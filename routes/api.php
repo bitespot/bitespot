@@ -127,7 +127,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/reviews/{review}/reply',    [\App\Http\Controllers\Api\VendorReplyController::class, 'store']);
         Route::put('/reviews/{review}/reply',     [\App\Http\Controllers\Api\VendorReplyController::class, 'update']);
     });
-
+ 
     // -----------------------------------------------------------------------
     // Admin panel (Norman)
     // -----------------------------------------------------------------------
