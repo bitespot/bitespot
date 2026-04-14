@@ -1,0 +1,68 @@
+name: Deploy BiteSpot to EC2 (main branch)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
+          echo "Starting BiteSpot deployment..."
+          cd /var/www/bitespot
+          
+          # Pull latest code
+          echo "Pulling latest code..."
+          git fetch origin
+          git checkout main
+          git pull origin main
+          
+          # Install dependencies
+          echo "Installing dependencies..."
+          composer install --no-dev --optimize-autoloader
+          
+          # Generate APP_KEY if missing
+          if ! grep -q "APP_KEY=base64:" .env; then
+            echo "Generating APP_KEY..."
+            php artisan key:generate
+          fi
+          
+          # Run migrations
+          echo "Running migrations..."
+          php artisan migrate --force
+          
+          # Clear caches
+          echo "Clearing caches..."
+          php artisan cache:clear
+          php artisan config:clear
+          php artisan route:clear
+          php artisan view:clear
+          
+          # Fix permissions
+          echo "Setting permissions..."
+          sudo chown -R apache:apache /var/www/bitespot
+          sudo chmod -R 755 /var/www/bitespot
+          sudo chmod -R 775 /var/www/bitespot/storage
+          sudo chmod -R 775 /var/www/bitespot/bootstrap/cache
+          
+          # Reload Apache
+          echo "Reloading Apache..."
+          sudo systemctl reload httpd
+          
+          echo "✓ Deployment completed successfully!"
+          EOF
