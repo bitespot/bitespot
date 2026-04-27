@@ -4,48 +4,50 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <title>{{ config('app.name', 'BiteSpot') }} — Discover Tacloban's Best Eats</title>
 
-        <title>{{ config('app.name', 'BiteSpot') }}</title>
-
-        <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
 
-        <!-- Styles / Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
 
-    <body class="bg-gray-50 min-h-screen" style="background-color: #f9fafb;">
+    <body class="bg-gray-50 min-h-screen">
 
-        {{-- ===== HERO SECTION ===== --}}
-        <section class="bs-hero">
-            {{-- Navbar inside hero --}}
-            <nav class="bs-navbar">
-                <div class="bs-navbar__logo-name">
-                    <a href="/">
-                        <img src="{{ asset('logo.png') }}" alt="{{ config('app.name', 'BiteSpot') }} logo" class="bs-navbar__logo">
+        {{-- ===================================================
+             NAVBAR — transparent over hero
+             =================================================== --}}
+        <nav class="bs-navbar">
+            <div class="bs-navbar__logo-name">
+                <a href="/">
+                    <img src="{{ asset('logo.png') }}" alt="{{ config('app.name', 'BiteSpot') }} logo" class="bs-navbar__logo">
+                </a>
+                <span class="bs-navbar__name">BiteSpot</span>
+            </div>
+
+            <div class="bs-navbar__links">
+                <a href="/explore" class="bs-navbar__link">Explore</a>
+                @auth
+                    <a href="{{ url('/dashboard') }}" class="btn-primary" style="font-size:.9rem; padding:.5rem 1.1rem;">
+                        Go to Dashboard
                     </a>
-                    <!-- BiteSpot name after the logo -->
-                    <span class="bs-navbar__name">BiteSpot</span>
-                </div>
-                
+                @else
+                    <a href="{{ route('login') }}" class="bs-navbar__link">Login</a>
+                    @if (Route::has('register'))
+                        <a href="{{ route('register') }}" class="btn-primary" style="font-size:.9rem; padding:.5rem 1.1rem;">
+                            Sign up free
+                        </a>
+                    @endif
+                @endauth
+            </div>
+        </nav>
 
-                <div class="bs-navbar__links">
-                    <a href="/explore" class="bs-navbar__link">Explore</a>
-                    @auth
-                        <a href="{{ url('/dashboard') }}" class="bs-navbar__link">Dashboard</a>
-                    @else
-                        <a href="{{ route('login') }}" class="bs-navbar__link">Login</a>
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="btn-primary" style="font-size:.9rem; padding:.5rem 1.1rem;">Sign up</a>
-                        @endif
-                    @endauth
-                </div>
-            </nav>
-
-            {{-- Background image --}}
+        {{-- ===================================================
+             HERO
+             =================================================== --}}
+        <section class="bs-hero">
             <img
-                src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1920&q=80"
+                src="/images/dashboard/jepoysgrillandresto.jpg"
                 alt=""
                 class="bs-hero__bg"
                 aria-hidden="true"
@@ -56,13 +58,12 @@
                     Discover your next <span>favorite bite</span>
                 </h1>
                 <p class="bs-hero__subtitle">
-                    Find the best restaurants, cafés, and hidden street food gems in your city.
+                    Tacloban's hyperlocal food directory — from hidden street food stalls
+                    to neighbourhood eateries you won't find anywhere else.
                 </p>
 
-                {{-- Search bar --}}
                 <div class="bs-search" id="hero-search-bar">
                     <div class="bs-search__inner">
-                        {{-- Search icon --}}
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
                              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -78,36 +79,91 @@
                     <a href="/explore" class="bs-search__btn" id="hero-search-btn">Search</a>
                 </div>
 
-                {{-- Autocomplete dropdown --}}
-                <div id="search-dropdown"
-                     style="display:none; position:absolute; left:50%; transform:translateX(-50%); width:min(40rem, 90vw);
-                            margin-top:.25rem; background:#fff; border-radius:.75rem; box-shadow:0 20px 25px -5px rgba(0,0,0,.2);
-                            text-align:left; z-index:30; max-height:16rem; overflow-y:auto;">
+                <div id="search-dropdown" class="bs-search-dropdown"></div>
+            </div>
+        </section>
+
+        {{-- ===================================================
+             WHAT WE ARE — Three-column value propositions
+             =================================================== --}}
+        <section class="bs-landing-section">
+            <div class="bs-container">
+                <p class="bs-landing-eyebrow">What is BiteSpot?</p>
+                <h2 class="bs-landing-heading">Tacloban's food scene, finally online.</h2>
+                <p class="bs-landing-subheading">
+                    BiteSpot bridges the digital divide for micro-food businesses that can't afford
+                    a spot on big platforms — and gives locals and tourists one place to find them all.
+                </p>
+
+                <div class="bs-value-grid">
+                    <div class="bs-value-card">
+                        <div class="bs-value-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                        </div>
+                        <h3 class="bs-value-title">Discover Hidden Gems</h3>
+                        <p class="bs-value-desc">
+                            Browse a searchable, map-based directory of restaurants, street food stalls,
+                            cafés, and night market vendors — all local, all verified.
+                        </p>
+                    </div>
+
+                    <div class="bs-value-card">
+                        <div class="bs-value-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                            </svg>
+                        </div>
+                        <h3 class="bs-value-title">Community Reviews</h3>
+                        <p class="bs-value-desc">
+                            Real ratings and reviews from Tacloban locals. Find what's trending,
+                            what's a hidden gem, and what's worth the queue.
+                        </p>
+                    </div>
+
+                    <div class="bs-value-card">
+                        <div class="bs-value-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                <polyline points="9 22 9 12 15 12 15 22"/>
+                            </svg>
+                        </div>
+                        <h3 class="bs-value-title">Visibility for Vendors</h3>
+                        <p class="bs-value-desc">
+                            Own a food stall or eatery? Claim your listing for free. Toggle open/closed
+                            status, manage your menu, and get discovered — no marketing team needed.
+                        </p>
+                    </div>
                 </div>
             </div>
         </section>
 
-        {{-- ===== MAIN CONTENT ===== --}}
-        <div class="bs-main">
+        {{-- ===================================================
+             CATEGORY BROWSE
+             =================================================== --}}
+        <section class="bs-landing-section bs-landing-section--alt">
+            <div class="bs-container">
+                <p class="bs-landing-eyebrow">Browse by category</p>
+                <h2 class="bs-landing-heading">What are you craving?</h2>
 
-            {{-- ── Categories ── --}}
-            <section style="margin-bottom: 3rem;">
-                <h2 class="bs-section-title">What are you craving?</h2>
                 <div class="bs-categories">
                     <a href="/explore?category=restaurants" class="bs-category-btn">
                         <div class="bs-category-icon">
-                            {{-- Utensils --}}
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>
+                                <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/>
+                                <path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>
                             </svg>
                         </div>
                         <span class="bs-category-label">Restaurants</span>
                     </a>
-
                     <a href="/explore?category=street-food" class="bs-category-btn">
                         <div class="bs-category-icon">
-                            {{-- Pizza --}}
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 2 2 22h20L12 2z"/><path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
@@ -115,10 +171,8 @@
                         </div>
                         <span class="bs-category-label">Street Food</span>
                     </a>
-
                     <a href="/explore?category=cafes" class="bs-category-btn">
                         <div class="bs-category-icon">
-                            {{-- Coffee --}}
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/>
@@ -127,10 +181,8 @@
                         </div>
                         <span class="bs-category-label">Cafés</span>
                     </a>
-
                     <a href="/explore?category=desserts" class="bs-category-btn">
                         <div class="bs-category-icon">
-                            {{-- Ice cream --}}
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 22l3-3-1.5-1.5L12 19l-1.5-1.5L9 19l3 3z"/>
@@ -139,10 +191,8 @@
                         </div>
                         <span class="bs-category-label">Desserts</span>
                     </a>
-
                     <a href="/explore?category=drinks" class="bs-category-btn">
                         <div class="bs-category-icon">
-                            {{-- Beer --}}
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M17 11h1a3 3 0 0 1 0 6h-1"/><path d="M5 11h12v10H5z"/>
@@ -152,40 +202,89 @@
                         <span class="bs-category-label">Drinks</span>
                     </a>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            {{-- ── Trending Spots ── --}}
-            <section id="trending-spots">
-                <div class="bs-section-header">
-                    <h2 class="bs-section-title" style="margin-bottom:0;">Trending Spots</h2>
-                    <a href="/explore" class="bs-see-all">
-                        See all
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="9 18 15 12 9 6"/>
-                        </svg>
-                    </a>
-                </div>
+        {{-- ===================================================
+             WHO IS IT FOR
+             =================================================== --}}
+        <section class="bs-landing-section">
+            <div class="bs-container">
+                <p class="bs-landing-eyebrow">Built for everyone</p>
+                <h2 class="bs-landing-heading">Who uses BiteSpot?</h2>
 
-                {{-- Cards render here via JS; skeletons shown while loading --}}
-                <div id="trending-container" class="bs-cards-grid">
-                    @foreach (range(1, 6) as $i)
-                    <div style="background:#fff; border-radius:1rem; overflow:hidden; border:1px solid #f3f4f6;">
-                        <div class="bs-skeleton" style="height:12rem;"></div>
-                        <div style="padding:1.25rem;">
-                            <div class="bs-skeleton" style="height:1.1rem; width:60%; margin-bottom:.6rem;"></div>
-                            <div class="bs-skeleton" style="height:.875rem; width:90%; margin-bottom:.4rem;"></div>
-                            <div class="bs-skeleton" style="height:.875rem; width:70%;"></div>
-                        </div>
+                <div class="bs-who-grid">
+                    <div class="bs-who-card">
+                        <span class="bs-who-emoji">🍽️</span>
+                        <h3 class="bs-who-title">Everyday Diners</h3>
+                        <p class="bs-who-desc">
+                            Find a nearby place to eat in seconds. Filter by category,
+                            check ratings, see operating hours, and read reviews from real locals.
+                        </p>
                     </div>
-                    @endforeach
+                    <div class="bs-who-card">
+                        <span class="bs-who-emoji">🗺️</span>
+                        <h3 class="bs-who-title">Tourists & Visitors</h3>
+                        <p class="bs-who-desc">
+                            Explore curated food trails and cultural spots unique to Tacloban.
+                            Navigate the city's food scene like a local from day one.
+                        </p>
+                    </div>
+                    <div class="bs-who-card">
+                        <span class="bs-who-emoji">🏪</span>
+                        <h3 class="bs-who-title">Food Vendors</h3>
+                        <p class="bs-who-desc">
+                            Claim your free listing, manage your menu, set your hours, and
+                            get found by customers — without needing a marketing budget.
+                        </p>
+                    </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-        </div>{{-- /.bs-main --}}
+        {{-- ===================================================
+             CTA STRIP
+             =================================================== --}}
+        <section class="bs-cta-strip">
+            <div class="bs-container bs-cta-strip__inner">
+                <div>
+                    <h2 class="bs-cta-strip__title">Ready to explore?</h2>
+                    <p class="bs-cta-strip__sub">Join BiteSpot and never wonder where to eat again.</p>
+                </div>
+                <div class="bs-cta-strip__actions">
+                    <a href="/explore" class="bs-cta-strip__btn bs-cta-strip__btn--ghost">Browse spots</a>
+                    @guest
+                        <a href="{{ route('register') }}" class="bs-cta-strip__btn bs-cta-strip__btn--primary">
+                            Create free account
+                        </a>
+                    @endguest
+                </div>
+            </div>
+        </section>
+
+        {{-- ===================================================
+             FOOTER
+             =================================================== --}}
+        <footer class="bs-footer">
+            <div class="bs-container bs-footer__inner">
+                <div class="bs-footer__brand">
+                    <img src="{{ asset('logo.png') }}" alt="BiteSpot" class="bs-footer__logo">
+                    <span class="bs-footer__name">BiteSpot</span>
+                </div>
+                <p class="bs-footer__copy">
+                    &copy; {{ date('Y') }} BiteSpot &mdash; Tacloban City, Philippines
+                </p>
+                <div class="bs-footer__links">
+                    <a href="/explore">Explore</a>
+                    <a href="{{ route('login') }}">Login</a>
+                    @if (Route::has('register'))
+                        <a href="{{ route('register') }}">Sign up</a>
+                    @endif
+                </div>
+            </div>
+        </footer>
 
         <script>
-        // ── Search: redirect to /explore with query param ──
         document.getElementById('hero-search-input').addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 const q = this.value.trim();
@@ -198,8 +297,5 @@
             window.location.href = '/explore' + (q ? '?q=' + encodeURIComponent(q) : '');
         });
         </script>
-
-        {{-- Existing home.js handles fetching & rendering the trending cards --}}
-        <script src="{{ asset('js/home.js') }}"></script>
     </body>
 </html>
