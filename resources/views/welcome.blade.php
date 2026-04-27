@@ -4,8 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <title>{{ config('app.name', 'BiteSpot') }} — Discover Tacloban's Best Eats</title>
-
+        <title>{{ config('app.name', 'BiteSpot') }} — Discover Your Place's Best Eats</title>
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
 
@@ -58,7 +57,7 @@
                     Discover your next <span>favorite bite</span>
                 </h1>
                 <p class="bs-hero__subtitle">
-                    Tacloban's hyperlocal food directory — from hidden street food stalls
+                    Your place's hyperlocal food directory — from hidden street food stalls
                     to neighbourhood eateries you won't find anywhere else.
                 </p>
 
@@ -89,7 +88,7 @@
         <section class="bs-landing-section">
             <div class="bs-container">
                 <p class="bs-landing-eyebrow">What is BiteSpot?</p>
-                <h2 class="bs-landing-heading">Tacloban's food scene, finally online.</h2>
+                <h2 class="bs-landing-heading">Your place's food scene, finally online.</h2>
                 <p class="bs-landing-subheading">
                     BiteSpot bridges the digital divide for micro-food businesses that can't afford
                     a spot on big platforms — and gives locals and tourists one place to find them all.
@@ -120,7 +119,7 @@
                         </div>
                         <h3 class="bs-value-title">Community Reviews</h3>
                         <p class="bs-value-desc">
-                            Real ratings and reviews from Tacloban locals. Find what's trending,
+                            Real ratings and reviews from locals. Find what's trending,
                             what's a hidden gem, and what's worth the queue.
                         </p>
                     </div>
@@ -226,8 +225,8 @@
                         <span class="bs-who-emoji">🗺️</span>
                         <h3 class="bs-who-title">Tourists & Visitors</h3>
                         <p class="bs-who-desc">
-                            Explore curated food trails and cultural spots unique to Tacloban.
-                            Navigate the city's food scene like a local from day one.
+                            Explore curated food trails and cultural spots unique to your location.
+                            Navigate the area's food scene like a local from day one.
                         </p>
                     </div>
                     <div class="bs-who-card">
@@ -272,7 +271,7 @@
                     <span class="bs-footer__name">BiteSpot</span>
                 </div>
                 <p class="bs-footer__copy">
-                    &copy; {{ date('Y') }} BiteSpot &mdash; Tacloban City, Philippines
+                    &copy; {{ date('Y') }} BiteSpot. All rights reserved.
                 </p>
                 <div class="bs-footer__links">
                     <a href="/explore">Explore</a>
