@@ -24,8 +24,12 @@ use Illuminate\Support\Facades\Route;
 // 1. PUBLIC (no auth required)
 // ---------------------------------------------------------------------------
 
-Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])
-     ->name('home');
+Route::get('/', function () {
+     if (auth()->check()) {
+          return redirect('/dashboard');
+     }
+     return app(\App\Http\Controllers\HomeController::class)->index();
+})->name('home');
 
 Route::get('/explore', [\App\Http\Controllers\ExploreController::class, 'index'])
      ->name('explore');
@@ -57,12 +61,17 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
 
-    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-    // User profile (Norman)
-    Route::get('/profile',      [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
-    Route::get('/profile/edit', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
-    Route::put('/profile',      [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+     // General dashboard for all authenticated users
+     Route::get('/dashboard', function () {
+          return view('dashboard');
+     })->name('dashboard');
+
+     // User profile (Norman)
+     Route::get('/profile',      [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
+     Route::get('/profile/edit', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+     Route::put('/profile',      [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
 
 });
 
