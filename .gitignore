@@ -28,3 +28,4 @@ vendor/
 /public/hot
 /public/build
 /public/js
+/resources/views/template_codes
