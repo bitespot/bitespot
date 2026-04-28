@@ -25,55 +25,79 @@
                 <span class="bs-navbar__name">BiteSpot</span>
             </div>
 
-            <div class="bs-navbar__links">
-                <a href="/explore" class="bs-navbar__link">Explore</a>
-                <a href="/saved" class="bs-navbar__link">Saved</a>
+            <div class="bs-navbar__links bs-navbar__links--center">
+                <a href="/dashboard" class="bs-navbar__link" data-nav="home" aria-label="Home">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                </a>
+                <a href="/explore" class="bs-navbar__link" data-nav="explore" aria-label="Explore">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                </a>
+                <a href="/saved" class="bs-navbar__link" data-nav="saved" aria-label="Saved">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                    </svg>
+                </a>
+                <div class="bs-navbar__indicator" id="navbar-indicator"></div>
+                <!-- User menu follows -->
 
                 {{-- User menu --}}
-                <div class="bs-user-menu" id="user-menu-wrap">
-                    <button class="bs-user-menu__trigger" id="user-menu-btn" aria-expanded="false">
-                        <span class="bs-user-avatar">
-                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                        </span>
-                        <span class="bs-user-menu__name">{{ auth()->user()->name }}</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                             fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="6 9 12 15 18 9"/>
-                        </svg>
-                    </button>
+                
+            </div>
 
-                    <div class="bs-user-menu__dropdown" id="user-menu-dropdown">
-                        <a href="/profile" class="bs-user-menu__item">
+
+
+
+            <div class="bs-user-menu" id="user-menu-wrap">
+                <button class="bs-user-menu__trigger" id="user-menu-btn" aria-expanded="false">
+                    <span class="bs-user-avatar">
+                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                    </span>
+                    <span class="bs-user-menu__name">{{ auth()->user()->name }}</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </button>
+
+                <div class="bs-user-menu__dropdown" id="user-menu-dropdown">
+                    <a href="/profile" class="bs-user-menu__item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        My Profile
+                    </a>
+                    <a href="/my-reviews" class="bs-user-menu__item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                        My Reviews
+                    </a>
+                    <div class="bs-user-menu__divider"></div>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="bs-user-menu__item bs-user-menu__item--danger">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                                <circle cx="12" cy="7" r="4"/>
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                <polyline points="16 17 21 12 16 7"/>
+                                <line x1="21" y1="12" x2="9" y2="12"/>
                             </svg>
-                            My Profile
-                        </a>
-                        <a href="/my-reviews" class="bs-user-menu__item">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                            </svg>
-                            My Reviews
-                        </a>
-                        <div class="bs-user-menu__divider"></div>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="bs-user-menu__item bs-user-menu__item--danger">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                                    <polyline points="16 17 21 12 16 7"/>
-                                    <line x1="21" y1="12" x2="9" y2="12"/>
-                                </svg>
-                                Sign out
-                            </button>
-                        </form>
-                    </div>
+                            Sign out
+                        </button>
+                    </form>
                 </div>
             </div>
+
+
+
         </nav>
 
         {{-- ===================================================
@@ -250,7 +274,7 @@
                     <span class="bs-footer__name">BiteSpot</span>
                 </div>
                 <p class="bs-footer__copy">
-                    &copy; {{ date('Y') }} BiteSpot &mdash; Tacloban City, Philippines
+                    &copy; {{ date('Y') }} BiteSpot. All rights reserved.
                 </p>
                 <div class="bs-footer__links">
                     <a href="/explore">Explore</a>
@@ -265,8 +289,86 @@
             </div>
         </footer>
 
+
+        <style>
+        /* --- Navbar icon links --- */
+        .bs-navbar__links--center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2.5rem;
+            position: relative;
+            flex: 1;
+        }
+        .bs-navbar__link {
+            background: none;
+            border: none;
+            outline: none;
+            padding: 0 2rem 0.5rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            color: #222;
+            opacity: 0.85;
+            transition: opacity 0.18s;
+        }
+        .bs-navbar__link.is-active, .bs-navbar__link:hover {
+            opacity: 1;
+        }
+        .bs-navbar__indicator {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            width: 32px;
+            background: linear-gradient(90deg, #ff8800 60%, #ffb347 100%);
+            border-radius: 2px 2px 0 0;
+            transition: transform 0.28s cubic-bezier(.4,1.6,.4,1), width 0.2s;
+            z-index: 2;
+            pointer-events: none;
+        }
+        .bs-navbar__link svg {
+            display: block;
+        }
+        </style>
+
         <script>
         // ── Search redirect ──
+
+        // --- Navbar underline indicator logic ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const links = Array.from(document.querySelectorAll('.bs-navbar__link[data-nav]'));
+            const indicator = document.getElementById('navbar-indicator');
+            // Determine active link by URL
+            let activeIdx = 0;
+            const path = window.location.pathname;
+            links.forEach((link, i) => {
+                const href = link.getAttribute('href');
+                if ((href === '/dashboard' && path === '/dashboard') ||
+                    (href === '/explore' && path.startsWith('/explore')) ||
+                    (href === '/saved' && path.startsWith('/saved'))
+                ) {
+                    activeIdx = i;
+                }
+            });
+            function moveIndicator(idx) {
+                links.forEach(l => l.classList.remove('is-active'));
+                const link = links[idx];
+                link.classList.add('is-active');
+                const rect = link.getBoundingClientRect();
+                const parentRect = link.parentElement.getBoundingClientRect();
+                indicator.style.width = rect.width + 'px';
+                indicator.style.transform = `translateX(${rect.left - parentRect.left}px)`;
+            }
+            moveIndicator(activeIdx);
+            links.forEach((link, i) => {
+                link.addEventListener('click', function(e) {
+                    // Allow normal navigation, but animate indicator
+                    moveIndicator(i);
+                });
+            });
+        });
         document.getElementById('hero-search-input').addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 const q = this.value.trim();

@@ -118,3 +118,5 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
          ->name('analytics');
 
 });
+
+Route::get('/bitespot/create', [\App\Http\Controllers\BiteSpotController::class, 'create'])->name('bitespot.create');
