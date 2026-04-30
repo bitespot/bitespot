@@ -61,24 +61,32 @@
                     to neighbourhood eateries you won't find anywhere else.
                 </p>
 
-                <div class="bs-search" id="hero-search-bar">
-                    <div class="bs-search__inner">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <div class="bs-search w-full max-w-xl mx-auto flex flex-col sm:flex-row gap-2 sm:gap-0" id="hero-search-bar">
+                    <div class="bs-search__inner flex-1 min-w-0 px-2 py-1 sm:px-0 sm:py-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1">
                             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
                         </svg>
                         <input
                             id="hero-search-input"
                             type="text"
                             placeholder="Find food near you..."
-                            class="bs-search__input"
+                            class="bs-search__input w-full min-w-0 text-base sm:text-lg py-2 sm:py-3"
                             autocomplete="off"
                         >
                     </div>
-                    <a href="/explore" class="bs-search__btn" id="hero-search-btn">Search</a>
+                    <a href="/explore" class="bs-search__btn w-full sm:w-auto mt-2 sm:mt-0 text-base sm:text-lg py-2 sm:py-3 px-4 sm:px-6 rounded-full sm:rounded-full" id="hero-search-btn">Search</a>
                 </div>
 
                 <div id="search-dropdown" class="bs-search-dropdown"></div>
+
+                <!-- Mobile-only quick links example -->
+                <div class="flex sm:hidden mt-6 gap-2 justify-center">
+                    <a href="/explore?category=restaurants" class="px-3 py-2 rounded-full bg-orange-100 text-orange-700 text-sm font-medium">Restaurants</a>
+                    <a href="/explore?category=street-food" class="px-3 py-2 rounded-full bg-orange-100 text-orange-700 text-sm font-medium">Street Food</a>
+                    <a href="/explore?category=cafes" class="px-3 py-2 rounded-full bg-orange-100 text-orange-700 text-sm font-medium">Cafés</a>
+                </div>
+                <!-- End mobile-only quick links -->
             </div>
         </section>
 
@@ -94,46 +102,46 @@
                     a spot on big platforms — and gives locals and tourists one place to find them all.
                 </p>
 
-                <div class="bs-value-grid">
-                    <div class="bs-value-card">
-                        <div class="bs-value-icon">
+                <div class="bs-value-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+                    <div class="bs-value-card flex flex-col items-center text-center p-6 bg-white rounded-xl shadow">
+                        <div class="bs-value-icon mb-3">
                             <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/>
                                 <circle cx="12" cy="10" r="3"/>
                             </svg>
                         </div>
-                        <h3 class="bs-value-title">Discover Hidden Gems</h3>
-                        <p class="bs-value-desc">
+                        <h3 class="bs-value-title font-semibold text-lg">Discover Hidden Gems</h3>
+                        <p class="bs-value-desc mt-2 text-gray-600">
                             Browse a searchable, map-based directory of restaurants, street food stalls,
                             cafés, and night market vendors — all local, all verified.
                         </p>
                     </div>
 
-                    <div class="bs-value-card">
-                        <div class="bs-value-icon">
+                    <div class="bs-value-card flex flex-col items-center text-center p-6 bg-white rounded-xl shadow">
+                        <div class="bs-value-icon mb-3">
                             <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                             </svg>
                         </div>
-                        <h3 class="bs-value-title">Community Reviews</h3>
-                        <p class="bs-value-desc">
+                        <h3 class="bs-value-title font-semibold text-lg">Community Reviews</h3>
+                        <p class="bs-value-desc mt-2 text-gray-600">
                             Real ratings and reviews from locals. Find what's trending,
                             what's a hidden gem, and what's worth the queue.
                         </p>
                     </div>
 
-                    <div class="bs-value-card">
-                        <div class="bs-value-icon">
+                    <div class="bs-value-card flex flex-col items-center text-center p-6 bg-white rounded-xl shadow">
+                        <div class="bs-value-icon mb-3">
                             <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                                 <polyline points="9 22 9 12 15 12 15 22"/>
                             </svg>
                         </div>
-                        <h3 class="bs-value-title">Visibility for Vendors</h3>
-                        <p class="bs-value-desc">
+                        <h3 class="bs-value-title font-semibold text-lg">Visibility for Vendors</h3>
+                        <p class="bs-value-desc mt-2 text-gray-600">
                             Own a food stall or eatery? Claim your listing for free. Toggle open/closed
                             status, manage your menu, and get discovered — no marketing team needed.
                         </p>
@@ -214,7 +222,9 @@
 
                 <div class="bs-who-grid">
                     <div class="bs-who-card">
-                        <span class="bs-who-emoji">🍽️</span>
+                        <span class="bs-who-emoji" style="display: flex; align-items: center; justify-content: center; height: 2.8em;">
+                            <img src="/images/dashboard/who_uses_bitespot/diners.png" alt="Everyday Diners" style="width: 2.2em; height: 2.2em; object-fit: contain; display: block;" loading="lazy">
+                        </span>
                         <h3 class="bs-who-title">Everyday Diners</h3>
                         <p class="bs-who-desc">
                             Find a nearby place to eat in seconds. Filter by category,
@@ -222,7 +232,9 @@
                         </p>
                     </div>
                     <div class="bs-who-card">
-                        <span class="bs-who-emoji">🗺️</span>
+                        <span class="bs-who-emoji" style="display: flex; align-items: center; justify-content: center; height: 2.8em;">
+                            <img src="/images/dashboard/who_uses_bitespot/tourists.png" alt="Tourists & Visitors" style="width: 2.2em; height: 2.2em; object-fit: contain; display: block;" loading="lazy">
+                        </span>
                         <h3 class="bs-who-title">Tourists & Visitors</h3>
                         <p class="bs-who-desc">
                             Explore curated food trails and cultural spots unique to your location.
@@ -230,7 +242,9 @@
                         </p>
                     </div>
                     <div class="bs-who-card">
-                        <span class="bs-who-emoji">🏪</span>
+                        <span class="bs-who-emoji" style="display: flex; align-items: center; justify-content: center; height: 2.8em;">
+                            <img src="/images/dashboard/who_uses_bitespot/vendors.png" alt="Food Vendors" style="width: 2.2em; height: 2.2em; object-fit: contain; display: block;" loading="lazy">
+                        </span>
                         <h3 class="bs-who-title">Food Vendors</h3>
                         <p class="bs-who-desc">
                             Claim your free listing, manage your menu, set your hours, and
