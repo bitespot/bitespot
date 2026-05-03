@@ -188,6 +188,8 @@ a { color: inherit; text-decoration: none; }
     align-items: center;
     gap: 1.25rem;
     position: relative;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
 }
 
 .bs-navbar__indicator {
@@ -207,7 +209,7 @@ a { color: inherit; text-decoration: none; }
     font-weight: 500;
     transition: color .15s;
     text-decoration: none;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 }
 .bs-navbar__link:hover { color: var(--color-primary); }
 
@@ -1076,11 +1078,11 @@ a { color: inherit; text-decoration: none; }
     background: #fff;
     border-bottom: 1px solid #f3f4f6;
     box-shadow: 0 1px 3px rgba(0,0,0,.06);
-    padding: .875rem 1.5rem;
+    padding: 0rem 1.5rem;
 }
 .bs-navbar--solid .bs-navbar__link { color: #374151; }
 .bs-navbar--solid .bs-navbar__link:hover { color: var(--color-primary); }
-.bs-navbar--solid .bs-navbar__name { color: var(--color-charcoal); }
+.bs-navbar--solid .bs-navbar__name { color: var(--color-primary); }
  
 /* ── Navbar logo + name wrapper ── */
 .bs-navbar__logo-name {

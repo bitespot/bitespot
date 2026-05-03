@@ -2,46 +2,53 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Vendor extends Model
 {
-    use HasFactory;
-
-    protected $guarded = ['id'];
-    
-    protected $casts = [
-        'hours' => 'array',
-        'isOpen' => 'boolean',
-        'isVerified' => 'boolean',
-        'isFeatured' => 'boolean',
-        'lat' => 'decimal:7',
-        'lng' => 'decimal:7',
+    protected $fillable = [
+        'name',
+        'description',
+        'category',
+        'address',
+        'latitude',
+        'longitude',
+        'image_url',
+        'rating',
     ];
 
-    public static function boot()
+    protected function casts(): array
     {
-        parent::boot();
-
-        static::creating(function ($vendor) {
-            if (empty($vendor->slug)) {
-                $vendor->slug = Str::slug($vendor->business_name) . '-' . uniqid();
-            }
-            if (!isset($vendor->status)) {
-                $vendor->status = 'pending';
-            }
-        });
+        return [
+            'latitude'  => 'float',
+            'longitude' => 'float',
+            'rating'    => 'float',
+        ];
     }
 
-    public function user()
+    public function discoveries(): HasMany
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(Discovery::class);
     }
 
-    public function category()
+    public function reviews(): HasMany
     {
-        return $this->belongsTo(Category::class);
+        return $this->hasMany(Review::class);
+    }
+
+    public function menuItems(): HasMany
+    {
+        return $this->hasMany(MenuItem::class);
+    }
+
+    public function photos(): HasMany
+    {
+        return $this->hasMany(Photo::class);
+    }
+
+    public function bookmarks(): HasMany
+    {
+        return $this->hasMany(Bookmark::class);
     }
 }
