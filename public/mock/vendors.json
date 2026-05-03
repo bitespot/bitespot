@@ -1,0 +1,103 @@
+{
+  "success": true,
+  "message": "OK",
+  "errors": {},
+  "data": [
+    {
+      "id": 1,
+      "slug": "jepoys-grill-tacloban",
+      "business_name": "Jepoy's Grill & Resto",
+      "category": { "id": 1, "name": "Restaurants", "slug": "restaurants" },
+      "city": "Tacloban",
+      "avg_rating": 4.7,
+      "price_tier": "$$",
+      "primary_photo": "/images/dashboard/jepoysgrillandresto.jpg",
+      "lat": 11.2444,
+      "lng": 125.0039
+    },
+    {
+      "id": 2,
+      "slug": "sugbo-mercado-cebu",
+      "business_name": "Sugbo Mercado",
+      "category": { "id": 2, "name": "Street Food", "slug": "street-food" },
+      "city": "Cebu City",
+      "avg_rating": 4.5,
+      "price_tier": "$",
+      "primary_photo": null,
+      "lat": 10.3157,
+      "lng": 123.8854
+    },
+    {
+      "id": 3,
+      "slug": "cafe-laguna-iloilo",
+      "business_name": "Café Laguna",
+      "category": { "id": 3, "name": "Cafés", "slug": "cafes" },
+      "city": "Iloilo City",
+      "avg_rating": 4.3,
+      "price_tier": "$$",
+      "primary_photo": null,
+      "lat": 10.7202,
+      "lng": 122.5621
+    },
+    {
+      "id": 4,
+      "slug": "manokan-country-bacolod",
+      "business_name": "Manokan Country",
+      "category": { "id": 1, "name": "Restaurants", "slug": "restaurants" },
+      "city": "Bacolod",
+      "avg_rating": 4.8,
+      "price_tier": "$",
+      "primary_photo": null,
+      "lat": 10.6765,
+      "lng": 122.9509
+    },
+    {
+      "id": 5,
+      "slug": "batchoy-ni-fely-iloilo",
+      "business_name": "Batchoy ni Fely",
+      "category": { "id": 2, "name": "Street Food", "slug": "street-food" },
+      "city": "Iloilo City",
+      "avg_rating": 4.6,
+      "price_tier": "$",
+      "primary_photo": null,
+      "lat": 10.7269,
+      "lng": 122.5490
+    },
+    {
+      "id": 6,
+      "slug": "dulce-dessert-bar-cebu",
+      "business_name": "Dulce Dessert Bar",
+      "category": { "id": 4, "name": "Desserts", "slug": "desserts" },
+      "city": "Cebu City",
+      "avg_rating": 4.4,
+      "price_tier": "$$",
+      "primary_photo": null,
+      "lat": 10.3203,
+      "lng": 123.8980
+    },
+    {
+      "id": 7,
+      "slug": "saltwater-seafood-tacloban",
+      "business_name": "Saltwater Seafood Grill",
+      "category": { "id": 7, "name": "Seafood", "slug": "seafood" },
+      "city": "Tacloban",
+      "avg_rating": 4.2,
+      "price_tier": "$$$",
+      "primary_photo": null,
+      "lat": 11.2550,
+      "lng": 125.0112
+    },
+    {
+      "id": 8,
+      "slug": "kape-tablea-dumaguete",
+      "business_name": "Kape Tablea",
+      "category": { "id": 3, "name": "Cafés", "slug": "cafes" },
+      "city": "Dumaguete",
+      "avg_rating": 4.9,
+      "price_tier": "$",
+      "primary_photo": null,
+      "lat": 9.3068,
+      "lng": 123.3054
+    }
+  ]
+}

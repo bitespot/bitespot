@@ -32,5 +32,7 @@
                 @yield('content')
             </main>
         </div>
+        <script src="{{ asset('js/api.js') }}"></script>
+        <script src="{{ asset('js/ui.js') }}"></script>
     </body>
 </html>
