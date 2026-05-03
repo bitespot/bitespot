@@ -176,7 +176,7 @@
             {{-- GRID TAB --}}
             <div x-show="tab === 'grid'" class="w-full p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6" x-cloak>
                 @forelse($bitespots as $spot)
-                    <a href="{{ route('bitespot.show', $spot['id']) }}" class="bg-white rounded-xl shadow hover:shadow-md transition-shadow duration-200 flex flex-col overflow-hidden group">
+                    <a href="{{ route('place.show', $spot['id']) }}" class="bg-white rounded-xl shadow hover:shadow-md transition-shadow duration-200 flex flex-col overflow-hidden group">
                         @if(!empty($spot['image_url']))
                             <img src="{{ $spot['image_url'] }}" alt="{{ $spot['name'] }}" class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300">
                         @else
