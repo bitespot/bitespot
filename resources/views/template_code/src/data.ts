@@ -1,0 +1,80 @@
+export const FOOD_PLACES = [
+  {
+    id: 1,
+    name: "The Rustic Spoon",
+    category: "Restaurant",
+    rating: 4.8,
+    reviews: 342,
+    priceRange: "$$",
+    location: "Downtown District",
+    distance: "1.2 km",
+    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80",
+    tags: ["Cozy", "Date Night", "Italian"],
+    description: "Authentic Italian cuisine in a warm, rustic setting. Famous for our handmade pasta and wood-fired pizzas."
+  },
+  {
+    id: 2,
+    name: "Bao & Bites",
+    category: "Street Food",
+    rating: 4.6,
+    reviews: 856,
+    priceRange: "$",
+    location: "Night Market",
+    distance: "0.5 km",
+    image: "https://images.unsplash.com/photo-1563227812-0ea4c22e6cc8?auto=format&fit=crop&w=800&q=80",
+    tags: ["Quick Bites", "Asian", "Spicy"],
+    description: "Award-winning steamed buns and Asian street food favorites. Quick, affordable, and incredibly delicious."
+  },
+  {
+    id: 3,
+    name: "Morning Brew Café",
+    category: "Café",
+    rating: 4.9,
+    reviews: 215,
+    priceRange: "$$",
+    location: "Westside",
+    distance: "2.1 km",
+    image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=800&q=80",
+    tags: ["Coffee", "Pastries", "Work Friendly"],
+    description: "Artisanal coffee roasted in-house, paired with freshly baked pastries. The perfect spot for your morning routine."
+  },
+  {
+    id: 4,
+    name: "Sweet Tooth Desserts",
+    category: "Desserts",
+    rating: 4.7,
+    reviews: 420,
+    priceRange: "$",
+    location: "South Square",
+    distance: "1.8 km",
+    image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=800&q=80",
+    tags: ["Ice Cream", "Cakes", "Late Night"],
+    description: "Decadent desserts to satisfy any craving. From towering sundaes to delicate macarons."
+  },
+  {
+    id: 5,
+    name: "Green Bowl",
+    category: "Restaurant",
+    rating: 4.5,
+    reviews: 189,
+    priceRange: "$$$",
+    location: "Uptown",
+    distance: "3.5 km",
+    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80",
+    tags: ["Healthy", "Vegan", "Organic"],
+    description: "Plant-based dining at its finest. Locally sourced ingredients crafted into beautiful, nourishing meals."
+  },
+  {
+    id: 6,
+    name: "Sizzling Wok",
+    category: "Street Food",
+    rating: 4.4,
+    reviews: 530,
+    priceRange: "$",
+    location: "East Market",
+    distance: "4.2 km",
+    image: "https://images.unsplash.com/photo-1552611052-33e04de081de?auto=format&fit=crop&w=800&q=80",
+    tags: ["Noodles", "Stir Fry", "Late Night"],
+    description: "Authentic wok-tossed noodles and rice dishes. Watch the chefs cook your meal over roaring flames."
+  }
+];

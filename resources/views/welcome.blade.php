@@ -16,7 +16,7 @@
         {{-- ===================================================
              NAVBAR — transparent over hero
              =================================================== --}}
-        <nav class="bs-navbar">
+        <nav class="bs-navbar bs-navbar--solid">
             <div class="bs-navbar__logo-name">
                 <a href="/">
                     <img src="{{ asset('logo.png') }}" alt="{{ config('app.name', 'BiteSpot') }} logo" class="bs-navbar__logo">
@@ -24,21 +24,78 @@
                 <span class="bs-navbar__name">BiteSpot</span>
             </div>
 
-            <div class="bs-navbar__links">
-                <a href="/explore" class="bs-navbar__link">Explore</a>
+            <div class="bs-navbar__links bs-navbar__links--left" style="flex:1; justify-content:flex-start;">
+                <form id="navbar-search-form" action="/explore" method="GET" style="display:flex; align-items:center; gap:0.5rem;">
+                    <div style="position:relative; display:flex; align-items:center;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; left:0.75rem; top:50%; transform:translateY(-50%); color:#888;">
+                            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        <input 
+                            type="text" 
+                            name="q" 
+                            id="navbar-search-input" 
+                            placeholder="Search food..." 
+                            style="padding:0.5rem 0.75rem 0.5rem 2.2rem; border-radius:1.5rem; border:1.5px solid #ddd; background:#fff; min-width:220px; font-size:1rem; outline:none; transition:border 0.2s;"
+                            autocomplete="off"
+                        >
+                    </div>
+                </form>
+                <!-- User menu follows -->
                 @auth
-                    <a href="{{ url('/dashboard') }}" class="btn-primary" style="font-size:.9rem; padding:.5rem 1.1rem;">
-                        Go to Dashboard
-                    </a>
-                @else
-                    <a href="{{ route('login') }}" class="bs-navbar__link">Login</a>
-                    @if (Route::has('register'))
-                        <a href="{{ route('register') }}" class="btn-primary" style="font-size:.9rem; padding:.5rem 1.1rem;">
-                            Sign up free
-                        </a>
-                    @endif
-                @endauth
             </div>
+            <div class="bs-user-menu" id="user-menu-wrap">
+                <button class="bs-user-menu__trigger" id="user-menu-btn" aria-expanded="false">
+                    <span class="bs-user-avatar">
+                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                    </span>
+                    <span class="bs-user-menu__name">{{ auth()->user()->name }}</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </button>
+                <div class="bs-user-menu__dropdown" id="user-menu-dropdown">
+                    <a href="/profile" class="bs-user-menu__item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        My Profile
+                    </a>
+                    <a href="/my-reviews" class="bs-user-menu__item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                        My Reviews
+                    </a>
+                    <div class="bs-user-menu__divider"></div>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="bs-user-menu__item bs-user-menu__item--danger">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                <polyline points="16 17 21 12 16 7"/>
+                                <line x1="21" y1="12" x2="9" y2="12"/>
+                            </svg>
+                            Sign out
+                        </button>
+                    </form>
+                </div>
+            </div>
+            @else
+            </div>
+            <div class="bs-navbar__links bs-navbar__links--right">
+                <a href="{{ route('login') }}" class="btn-primary" style="font-size:.9rem; padding:.5rem 1.1rem; background:#fff; color:#222; border:1.5px solid #222; box-shadow:none;">Login</a>
+                @if (Route::has('register'))
+                    <a href="{{ route('register') }}" class="btn-primary" style="font-size:.9rem; padding:.5rem 1.1rem;">
+                        Sign up free
+                    </a>
+                @endif
+            </div>
+            @endauth
         </nav>
 
         {{-- ===================================================
@@ -297,7 +354,27 @@
             </div>
         </footer>
 
+        <style>
+        /* Navbar search bar left-aligned, simple rectangle */
+        .bs-navbar__links--left {
+            display: flex;
+            margin-left: 1rem;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 0.5rem;
+            flex: 1;
+        }
+        </style>
+
         <script>
+        // No underline indicator logic needed
+        // Navbar search bar submit on Enter
+        document.getElementById('navbar-search-form').addEventListener('submit', function(e) {
+            const input = document.getElementById('navbar-search-input');
+            if (input.value.trim() === '') {
+                e.preventDefault(); // Prevent empty search
+            }
+        });
         document.getElementById('hero-search-input').addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 const q = this.value.trim();

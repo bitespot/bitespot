@@ -32,9 +32,11 @@
                         <polyline points="9 22 9 12 15 12 15 22"/>
                     </svg>
                 </a>
-                <a href="/explore" class="bs-navbar__link" data-nav="explore" aria-label="Explore">
+                <a href="{{ route('explore') }}" class="bs-navbar__link" data-nav="explore" aria-label="Explore">
                     <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+                        <line x1="8" y1="2" x2="8" y2="18"/>
+                        <line x1="16" y1="6" x2="16" y2="22"/>
                     </svg>
                 </a>
                 <a href="/saved" class="bs-navbar__link" data-nav="saved" aria-label="Saved">
@@ -237,7 +239,7 @@
             <section id="hidden-gems" style="margin-top: 3.5rem;">
                 <div class="bs-section-header">
                     <h2 class="bs-section-title" style="margin-bottom:0;">
-                        ✨ Hidden Gems
+                        Hidden Gems
                     </h2>
                     <a href="/explore?sort=hidden-gems" class="bs-see-all">
                         See all
@@ -264,9 +266,7 @@
 
         </div>{{-- /.bs-main --}}
 
-        {{-- ===================================================
-             FOOTER (minimal for authenticated pages)
-             =================================================== --}}
+{{--
         <footer class="bs-footer">
             <div class="bs-container bs-footer__inner">
                 <div class="bs-footer__brand">
@@ -288,8 +288,7 @@
                 </div>
             </div>
         </footer>
-
-
+--}}
         <style>
         /* --- Navbar icon links --- */
         .bs-navbar__links--center {
@@ -418,5 +417,10 @@
 
         {{-- home.js fetches and renders trending + hidden gems cards into their containers --}}
         <script src="{{ asset('js/home.js') }}"></script>
+
+        {{-- Floating Add BiteSpot Button (only for logged-in users) --}}
+        @auth
+            @include('components.add-bitespot')
+        @endauth
     </body>
 </html>
