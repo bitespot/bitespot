@@ -58,10 +58,10 @@ Route::get('/trending', [\App\Http\Controllers\Api\VendorController::class, 'tre
      ->name('api.vendors.trending');
 
 // ---------------------------------------------------------------------------
-// AUTHENTICATED ROUTES — require session auth (auth:sanctum or auth middleware)
+// AUTHENTICATED ROUTES — require session auth (auth or auth middleware)
 // ---------------------------------------------------------------------------
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth')->group(function () {
 
     // -----------------------------------------------------------------------
     // Auth / Current User (Norman)

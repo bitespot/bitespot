@@ -1,0 +1,1 @@
+{"version":2,"defects":{"Tests\\Feature\\VendorApiTest::test_can_register_new_vendor":7,"Tests\\Feature\\VendorApiTest::test_can_search_and_filter_approved_vendors":8},"times":{"Tests\\Feature\\VendorApiTest::test_can_register_new_vendor":0.063,"Tests\\Feature\\VendorApiTest::test_can_search_and_filter_approved_vendors":0.007}}

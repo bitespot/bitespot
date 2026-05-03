@@ -1,0 +1,80 @@
+
+   FAIL  Tests\Feature\VendorApiTest
+  ⨯ can register new vendor                                              0.17s  
+  ✓ can search and filter approved vendors                               0.01s  
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\VendorApiTest > can register new vendor                
+  Expected response status code [201] but received 500.
+Failed asserting that 500 is identical to 201.
+
+The following exception occurred during the last request:
+
+InvalidArgumentException: Auth guard [sanctum] is not defined. in /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Auth/AuthManager.php:87
+Stack trace:
+#0 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Auth/AuthManager.php(71): Illuminate\Auth\AuthManager->resolve('sanctum')
+#1 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(82): Illuminate\Auth\AuthManager->guard('sanctum')
+#2 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(61): Illuminate\Auth\Middleware\Authenticate->authenticate(Object(Illuminate\Http\Request), Array)
+#3 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Auth\Middleware\Authenticate->handle(Object(Illuminate\Http\Request), Object(Closure), 'sanctum')
+#4 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(137): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}(Object(Illuminate\Http\Request))
+#5 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Routing/Router.php(821): Illuminate\Pipeline\Pipeline->then(Object(Closure))
+#6 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Routing/Router.php(800): Illuminate\Routing\Router->runRouteWithinStack(Object(Illuminate\Routing\Route), Object(Illuminate\Http\Request))
+#7 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Routing/Router.php(764): Illuminate\Routing\Router->runRoute(Object(Illuminate\Http\Request), Object(Illuminate\Routing\Route))
+#8 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Routing/Router.php(753): Illuminate\Routing\Router->dispatchToRoute(Object(Illuminate\Http\Request))
+#9 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate\Routing\Router->dispatch(Object(Illuminate\Http\Request))
+#10 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(180): Illuminate\Foundation\Http\Kernel->{closure:Illuminate\Foundation\Http\Kernel::dispatchToRouter():197}(Object(Illuminate\Http\Request))
+#11 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->{closure:Illuminate\Pipeline\Pipeline::prepareDestination():178}(Object(Illuminate\Http\Request))
+#12 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle(Object(Illuminate\Http\Request), Object(Closure))
+#13 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull->handle(Object(Illuminate\Http\Request), Object(Closure))
+#14 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}(Object(Illuminate\Http\Request))
+#15 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(51): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle(Object(Illuminate\Http\Request), Object(Closure))
+#16 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Foundation\Http\Middleware\TrimStrings->handle(Object(Illuminate\Http\Request), Object(Closure))
+#17 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePostSize.php(27): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}(Object(Illuminate\Http\Request))
+#18 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Http\Middleware\ValidatePostSize->handle(Object(Illuminate\Http\Request), Object(Closure))
+#19 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(109): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}(Object(Illuminate\Http\Request))
+#20 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance->handle(Object(Illuminate\Http\Request), Object(Closure))
+#21 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(74): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}(Object(Illuminate\Http\Request))
+#22 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Http\Middleware\HandleCors->handle(Object(Illuminate\Http\Request), Object(Closure))
+#23 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(58): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}(Object(Illuminate\Http\Request))
+#24 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Http\Middleware\TrustProxies->handle(Object(Illuminate\Http\Request), Object(Closure))
+#25 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks.php(22): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}(Object(Illuminate\Http\Request))
+#26 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks->handle(Object(Illuminate\Http\Request), Object(Closure))
+#27 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePathEncoding.php(28): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}(Object(Illuminate\Http\Request))
+#28 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Http\Middleware\ValidatePathEncoding->handle(Object(Illuminate\Http\Request), Object(Closure))
+#29 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(137): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}(Object(Illuminate\Http\Request))
+#30 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate\Pipeline\Pipeline->then(Object(Closure))
+#31 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter(Object(Illuminate\Http\Request))
+#32 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php(607): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#33 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php(573): Illuminate\Foundation\Testing\TestCase->call('POST', '/api/vendor/reg...', Array, Array, Array, Array, '{"business_name...')
+#34 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php(411): Illuminate\Foundation\Testing\TestCase->json('POST', '/api/vendor/reg...', Array, Array, 0)
+#35 /Volumes/RolfStuffs/Developer/projects/bitespot/tests/Feature/VendorApiTest.php(21): Illuminate\Foundation\Testing\TestCase->postJson('/api/vendor/reg...', Array)
+#36 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/phpunit/phpunit/src/Framework/TestCase.php(1332): Tests\Feature\VendorApiTest->test_can_register_new_vendor()
+#37 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/phpunit/phpunit/src/Framework/TestCase.php(519): PHPUnit\Framework\TestCase->runTest()
+#38 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/phpunit/phpunit/src/Framework/TestRunner/TestRunner.php(99): PHPUnit\Framework\TestCase->runBare()
+#39 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/phpunit/phpunit/src/Framework/TestCase.php(359): PHPUnit\Framework\TestRunner->run(Object(Tests\Feature\VendorApiTest))
+#40 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/phpunit/phpunit/src/Framework/TestSuite.php(374): PHPUnit\Framework\TestCase->run()
+#41 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/phpunit/phpunit/src/Framework/TestSuite.php(374): PHPUnit\Framework\TestSuite->run()
+#42 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/phpunit/phpunit/src/Framework/TestSuite.php(374): PHPUnit\Framework\TestSuite->run()
+#43 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/phpunit/phpunit/src/TextUI/TestRunner.php(64): PHPUnit\Framework\TestSuite->run()
+#44 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/phpunit/phpunit/src/TextUI/Application.php(229): PHPUnit\TextUI\TestRunner->run(Object(PHPUnit\TextUI\Configuration\Configuration), Object(PHPUnit\Runner\ResultCache\DefaultResultCache), Object(PHPUnit\Framework\TestSuite))
+#45 /Volumes/RolfStuffs/Developer/projects/bitespot/vendor/phpunit/phpunit/phpunit(104): PHPUnit\TextUI\Application->run(Array)
+#46 {main}
+
+----------------------------------------------------------------------------------
+
+Auth guard [sanctum] is not defined.
+
+  at tests/Feature/VendorApiTest.php:30
+     26▕             'city' => 'Tacloban City',
+     27▕             'phone' => '123456789'
+     28▕         ]);
+     29▕ 
+  ➜  30▕         $response->assertStatus(201)
+     31▕                  ->assertJsonPath('vendor.business_name', 'The Cozy Cafe')
+     32▕                  ->assertJsonPath('vendor.status', 'pending');
+     33▕ 
+     34▕         $this->assertDatabaseHas('vendors', [
+
+
+  Tests:    1 failed, 1 passed (8 assertions)
+  Duration: 0.44s
+
