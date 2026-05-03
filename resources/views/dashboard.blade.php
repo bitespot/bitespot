@@ -32,9 +32,11 @@
                         <polyline points="9 22 9 12 15 12 15 22"/>
                     </svg>
                 </a>
-                <a href="/explore" class="bs-navbar__link" data-nav="explore" aria-label="Explore">
+                <a href="{{ route('explore') }}" class="bs-navbar__link" data-nav="explore" aria-label="Explore">
                     <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+                        <line x1="8" y1="2" x2="8" y2="18"/>
+                        <line x1="16" y1="6" x2="16" y2="22"/>
                     </svg>
                 </a>
                 <a href="/saved" class="bs-navbar__link" data-nav="saved" aria-label="Saved">
@@ -114,7 +116,7 @@
             <div class="bs-hero__content">
                 <p class="bs-hero__greeting">
                     Good {{ now()->hour < 12 ? 'morning' : (now()->hour < 17 ? 'afternoon' : 'evening') }},
-                    {{ auth()->user()->name }} 👋
+                    {{ auth()->user()->name }}
                 </p>
                 <h1 class="bs-hero__title">
                     Discover your next <span>favorite bite</span>
@@ -124,7 +126,7 @@
                 </p>
 
                 <div class="bs-search" id="hero-search-bar">
-                    <div class="bs-search__inner">
+                    <div class="bs-search__inner flex-1 min-w-0">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
                              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -133,11 +135,11 @@
                             id="hero-search-input"
                             type="text"
                             placeholder="Find food near you..."
-                            class="bs-search__input"
+                            class="bs-search__input w-full min-w-0"
                             autocomplete="off"
                         >
                     </div>
-                    <a href="/explore" class="bs-search__btn" id="hero-search-btn">Search</a>
+                    <a href="/explore" class="bs-search__btn w-full sm:w-auto mt-2 sm:mt-0" id="hero-search-btn">Search</a>
                 </div>
 
                 <div id="search-dropdown" class="bs-search-dropdown"></div>
@@ -152,9 +154,9 @@
             {{-- ── Categories ── --}}
             <section class="bs-categories-section">
                 <h2 class="bs-section-title">What are you craving?</h2>
-                <div class="bs-categories">
-                    <a href="/explore?category=restaurants" class="bs-category-btn">
-                        <div class="bs-category-icon">
+                <div class="bs-categories flex flex-wrap gap-3 mt-4">
+                    <a href="/explore?category=restaurants" class="bs-category-btn flex-1 min-w-[120px] max-w-[180px] flex flex-col items-center">
+                        <div class="bs-category-icon mb-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/>
@@ -163,8 +165,8 @@
                         </div>
                         <span class="bs-category-label">Restaurants</span>
                     </a>
-                    <a href="/explore?category=street-food" class="bs-category-btn">
-                        <div class="bs-category-icon">
+                    <a href="/explore?category=street-food" class="bs-category-btn flex-1 min-w-[120px] max-w-[180px] flex flex-col items-center">
+                        <div class="bs-category-icon mb-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 2 2 22h20L12 2z"/><path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
@@ -172,8 +174,8 @@
                         </div>
                         <span class="bs-category-label">Street Food</span>
                     </a>
-                    <a href="/explore?category=cafes" class="bs-category-btn">
-                        <div class="bs-category-icon">
+                    <a href="/explore?category=cafes" class="bs-category-btn flex-1 min-w-[120px] max-w-[180px] flex flex-col items-center">
+                        <div class="bs-category-icon mb-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/>
@@ -182,8 +184,8 @@
                         </div>
                         <span class="bs-category-label">Cafés</span>
                     </a>
-                    <a href="/explore?category=desserts" class="bs-category-btn">
-                        <div class="bs-category-icon">
+                    <a href="/explore?category=desserts" class="bs-category-btn flex-1 min-w-[120px] max-w-[180px] flex flex-col items-center">
+                        <div class="bs-category-icon mb-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 22l3-3-1.5-1.5L12 19l-1.5-1.5L9 19l3 3z"/>
@@ -192,8 +194,8 @@
                         </div>
                         <span class="bs-category-label">Desserts</span>
                     </a>
-                    <a href="/explore?category=drinks" class="bs-category-btn">
-                        <div class="bs-category-icon">
+                    <a href="/explore?category=drinks" class="bs-category-btn flex-1 min-w-[120px] max-w-[180px] flex flex-col items-center">
+                        <div class="bs-category-icon mb-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M17 11h1a3 3 0 0 1 0 6h-1"/><path d="M5 11h12v10H5z"/>
@@ -237,7 +239,7 @@
             <section id="hidden-gems" style="margin-top: 3.5rem;">
                 <div class="bs-section-header">
                     <h2 class="bs-section-title" style="margin-bottom:0;">
-                        ✨ Hidden Gems
+                        Hidden Gems
                     </h2>
                     <a href="/explore?sort=hidden-gems" class="bs-see-all">
                         See all
@@ -264,9 +266,7 @@
 
         </div>{{-- /.bs-main --}}
 
-        {{-- ===================================================
-             FOOTER (minimal for authenticated pages)
-             =================================================== --}}
+{{--
         <footer class="bs-footer">
             <div class="bs-container bs-footer__inner">
                 <div class="bs-footer__brand">
@@ -288,15 +288,14 @@
                 </div>
             </div>
         </footer>
-
-
+--}}
         <style>
         /* --- Navbar icon links --- */
         .bs-navbar__links--center {
             display: flex;
-            align-items: center;
+            align-items: stretch;
             justify-content: center;
-            gap: 2.5rem;
+            gap: 0;
             position: relative;
             flex: 1;
         }
@@ -304,29 +303,32 @@
             background: none;
             border: none;
             outline: none;
-            padding: 0 2rem 0.5rem 2rem;
+            padding: 0 2rem;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            color: #222;
-            opacity: 0.85;
-            transition: opacity 0.18s;
+            color: #374151;
+            transition: color 0.18s;
+            text-decoration: none;
         }
-        .bs-navbar__link.is-active, .bs-navbar__link:hover {
-            opacity: 1;
+        .bs-navbar__link:hover {
+            color: var(--color-primary);
+        }
+        .bs-navbar__link.is-active {
+            color: var(--color-primary);
         }
         .bs-navbar__indicator {
             position: absolute;
             bottom: 0;
             left: 0;
             height: 3px;
-            width: 32px;
             background: linear-gradient(90deg, #ff8800 60%, #ffb347 100%);
             border-radius: 2px 2px 0 0;
-            transition: transform 0.28s cubic-bezier(.4,1.6,.4,1), width 0.2s;
+            transition: transform 0.28s cubic-bezier(.4,1.6,.4,1), width 0.28s cubic-bezier(.4,1.6,.4,1);
             z-index: 2;
             pointer-events: none;
+            width: 0;
         }
         .bs-navbar__link svg {
             display: block;
@@ -340,7 +342,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             const links = Array.from(document.querySelectorAll('.bs-navbar__link[data-nav]'));
             const indicator = document.getElementById('navbar-indicator');
-            // Determine active link by URL
+            const linksContainer = indicator.parentElement;
+
             let activeIdx = 0;
             const path = window.location.pathname;
             links.forEach((link, i) => {
@@ -352,19 +355,33 @@
                     activeIdx = i;
                 }
             });
+
             function moveIndicator(idx) {
                 links.forEach(l => l.classList.remove('is-active'));
                 const link = links[idx];
                 link.classList.add('is-active');
-                const rect = link.getBoundingClientRect();
-                const parentRect = link.parentElement.getBoundingClientRect();
-                indicator.style.width = rect.width + 'px';
-                indicator.style.transform = `translateX(${rect.left - parentRect.left}px)`;
+                const containerRect = linksContainer.getBoundingClientRect();
+                const linkRect = link.getBoundingClientRect();
+                indicator.style.width = linkRect.width + 'px';
+                indicator.style.transform = `translateX(${linkRect.left - containerRect.left}px)`;
             }
-            moveIndicator(activeIdx);
+
+            // Use requestAnimationFrame to ensure layout is painted before measuring
+            requestAnimationFrame(function() {
+                moveIndicator(activeIdx);
+            });
+
+            // Re-measure on scroll/resize (navbar may shrink)
+            window.addEventListener('scroll', function() {
+                moveIndicator(activeIdx);
+            }, { passive: true });
+            window.addEventListener('resize', function() {
+                moveIndicator(activeIdx);
+            });
+
             links.forEach((link, i) => {
-                link.addEventListener('click', function(e) {
-                    // Allow normal navigation, but animate indicator
+                link.addEventListener('click', function() {
+                    activeIdx = i;
                     moveIndicator(i);
                 });
             });
@@ -400,5 +417,10 @@
 
         {{-- home.js fetches and renders trending + hidden gems cards into their containers --}}
         <script src="{{ asset('js/home.js') }}"></script>
+
+        {{-- Floating Add BiteSpot Button (only for logged-in users) --}}
+        @auth
+            @include('components.add-bitespot')
+        @endauth
     </body>
 </html>
