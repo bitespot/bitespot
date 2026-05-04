@@ -1,52 +1,92 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
-
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+    <div class="min-h-screen flex bg-gray-50">
+        <!-- Branding Panel (Desktop Only) -->
+        <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-orange-500 to-orange-400 justify-center items-center p-12 text-center text-white">
+            <div class="max-w-lg">
+                <img src="{{ asset('logo.png') }}" alt="BiteSpot Logo" class="w-32 h-32 mx-auto mb-8 bg-white p-2 rounded-full shadow-md">
+                <h1 class="text-4xl font-extrabold mb-4">Join BiteSpot</h1>
+                <p class="text-lg text-orange-50">Discover and connect with the best local food vendors in your area. Set up your account to get started.</p>
+            </div>
         </div>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        <!-- Form Panel (Mobile + Desktop) -->
+        <div class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12">
+            <div class="w-full max-w-md bg-white rounded-2xl shadow-xl lg:shadow-none p-8 lg:p-2 lg:bg-transparent">
+                
+                <!-- Mobile Logo (Hidden on Desktop) -->
+                <div class="flex flex-col items-center lg:items-start mb-8">
+                    <img src="{{ asset('logo.png') }}" alt="BiteSpot Logo" class="w-16 h-16 mb-4 lg:hidden">
+                    <h2 class="text-3xl font-extrabold text-gray-900">Create an account</h2>
+                    <p class="text-sm text-gray-500 mt-2">Enter your details to register.</p>
+                </div>
+
+                <form method="POST" action="{{ route('register') }}" class="space-y-5" id="register-form">
+                    @csrf
+                    
+                    <!-- Role Toggle -->
+                    <div class="flex justify-center lg:justify-start mb-6">
+                        <div class="flex bg-gray-100 rounded-full p-1 w-full max-w-xs lg:max-w-none">
+                            <button type="button" id="role-user" class="flex-1 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-400 text-gray-700 bg-white shadow" aria-pressed="true">User</button>
+                            <button type="button" id="role-vendor" class="flex-1 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-400 text-gray-700">Vendor</button>
+                        </div>
+                        <input type="hidden" name="role" id="role-input" value="user">
+                    </div>
+
+                    <div>
+                        <label for="name" class="block text-sm font-semibold text-gray-700 mb-1">Name</label>
+                        <input id="name" name="name" type="text" autocomplete="name" required autofocus value="{{ old('name') }}" class="block w-full rounded-lg border-gray-300 px-4 py-3 focus:border-orange-500 focus:ring-orange-500 shadow-sm transition">
+                        <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                    </div>
+
+                    <div>
+                        <label for="email" class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
+                        <input id="email" name="email" type="email" autocomplete="username" required value="{{ old('email') }}" class="block w-full rounded-lg border-gray-300 px-4 py-3 focus:border-orange-500 focus:ring-orange-500 shadow-sm transition">
+                        <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                    </div>
+
+                    <div>
+                        <label for="password" class="block text-sm font-semibold text-gray-700 mb-1">Password</label>
+                        <input id="password" name="password" type="password" autocomplete="new-password" required class="block w-full rounded-lg border-gray-300 px-4 py-3 focus:border-orange-500 focus:ring-orange-500 shadow-sm transition">
+                        <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                    </div>
+
+                    <div>
+                        <label for="password_confirmation" class="block text-sm font-semibold text-gray-700 mb-1">Confirm Password</label>
+                        <input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password" required class="block w-full rounded-lg border-gray-300 px-4 py-3 focus:border-orange-500 focus:ring-orange-500 shadow-sm transition">
+                        <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+                    </div>
+
+                    <div class="pt-2">
+                        <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-sm font-bold text-white bg-gradient-to-r from-orange-500 to-orange-400 hover:from-orange-600 hover:to-orange-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-all transform hover:-translate-y-0.5">
+                            Create Account
+                        </button>
+                    </div>
+
+                    <div class="text-center mt-6">
+                        <span class="text-sm text-gray-600">Already registered?</span>
+                        <a href="{{ route('login') }}" class="text-orange-500 font-semibold hover:text-orange-600 hover:underline ml-1 transition">Sign in instead</a>
+                    </div>
+                </form>
+            </div>
         </div>
+    </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
+    <script>
+        // Toggle role selection
+        const userBtn = document.getElementById('role-user');
+        const vendorBtn = document.getElementById('role-vendor');
+        const roleInput = document.getElementById('role-input');
+        
+        userBtn.addEventListener('click', function() {
+            userBtn.classList.add('bg-white', 'shadow');
+            vendorBtn.classList.remove('bg-white', 'shadow');
+            roleInput.value = 'user';
+        });
+        
+        vendorBtn.addEventListener('click', function() {
+            vendorBtn.classList.add('bg-white', 'shadow');
+            userBtn.classList.remove('bg-white', 'shadow');
+            roleInput.value = 'vendor';
+        });
+    </script>
 </x-guest-layout>
