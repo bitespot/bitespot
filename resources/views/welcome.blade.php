@@ -148,6 +148,19 @@
         </section>
 
         {{-- ===================================================
+             TRENDING SPOTS — SID_07
+             =================================================== --}}
+        <section class="bs-landing-section bs-landing-section--alt">
+            <div class="bs-container">
+                <p class="bs-landing-eyebrow">What's hot right now</p>
+                <h2 class="bs-landing-heading">Trending Spots</h2>
+                <div id="trending-container"
+                     class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+                </div>
+            </div>
+        </section>
+
+        {{-- ===================================================
              WHAT WE ARE — Three-column value propositions
              =================================================== --}}
         <section class="bs-landing-section">
@@ -387,5 +400,8 @@
             window.location.href = '/explore' + (q ? '?q=' + encodeURIComponent(q) : '');
         });
         </script>
+        <script src="{{ asset('js/api.js') }}"></script>
+        <script src="{{ asset('js/ui.js') }}"></script>
+        <script src="{{ asset('js/home.js') }}"></script>
     </body>
 </html>

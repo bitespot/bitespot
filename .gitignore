@@ -27,5 +27,4 @@ vendor/
 /node_modules
 /public/hot
 /public/build
-/public/js
 /resources/views/template_code

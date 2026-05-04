@@ -131,14 +131,14 @@
     <div x-data="{ tab: 'map' }" class="min-h-screen bg-gray-50 flex flex-col">
 
         <div class="bg-white border-b border-gray-200 px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-4 z-10 shadow-sm">
-            <form class="flex items-center w-full sm:w-auto flex-1 max-w-md bg-gray-100 rounded-full px-4 py-2">
+            <form data-action="explore-search" class="flex items-center w-full sm:w-auto flex-1 max-w-md bg-gray-100 rounded-full px-4 py-2">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 mr-2">
                     <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
-                <input type="text" placeholder="Search by name or cuisine..." class="bg-transparent border-none focus:outline-none w-full text-sm">
+                <input id="explore-search-input" type="text" placeholder="Search by name or cuisine..." class="bg-transparent border-none focus:outline-none w-full text-sm" autocomplete="off">
             </form>
             <div class="flex items-center gap-3 w-full sm:w-auto">
-                <button class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-full text-sm font-medium hover:bg-gray-50 shadow-sm">
+                <button data-action="explore-filters-toggle" class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-full text-sm font-medium hover:bg-gray-50 shadow-sm">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/>
                         <line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/>
@@ -154,13 +154,63 @@
                             <line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/>
                         </svg> Map
                     </button>
-                    <button @click="tab = 'grid'"
+                    <button @click="tab = 'grid'" data-action="show-grid"
                             :class="tab === 'grid' ? 'bg-white shadow-sm text-orange-600' : 'text-gray-600 hover:text-gray-900'"
                             class="flex items-center px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1.5">
                             <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
                             <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
                         </svg> Grid
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        {{-- FILTER PANEL — SID_10 --}}
+        <div id="explore-filter-panel" class="hidden bg-white border-b border-gray-200 px-6 py-5 shadow-sm z-10">
+            <div class="max-w-3xl mx-auto flex flex-col gap-5">
+
+                {{-- Categories --}}
+                <div>
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Category</p>
+                    <div id="filter-categories" class="flex flex-wrap gap-2">
+                        <span class="text-sm text-gray-400">Loading…</span>
+                    </div>
+                </div>
+
+                {{-- Price tier --}}
+                <div>
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Price</p>
+                    <div class="flex gap-2">
+                        <button data-filter="price" data-value="$"
+                                class="px-4 py-1.5 rounded-full border border-gray-200 text-sm hover:border-orange-400 transition">$</button>
+                        <button data-filter="price" data-value="$$"
+                                class="px-4 py-1.5 rounded-full border border-gray-200 text-sm hover:border-orange-400 transition">$$</button>
+                        <button data-filter="price" data-value="$$$"
+                                class="px-4 py-1.5 rounded-full border border-gray-200 text-sm hover:border-orange-400 transition">$$$</button>
+                    </div>
+                </div>
+
+                {{-- Min rating --}}
+                <div>
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Minimum Rating</p>
+                    <select id="filter-rating" class="border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-orange-400">
+                        <option value="">Any</option>
+                        <option value="3">3+ ★</option>
+                        <option value="4">4+ ★</option>
+                        <option value="4.5">4.5+ ★</option>
+                    </select>
+                </div>
+
+                {{-- Actions --}}
+                <div class="flex gap-3 pt-1">
+                    <button id="filter-apply"
+                            class="px-5 py-2 bg-orange-500 text-white rounded-full text-sm font-medium hover:bg-orange-600 transition">
+                        Apply Filters
+                    </button>
+                    <button id="filter-clear"
+                            class="px-5 py-2 border border-gray-200 text-gray-600 rounded-full text-sm font-medium hover:bg-gray-50 transition">
+                        Clear
                     </button>
                 </div>
             </div>
@@ -174,36 +224,38 @@
             </div>
 
             {{-- GRID TAB --}}
-            <div x-show="tab === 'grid'" class="w-full p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6" x-cloak>
-                @forelse($bitespots as $spot)
-                    <a href="{{ route('place.show', $spot['id']) }}" class="bg-white rounded-xl shadow hover:shadow-md transition-shadow duration-200 flex flex-col overflow-hidden group">
-                        @if(!empty($spot['image_url']))
-                            <img src="{{ $spot['image_url'] }}" alt="{{ $spot['name'] }}" class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300">
-                        @else
-                            <div class="w-full h-40 bg-gradient-to-br from-orange-400 to-orange-300 flex items-center justify-content-center text-white text-3xl">
-                                🍽️
+            <div x-show="tab === 'grid'" class="w-full p-6" x-cloak>
+                <div id="explore-results" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    @forelse($bitespots as $spot)
+                        <a href="{{ route('place.show', $spot['id']) }}" class="bg-white rounded-xl shadow hover:shadow-md transition-shadow duration-200 flex flex-col overflow-hidden group">
+                            @if(!empty($spot['image_url']))
+                                <img src="{{ $spot['image_url'] }}" alt="{{ $spot['name'] }}" class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300">
+                            @else
+                                <div class="w-full h-40 bg-gradient-to-br from-orange-400 to-orange-300 flex items-center justify-center text-white text-3xl">
+                                    🍽️
+                                </div>
+                            @endif
+                            <div class="p-4 flex flex-col flex-1">
+                                <h3 class="font-bold text-lg mb-1 text-gray-900">{{ $spot['name'] }}</h3>
+                                <p class="text-gray-500 text-sm mb-3">{{ $spot['category'] }} • {{ $spot['location'] }}</p>
+                                <div class="flex items-center text-sm text-amber-500 font-semibold mt-auto">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none" class="mr-1">
+                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                                    </svg>
+                                    {{ number_format($spot['rating'], 1) }}
+                                </div>
                             </div>
-                        @endif
-                        <div class="p-4 flex flex-col flex-1">
-                            <h3 class="font-bold text-lg mb-1 text-gray-900">{{ $spot['name'] }}</h3>
-                            <p class="text-gray-500 text-sm mb-3">{{ $spot['category'] }} • {{ $spot['location'] }}</p>
-                            <div class="flex items-center text-sm text-amber-500 font-semibold mt-auto">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none" class="mr-1">
-                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                                </svg>
-                                {{ number_format($spot['rating'], 1) }}
-                            </div>
+                        </a>
+                    @empty
+                        <div class="col-span-3 text-center py-16 text-gray-400">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mx-auto mb-3 opacity-40">
+                                <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+                            </svg>
+                            <p class="text-lg font-medium">No BiteSpots found yet.</p>
+                            <p class="text-sm mt-1">Be the first to add one!</p>
                         </div>
-                    </a>
-                @empty
-                    <div class="col-span-3 text-center py-16 text-gray-400">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mx-auto mb-3 opacity-40">
-                            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
-                        </svg>
-                        <p class="text-lg font-medium">No BiteSpots found yet.</p>
-                        <p class="text-sm mt-1">Be the first to add one!</p>
-                    </div>
-                @endforelse
+                    @endforelse
+                </div>
             </div>
 
         </div>
@@ -319,4 +371,8 @@
         initMap();
     });
     </script>
+
+    <script src="{{ asset('js/api.js') }}"></script>
+    <script src="{{ asset('js/ui.js') }}"></script>
+    <script src="{{ asset('js/explore.js') }}"></script>
 @endsection
