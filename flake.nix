@@ -29,10 +29,16 @@
             pkgs.git
             pkgs.unzip
             pkgs.zip
+            pkgs.mysql84
+            pkgs.cacert
           ];
 
           # This script runs automatically when you enter the direnv shell
           shellHook = ''
+            # Provide default SSL paths so OpenSSL stops complaining
+            export SSL_CERT_FILE="${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
+            export NIX_SSL_CERT_FILE="${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
+            
             echo "Development Environment Loaded!"
             echo "PHP: $(php -v | head -n 1 | awk '{print $2}')"
             echo "Composer: $(composer -V | awk '{print $3}')"
