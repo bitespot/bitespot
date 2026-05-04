@@ -10,23 +10,58 @@ class Vendor extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'name',
+        'user_id',
+        'category_id',
+        'business_name',
+        'slug',
         'description',
-        'category',
+        'owner_name',
+        'phone',
+        'website',
+        'email',
         'address',
-        'latitude',
-        'longitude',
-        'image_url',
-        'rating',
+        'district',
+        'city',
+        'province',
+        'lat',
+        'lng',
+        'hours',
+        'cover_photo',
+        'profile_photo',
+        'price_tier',
+        'tier',
+        'status',
+        'rejection_reason',
+        'view_count',
+        'avg_rating',
+        'review_count',
     ];
 
     protected function casts(): array
     {
         return [
-            'latitude'  => 'float',
-            'longitude' => 'float',
-            'rating'    => 'float',
+            'lat'          => 'float',
+            'lng'          => 'float',
+            'avg_rating'   => 'float',
+            'hours'        => 'array',
         ];
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    protected $appends = ['primary_photo'];
+
+    public function getPrimaryPhotoAttribute()
+    {
+        return $this->profile_photo ?? $this->cover_photo;
     }
 
     public function discoveries(): HasMany
