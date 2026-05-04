@@ -11,19 +11,19 @@ class ExploreController extends Controller
     public function index(Request $request): View
     {
         // Fetch all vendors (these are the BiteSpots shown on map + grid)
-        $spots = Vendor::all();
+        $spots = Vendor::with('category')->where('status', 'approved')->get();
 
         // Plain array for the Blade view (grid tab uses $spot['name'] etc.)
         $bitespots = $spots->map(function ($spot) {
             return [
-                'id'        => $spot->id,
-                'name'      => $spot->name,
-                'category'  => $spot->category ?? '',
-                'location'  => $spot->address   ?? '',
-                'rating'    => $spot->rating     ?? 0,
-                'image_url' => $spot->image_url  ?? null,
-                'latitude'  => $spot->latitude   ?? null,
-                'longitude' => $spot->longitude  ?? null,
+                'id'        => $spot->slug ?? $spot->id,
+                'name'      => $spot->business_name,
+                'category'  => $spot->category ? $spot->category->name : '',
+                'location'  => $spot->address,
+                'rating'    => $spot->avg_rating,
+                'image_url' => $spot->profile_photo ?? $spot->cover_photo,
+                'latitude'  => $spot->lat,
+                'longitude' => $spot->lng,
             ];
         });
 

@@ -40,7 +40,7 @@ class VendorController extends Controller
         
         // Filter by price level (e.g., "$", "$$")
         if ($request->has('price') && $request->price) {
-            $query->where('price_level', $request->price);
+            $query->where('price_tier', $request->price);
         }
 
         $vendors = $query->paginate(15);
