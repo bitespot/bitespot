@@ -28,3 +28,5 @@ vendor/
 /public/hot
 /public/build
 /resources/views/template_code
+/.direnv
+.envrc

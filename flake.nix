@@ -12,8 +12,8 @@
         pkgs = import nixpkgs { inherit system; };
         
         # Define the PHP version you want to use (Laravel 11 requires PHP 8.2+)
-        php = pkgs.php83;
-        phpPackages = pkgs.php83Packages;
+        php = pkgs.php84;
+        phpPackages = pkgs.php84Packages;
       in
       {
         devShells.default = pkgs.mkShell {
@@ -23,8 +23,7 @@
             phpPackages.composer
 
             # Frontend (Tailwind/Vite/JS)
-            pkgs.nodejs_22
-            pkgs.nodePackages.npm
+            pkgs.nodejs_25
 
             # Essential utilities for Composer and general dev
             pkgs.git
