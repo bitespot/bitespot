@@ -98,4 +98,31 @@ class ReviewTest extends TestCase
         $response->assertStatus(200);
         $this->assertSoftDeleted('reviews', ['id' => $review->id]);
     }
+
+    public function test_vendor_stats_are_updated_on_review_changes(): void
+    {
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
+        $vendor = Vendor::factory()->create(['avg_rating' => 0, 'review_count' => 0]);
+
+        // Add first review
+        $this->actingAs($user1)->postJson('/api/reviews', [
+            'vendor_id' => $vendor->id,
+            'rating' => 4,
+        ]);
+
+        $vendor->refresh();
+        $this->assertEquals(1, $vendor->review_count);
+        $this->assertEquals(4.0, $vendor->avg_rating);
+
+        // Add second review
+        $this->actingAs($user2)->postJson('/api/reviews', [
+            'vendor_id' => $vendor->id,
+            'rating' => 5,
+        ]);
+
+        $vendor->refresh();
+        $this->assertEquals(2, $vendor->review_count);
+        $this->assertEquals(4.5, $vendor->avg_rating);
+    }
 }
