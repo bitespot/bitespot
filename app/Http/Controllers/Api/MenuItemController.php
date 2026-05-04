@@ -75,11 +75,11 @@ class MenuItemController extends Controller
     /**
      * Update the specified menu item in storage.
      */
-    public function update(Request $request, MenuItem $menuItem): JsonResponse
+    public function update(Request $request, MenuItem $item): JsonResponse
     {
         $vendor = Vendor::where('user_id', auth()->id())->first();
 
-        if (!$vendor || $menuItem->vendor_id !== $vendor->id) {
+        if (!$vendor || $item->vendor_id !== $vendor->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -96,23 +96,23 @@ class MenuItemController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $menuItem->update($request->all());
+        $item->update($request->all());
 
-        return response()->json($menuItem);
+        return response()->json($item);
     }
 
     /**
      * Remove the specified menu item from storage.
      */
-    public function destroy(Request $request, MenuItem $menuItem): JsonResponse
+    public function destroy(Request $request, MenuItem $item): JsonResponse
     {
         $vendor = Vendor::where('user_id', auth()->id())->first();
 
-        if (!$vendor || $menuItem->vendor_id !== $vendor->id) {
+        if (!$vendor || $item->vendor_id !== $vendor->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        $menuItem->delete();
+        $item->delete();
 
         return response()->json(['message' => 'Menu item deleted successfully.']);
     }
