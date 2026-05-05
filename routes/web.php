@@ -95,7 +95,6 @@ Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->g
 
     Route::get('/settings',  [\App\Http\Controllers\Vendor\SettingsController::class, 'index'])
          ->name('settings');
-
 });
 
 // ---------------------------------------------------------------------------

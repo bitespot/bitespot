@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
+use App\Models\Category;
+use Illuminate\Http\JsonResponse;
 
 class CategoryController extends StubController
 {
-    public function index(\Illuminate\Http\Request $request, $param = null): \Illuminate\Http\JsonResponse
+    public function index(): JsonResponse
     {
-        return $this->stub('CategoryController::index');
+        $categories = Category::orderBy('name')->get(['id', 'name', 'slug', 'icon']);
+
+        return response()->json(['success' => true, 'data' => $categories]);
     }
 }
