@@ -31,6 +31,7 @@
         </a>
     </div>
 
+    @auth
     <div class="bs-user-menu" id="user-menu-wrap">
         <button class="bs-user-menu__trigger" id="user-menu-btn" aria-expanded="false">
             <span class="bs-user-avatar">
@@ -74,6 +75,14 @@
             </form>
         </div>
     </div>
+    @else
+    <div class="bs-user-menu">
+        <a href="/login"
+           class="px-4 py-2 bg-orange-500 text-white text-sm font-semibold rounded-full hover:bg-orange-600 transition">
+            Sign In
+        </a>
+    </div>
+    @endauth
 </nav>
 
 <style>
