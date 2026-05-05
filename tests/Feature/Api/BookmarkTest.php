@@ -61,4 +61,32 @@ class BookmarkTest extends TestCase
             'vendor_id' => $vendor->id,
         ]);
     }
+
+    public function test_guest_cannot_bookmark_a_vendor(): void
+    {
+        $vendor = Vendor::factory()->create();
+
+        $response = $this->postJson("/api/user/bookmarks/{$vendor->id}");
+
+        $response->assertStatus(401);
+    }
+
+    public function test_guest_cannot_remove_a_bookmark(): void
+    {
+        $vendor = Vendor::factory()->create();
+
+        $response = $this->deleteJson("/api/user/bookmarks/{$vendor->id}");
+
+        $response->assertStatus(401);
+    }
+
+    public function test_removing_nonexistent_bookmark_returns_404(): void
+    {
+        $user = User::factory()->create();
+        $vendor = Vendor::factory()->create();
+
+        $response = $this->actingAs($user)->deleteJson("/api/user/bookmarks/{$vendor->id}");
+
+        $response->assertStatus(404);
+    }
 }
