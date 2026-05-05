@@ -90,6 +90,11 @@ Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->g
     Route::get('/media',     [\App\Http\Controllers\Vendor\MediaController::class, 'index'])
          ->name('media');
 
+    Route::get('/photos',    function () {
+         $vendor = \App\Models\Vendor::where('user_id', auth()->id())->firstOrFail();
+         return view('vendor.upload-photos', ['vendor' => $vendor]);
+    })->name('photos');
+
     Route::get('/reviews',   [\App\Http\Controllers\Vendor\ReviewsController::class, 'index'])
          ->name('reviews');
 
