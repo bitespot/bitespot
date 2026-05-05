@@ -18,7 +18,7 @@
 
         <div class="absolute inset-0 flex flex-col justify-between p-4 sm:p-6">
 
-            {{-- Back + Share + Bookmark --}}
+            {{-- Back + Bookmark --}}
             <div class="flex items-center justify-between">
                 <a href="javascript:history.back()"
                    class="flex items-center justify-center w-9 h-9 rounded-full bg-black/30 text-white hover:bg-black/50 transition backdrop-blur-sm"
@@ -29,32 +29,18 @@
                     </svg>
                 </a>
 
-                <div class="flex items-center gap-2">
-                    {{-- SID_16: Share button --}}
-                    <button id="share-btn"
-                            aria-label="Share this BiteSpot"
-                            class="flex items-center justify-center w-9 h-9 rounded-full bg-black/30 text-white hover:bg-black/50 transition backdrop-blur-sm">
-                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
-                            <polyline points="16 6 12 2 8 6"/>
-                            <line x1="12" y1="2" x2="12" y2="15"/>
-                        </svg>
-                    </button>
-
-                    <button id="bookmark-btn"
-                            aria-label="Save this BiteSpot"
-                            aria-pressed="{{ $isBookmarked ? 'true' : 'false' }}"
-                            data-bookmarked="{{ $isBookmarked ? 'true' : 'false' }}"
-                            class="flex items-center justify-center w-9 h-9 rounded-full bg-black/30 text-white hover:bg-black/50 transition backdrop-blur-sm">
-                        <svg data-bookmark-icon width="18" height="18" viewBox="0 0 24 24"
-                             fill="{{ $isBookmarked ? '#f97316' : 'none' }}"
-                             stroke="{{ $isBookmarked ? '#f97316' : 'currentColor' }}"
-                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                        </svg>
-                    </button>
-                </div>
+                <button id="bookmark-btn"
+                        aria-label="Save this BiteSpot"
+                        aria-pressed="{{ $isBookmarked ? 'true' : 'false' }}"
+                        data-bookmarked="{{ $isBookmarked ? 'true' : 'false' }}"
+                        class="flex items-center justify-center w-9 h-9 rounded-full bg-black/30 text-white hover:bg-black/50 transition backdrop-blur-sm">
+                    <svg data-bookmark-icon width="18" height="18" viewBox="0 0 24 24"
+                         fill="{{ $isBookmarked ? '#f97316' : 'none' }}"
+                         stroke="{{ $isBookmarked ? '#f97316' : 'currentColor' }}"
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                </button>
             </div>
 
             {{-- Vendor name + meta --}}
@@ -102,46 +88,6 @@
                 <div class="bg-white rounded-xl shadow-sm p-5">
                     <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-4">Menu</h2>
                     <div id="menu-container"></div>
-                </div>
-
-                {{-- SID_17: Submit review form (authenticated users only) --}}
-                @auth
-                <div id="review-form-card" class="bg-white rounded-xl shadow-sm p-5">
-                    <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-4">Leave a Review</h2>
-                    <form id="review-form" novalidate>
-                        <div class="mb-3">
-                            <div id="star-picker" class="flex gap-1 cursor-pointer" role="group" aria-label="Star rating">
-                                @for ($i = 1; $i <= 5; $i++)
-                                <button type="button" data-star="{{ $i }}"
-                                        style="color:#d1d5db;font-size:1.75rem;line-height:1"
-                                        aria-label="{{ $i }} star{{ $i > 1 ? 's' : '' }}">&#9733;</button>
-                                @endfor
-                            </div>
-                            <input type="hidden" id="review-rating" value="0">
-                        </div>
-                        <textarea id="review-body" rows="3" maxlength="1000"
-                                  class="w-full border border-gray-200 rounded-lg p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-orange-300"
-                                  placeholder="Share your experience (optional)…"></textarea>
-                        <p id="review-form-error" class="text-xs text-red-500 mt-1 min-h-[1rem]"></p>
-                        <button id="review-submit-btn" type="submit"
-                                class="mt-3 px-5 py-2 bg-orange-500 text-white text-sm font-medium rounded-full hover:bg-orange-600 transition disabled:opacity-50">
-                            Submit Review
-                        </button>
-                    </form>
-                </div>
-                @endauth
-
-                {{-- SID_19: Reviews list — rendered by place.js --}}
-                <div class="bg-white rounded-xl shadow-sm p-5">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Reviews</h2>
-                        <span id="reviews-total" class="text-xs text-gray-400"></span>
-                    </div>
-                    <div id="reviews-container"></div>
-                    <button id="load-more-btn" hidden
-                            class="mt-4 w-full py-2 text-sm text-orange-600 border border-orange-200 rounded-lg hover:bg-orange-50 transition">
-                        Load more reviews
-                    </button>
                 </div>
 
             </div>
@@ -226,8 +172,6 @@
 window.VENDOR_ID     = {{ $vendor->id }};
 window.IS_BOOKMARKED = {{ $isBookmarked ? 'true' : 'false' }};
 window.IS_AUTH       = {{ auth()->check() ? 'true' : 'false' }};
-window.USER_ID       = {{ auth()->check() ? auth()->id() : 'null' }};
-window.AUTH_NAME     = @json(auth()->check() ? auth()->user()->name : null);
 </script>
 <script src="{{ asset('js/place.js') }}"></script>
 
