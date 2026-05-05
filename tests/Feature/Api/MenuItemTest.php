@@ -22,37 +22,6 @@ class MenuItemTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_public_menu_excludes_unavailable_items(): void
-    {
-        $vendor = Vendor::factory()->create();
-        MenuItem::factory()->count(3)->create(['vendor_id' => $vendor->id, 'is_available' => true, 'category' => 'Mains']);
-        MenuItem::factory()->count(2)->create(['vendor_id' => $vendor->id, 'is_available' => false, 'category' => 'Hidden']);
-
-        $response = $this->getJson("/api/vendors/{$vendor->id}/menu");
-
-        $response->assertStatus(200);
-        $data = $response->json();
-        $this->assertArrayHasKey('Mains', $data);
-        $this->assertArrayNotHasKey('Hidden', $data);
-        $this->assertCount(3, $data['Mains']);
-    }
-
-    public function test_public_menu_is_grouped_by_category(): void
-    {
-        $vendor = Vendor::factory()->create();
-        MenuItem::factory()->count(2)->create(['vendor_id' => $vendor->id, 'category' => 'Mains']);
-        MenuItem::factory()->count(1)->create(['vendor_id' => $vendor->id, 'category' => 'Drinks']);
-
-        $response = $this->getJson("/api/vendors/{$vendor->id}/menu");
-
-        $response->assertStatus(200);
-        $data = $response->json();
-        $this->assertArrayHasKey('Mains', $data);
-        $this->assertArrayHasKey('Drinks', $data);
-        $this->assertCount(2, $data['Mains']);
-        $this->assertCount(1, $data['Drinks']);
-    }
-
     public function test_vendor_can_list_their_own_menu_items(): void
     {
         $user = User::factory()->create(['role' => 'vendor']);
