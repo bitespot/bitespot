@@ -43,7 +43,12 @@ class VendorController extends Controller
             $query->where('price_tier', $request->price);
         }
 
-        $vendors = $query->paginate(15);
+        // Filter by minimum rating
+        if ($request->filled('rating')) {
+            $query->where('avg_rating', '>=', (float) $request->rating);
+        }
+
+        $vendors = $query->paginate(20);
 
         return response()->json($vendors);
     }
