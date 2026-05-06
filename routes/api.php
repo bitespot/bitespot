@@ -112,9 +112,10 @@ Route::middleware('auth')->group(function () {
         Route::delete('/menu/{item}',[\App\Http\Controllers\Api\MenuItemController::class, 'destroy']);
 
         // Photo management
-        Route::get('/photos',            [\App\Http\Controllers\Api\PhotoController::class, 'index']);
-        Route::post('/photos',           [\App\Http\Controllers\Api\PhotoController::class, 'store']);
-        Route::delete('/photos/{photo}', [\App\Http\Controllers\Api\PhotoController::class, 'destroy']);
+        Route::get('/photos',                    [\App\Http\Controllers\Api\PhotoController::class, 'index']);
+        Route::post('/photos/cover',             [\App\Http\Controllers\Api\PhotoController::class, 'uploadCover']);
+        Route::post('/photos/profile',           [\App\Http\Controllers\Api\PhotoController::class, 'uploadProfile']);
+        Route::delete('/photos/{photo}',         [\App\Http\Controllers\Api\PhotoController::class, 'destroy']);
 
         // Promotions
         Route::get('/promotions',              [\App\Http\Controllers\Api\PromotionController::class, 'index']);

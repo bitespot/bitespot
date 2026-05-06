@@ -43,6 +43,17 @@ function buildPopup(v) {
         </div></div>`;
 }
 
+// ── S3 Image URL helper ──────────────────────────────────────────────────────
+function getS3ImageUrl(photoPath) {
+    if (!photoPath) return null;
+    // If already a full URL, return as-is
+    if (photoPath.startsWith('http')) return photoPath;
+    // Build S3 URL - Laravel Storage::disk('s3')->url() returns this format
+    const bucket = window.S3_BUCKET || 'bitespot';
+    const region = window.S3_REGION || 'ap-southeast-2';
+    return `https://${bucket}.s3.${region}.amazonaws.com/${photoPath}`;
+}
+
 // ── Normalize: handles both blade-JSON format and API response format ──────
 function normalize(v) {
     return {
@@ -54,7 +65,7 @@ function normalize(v) {
         city:       v.city ?? '',
         price_tier: v.price_tier ?? '',
         rating:     v.avg_rating != null ? parseFloat(v.avg_rating) : (v.rating != null ? parseFloat(v.rating) : null),
-        image_url:  v.primary_photo ?? v.image_url ?? '',
+        image_url:  getS3ImageUrl(v.cover_photo) ?? getS3ImageUrl(v.profile_photo) ?? v.primary_photo ?? v.image_url ?? '',
         lat:        v.lat != null ? parseFloat(v.lat) : null,
         lng:        v.lng != null ? parseFloat(v.lng) : null,
     };
@@ -69,26 +80,78 @@ window.exploreMap = {
     init() {
         if (this._map) return;
 
-        this._map = L.map('explore-map', { center: [12.8797, 121.7740], zoom: 6 });
+        // Request user location first, then create map
+        this._requestUserLocationAndInitMap();
+    },
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
-        }).addTo(this._map);
+    _requestUserLocationAndInitMap() {
+        const fallbackCenter = [12.8797, 121.7740]; // Tacloban
+        const createMapWithCenter = (center) => {
+            this._map = L.map('explore-map', { center, zoom: 15 });
 
-        if (window.INITIAL_MAP_SPOTS?.length) {
-            this._placeMarkers(window.INITIAL_MAP_SPOTS.map(normalize));
-            this._fitBounds(window.INITIAL_MAP_SPOTS.map(normalize));
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                maxZoom: 20,
+                attribution: '© OpenStreetMap contributors © CARTO',
+            }).addTo(this._map);
+
+            if (window.INITIAL_MAP_SPOTS?.length) {
+                this._placeMarkers(window.INITIAL_MAP_SPOTS.map(normalize));
+                this._fitBounds(window.INITIAL_MAP_SPOTS.map(normalize));
+            }
+
+            this._placeUserLocation();
+        };
+
+        if (!navigator.geolocation) {
+            createMapWithCenter(fallbackCenter);
+            return;
         }
 
-        navigator.geolocation?.getCurrentPosition(pos => {
-            L.circle([pos.coords.latitude, pos.coords.longitude], {
-                color: '#4F46E5', fillColor: '#818CF8', fillOpacity: 0.2, radius: 200, weight: 2,
-            }).addTo(this._map).bindTooltip('You are here');
-            if (!window.INITIAL_MAP_SPOTS?.length) {
-                this._map.setView([pos.coords.latitude, pos.coords.longitude], 13);
+        navigator.geolocation.getCurrentPosition(
+            pos => {
+                const userCenter = [pos.coords.latitude, pos.coords.longitude];
+                createMapWithCenter(userCenter);
+            },
+            err => {
+                console.debug('[explore] Geolocation unavailable:', err.code);
+                createMapWithCenter(fallbackCenter);
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 8000,
+                maximumAge: 0
             }
-        }, () => {});
+        );
+    },
+
+    _placeUserLocation() {
+        if (!navigator.geolocation) return;
+
+        navigator.geolocation.getCurrentPosition(
+            pos => {
+                const lat = pos.coords.latitude;
+                const lng = pos.coords.longitude;
+                
+                const userIcon = L.divIcon({
+                    className: '',
+                    html: `<div style="width:32px;height:32px;border-radius:50%;background:red;border:3px solid #fff;box-shadow:0 2px 8px rgba(240, 124, 78, 0.4);display:flex;align-items:center;justify-content:center;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="white" stroke="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg></div>`,
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 16],
+                });
+                
+                L.marker([lat, lng], { icon: userIcon })
+                    .addTo(this._map)
+                    .bindTooltip('You are here');
+            },
+            err => {
+                console.debug('[explore] User marker placement failed:', err.code);
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 8000,
+                maximumAge: 0
+            }
+        );
     },
 
     setVendors(rawVendors) {

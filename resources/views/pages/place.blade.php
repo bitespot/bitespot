@@ -61,7 +61,7 @@
             <div>
                 <p class="text-orange-300 text-sm font-medium mb-1">
                     {{ $vendor->category?->name ?? '' }}
-                    @if($vendor->price_tier) &middot; {{ $vendor->price_tier }} @endif
+                    @if($vendor->price_tier) &middot; {{ $vendor->price_tier_label }} @endif
                 </p>
                 <h1 class="text-white text-2xl sm:text-3xl font-bold leading-tight">
                     {{ $vendor->business_name }}

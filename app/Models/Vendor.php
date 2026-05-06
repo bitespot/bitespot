@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 class Vendor extends Model
 {
@@ -57,11 +58,33 @@ class Vendor extends Model
         return $this->belongsTo(Category::class);
     }
 
-    protected $appends = ['primary_photo'];
+    protected $appends = ['primary_photo', 'cover_photo_url', 'profile_photo_url', 'price_tier_label'];
 
-    public function getPrimaryPhotoAttribute()
+    private const PRICE_TIER_MAP = ['$' => '₱', '$$' => '₱₱', '$$$' => '₱₱₱'];
+
+    public function getPriceTierLabelAttribute(): ?string
     {
-        return $this->profile_photo ?? $this->cover_photo;
+        return self::PRICE_TIER_MAP[$this->price_tier] ?? $this->price_tier;
+    }
+
+    public function getPrimaryPhotoAttribute(): ?string
+    {
+        $key = $this->profile_photo ?? $this->cover_photo;
+        return $key ? Storage::disk('s3')->url($key) : null;
+    }
+
+    public function getCoverPhotoUrlAttribute(): ?string
+    {
+        return $this->cover_photo
+            ? Storage::disk('s3')->url($this->cover_photo)
+            : null;
+    }
+
+    public function getProfilePhotoUrlAttribute(): ?string
+    {
+        return $this->profile_photo
+            ? Storage::disk('s3')->url($this->profile_photo)
+            : null;
     }
 
     public function discoveries(): HasMany
