@@ -19,9 +19,10 @@ class ExploreController extends Controller
             'category'      => $spot->category?->name ?? '',
             'category_slug' => $spot->category?->slug ?? '',
             'city'          => $spot->city ?? '',
-            'price_tier'    => $spot->price_tier_label ?? '',
-            'rating'        => $spot->avg_rating !== null ? (float) $spot->avg_rating : null,
-            'image_url'     => $spot->primary_photo,
+            'price_tier'       => $spot->price_tier ?? '',
+            'price_tier_label' => $spot->price_tier_label ?? '',
+            'rating'           => $spot->avg_rating !== null ? (float) $spot->avg_rating : null,
+            'image_url'        => $spot->primary_photo,
             'lat'           => $spot->lat !== null ? (float) $spot->lat : null,
             'lng'           => $spot->lng !== null ? (float) $spot->lng : null,
         ]);

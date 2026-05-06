@@ -25,12 +25,12 @@ class VendorController extends Controller
             });
         }
 
-        // Filter by category slug or ID
-        if ($request->has('category') && $request->category) {
-            $query->whereHas('category', function($q) use ($request) {
-                $q->where('slug', $request->category)
-                  ->orWhere('id', $request->category);
-            });
+        // Filter by category slug — resolve to category_id first to use the indexed FK
+        if ($request->filled('category')) {
+            $categoryId = \App\Models\Category::where('slug', $request->category)->value('id');
+            if ($categoryId) {
+                $query->where('category_id', $categoryId);
+            }
         }
 
         // Filter by city
