@@ -24,6 +24,7 @@ TestResults.xml
 documents/
 .DS_Store
 vendor/
+!resources/views/vendor/
 /node_modules
 /public/hot
 /public/build
