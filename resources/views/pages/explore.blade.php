@@ -134,9 +134,9 @@
             <div>
                 <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Price</p>
                 <div class="flex gap-2">
-                    <button data-filter="price" data-value="$"   class="cat-pill">$</button>
-                    <button data-filter="price" data-value="$$"  class="cat-pill">$$</button>
-                    <button data-filter="price" data-value="$$$" class="cat-pill">$$$</button>
+                    <button data-filter="price" data-value="$"   class="cat-pill">₱</button>
+                    <button data-filter="price" data-value="$$"  class="cat-pill">₱₱</button>
+                    <button data-filter="price" data-value="$$$" class="cat-pill">₱₱₱</button>
                 </div>
             </div>
             <div>

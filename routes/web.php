@@ -90,10 +90,16 @@ Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->g
     Route::get('/media',     [\App\Http\Controllers\Vendor\MediaController::class, 'index'])
          ->name('media');
 
-    Route::get('/photos',    function () {
+    Route::get('/photos',         function () {
          $vendor = \App\Models\Vendor::where('user_id', auth()->id())->firstOrFail();
          return view('vendor.upload-photos', ['vendor' => $vendor]);
     })->name('photos');
+
+    Route::post('/photos/cover',   [\App\Http\Controllers\Vendor\PhotosController::class, 'uploadCover'])
+         ->name('photos.cover');
+
+    Route::post('/photos/profile', [\App\Http\Controllers\Vendor\PhotosController::class, 'uploadProfile'])
+         ->name('photos.profile');
 
     Route::get('/reviews',   [\App\Http\Controllers\Vendor\ReviewsController::class, 'index'])
          ->name('reviews');

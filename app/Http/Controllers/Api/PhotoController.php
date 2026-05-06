@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -42,7 +43,7 @@ class PhotoController extends Controller
             $fileName = 'vendors/covers/' . Str::slug($vendor->business_name) . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
 
             // Upload to S3 with public visibility
-            Storage::disk('s3')->put($fileName, file_get_contents($file), 'public');
+            Storage::disk('s3')->put($fileName, file_get_contents($file));
 
             // Update database
             $vendor->cover_photo = $fileName;
@@ -85,7 +86,7 @@ class PhotoController extends Controller
             }
 
             $fileName = 'vendors/profiles/' . Str::slug($vendor->business_name) . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
-            Storage::disk('s3')->put($fileName, file_get_contents($file), 'public');
+            Storage::disk('s3')->put($fileName, file_get_contents($file));
 
             $vendor->profile_photo = $fileName;
             $vendor->save();

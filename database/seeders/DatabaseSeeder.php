@@ -74,5 +74,7 @@ class DatabaseSeeder extends Seeder
                 'status' => array_rand(['approved' => 1, 'pending' => 1]),
             ]);
         }
+
+        $this->call(VendorPhotoSeeder::class);
     }
 }
