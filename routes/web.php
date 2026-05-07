@@ -231,6 +231,8 @@ Route::post('/bitespot/store', function (\Illuminate\Http\Request $request) {
         'price_tier'    => 'required|in:$,$$,$$$',
     ]);
 
+    $validated['price_tier'] = ['$' => '₱', '$$' => '₱₱', '$$$' => '₱₱₱'][$validated['price_tier']];
+
     $vendor = \App\Models\Vendor::create([
         ...$validated,
         'user_id' => null,
