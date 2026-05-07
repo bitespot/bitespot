@@ -15,6 +15,7 @@ class EstablishmentController extends Controller
         }
 
         $vendor->load('category');
+        $vendor->increment('view_count');
 
         $isBookmarked = false;
         if (auth()->check()) {

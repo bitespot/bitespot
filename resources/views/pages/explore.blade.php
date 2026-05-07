@@ -249,6 +249,7 @@
     @include('components.add-bitespot')
 @endauth
 
+@push('scripts')
 {{-- Leaflet JS --}}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -259,4 +260,5 @@ window.INITIAL_MAP_SPOTS = {!! json_encode($mapspotsJson) !!};
 </script>
 
 <script src="{{ asset('js/explore.js') }}"></script>
+@endpush
 @endsection
