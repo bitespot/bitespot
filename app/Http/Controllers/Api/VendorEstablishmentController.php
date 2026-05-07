@@ -42,11 +42,26 @@ class VendorEstablishmentController extends Controller
 
         $validated['user_id'] = auth()->id();
         $validated['slug']    = Str::slug($validated['business_name']) . '-' . Str::random(6);
-        $validated['status']  = 'pending';
+        $validated['status']  = 'approved';
 
         $vendor = Vendor::create($validated);
         $vendor->load('category');
 
         return response()->json($vendor, 201);
+    }
+
+    /**
+     * DELETE /api/vendor/establishments/{vendor}
+     * Permanently delete an establishment owned by the authenticated vendor.
+     */
+    public function destroy(Vendor $vendor): JsonResponse
+    {
+        if ($vendor->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
+        $vendor->delete();
+
+        return response()->json(['message' => 'Establishment deleted.']);
     }
 }

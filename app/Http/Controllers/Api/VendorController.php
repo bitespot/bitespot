@@ -105,7 +105,7 @@ class VendorController extends Controller
 
         $vendor->user_id = auth()->id();
         $vendor->slug = Str::slug($request->business_name) . '-' . uniqid();
-        $vendor->status = 'pending'; // Default status
+        $vendor->status = 'approved';
         $vendor->save();
 
         return response()->json([

@@ -16,6 +16,14 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\VerifyCsrfToken::class,
         ]);
 
+        // Add session-based auth support for API routes called from browser (no Sanctum)
+        $middleware->api(prepend: [
+            \Illuminate\Session\Middleware\StartSession::class,
+        ]);
+        $middleware->api(prepend: [
+            \Illuminate\Cookie\Middleware\EncryptCookies::class,
+        ]);
+
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRole::class,
         ]);

@@ -569,6 +569,35 @@ window.saveSettings = async function () {
 };
 
 /* ═══════════════════════════════════════════
+   DELETE ESTABLISHMENT
+═══════════════════════════════════════════ */
+window.deleteEstablishment = function () {
+    const nameEl = document.getElementById('delete-modal-name');
+    const bizName = document.getElementById('s-biz-name')?.value.trim();
+    if (nameEl && bizName) nameEl.textContent = bizName;
+    document.getElementById('delete-modal').classList.add('open');
+};
+
+window.closeDeleteModal = function () {
+    document.getElementById('delete-modal').classList.remove('open');
+};
+
+window.confirmDeleteEstablishment = async function () {
+    const btn = document.getElementById('delete-confirm-btn');
+    btn.disabled = true;
+    btn.textContent = 'Deleting…';
+    try {
+        await api('DELETE', API_BASE);
+        toast('Establishment deleted. Redirecting…');
+        setTimeout(() => { window.location.href = '/vendor-dashboard'; }, 1500);
+    } catch {
+        toast('Could not delete establishment.', 'error');
+        btn.disabled = false;
+        btn.textContent = 'Delete';
+    }
+};
+
+/* ═══════════════════════════════════════════
    HELPERS
 ═══════════════════════════════════════════ */
 function escHtml(str) {
@@ -576,7 +605,7 @@ function escHtml(str) {
 }
 
 // Close modals on backdrop click
-['menu-modal','promo-modal'].forEach(id => {
+['menu-modal','promo-modal','delete-modal'].forEach(id => {
     document.getElementById(id).addEventListener('click', function(e) {
         if (e.target === this) {
             this.classList.remove('open');
