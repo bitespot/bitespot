@@ -29,6 +29,16 @@
             </svg>
             <span class="bs-navbar__underline"></span>
         </a>
+
+        {{-- VENDOR DASHBOARD LINK (ONLY VISIBLE TO VENDORS) --}}
+        @if(auth()->check() && auth()->user()->isVendor())
+        <a href="/vendor-dashboard" class="bs-navbar__link" data-nav="vendor-dashboard" aria-label="Vendor Dashboard">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 3h18v18H3zM12 3v18M3 12h18"/>
+            </svg>
+            <span class="bs-navbar__underline"></span>
+        </a>
+        @endif
     </div>
 
     @auth
@@ -38,7 +48,7 @@
                 {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
             </span>
             <span class="bs-user-menu__name">{{ auth()->user()->name }}</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+            <svg class="bs-user-menu__chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
                  fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="6 9 12 15 18 9"/>
             </svg>
@@ -78,7 +88,7 @@
     @else
     <div class="bs-user-menu">
         <a href="/login"
-           class="px-4 py-2 bg-orange-500 text-white text-sm font-semibold rounded-full hover:bg-orange-600 transition">
+           class="bs-signin-btn">
             Sign In
         </a>
     </div>
@@ -86,6 +96,7 @@
 </nav>
 
 <style>
+    /* ── Shared base ── */
     .bs-navbar__links--center {
         display: flex;
         align-items: stretch;
@@ -108,10 +119,6 @@
         color: #374151;
         transition: color 0.2s ease;
         text-decoration: none;
-        /* NO overflow:hidden here. It creates a compositing layer boundary that
-           clips the absolutely-positioned underline during scroll repaints on
-           sticky/fixed navbars. scaleX(0) already makes the bar invisible — we
-           don't need overflow to hide it, and keeping it breaks scroll. */
     }
 
     .bs-navbar__link:hover {
@@ -124,16 +131,9 @@
 
     .bs-navbar__link svg {
         display: block;
-        /* Prevent svg from shrinking the available bottom space */
         flex-shrink: 0;
     }
 
-    /*
-     * Each link owns its own underline bar.
-     * It sits flush at the bottom of the link, full-width of the link.
-     * transform-origin controls which end the grow/shrink animates from.
-     * Default state: scaleX(0) — invisible.
-     */
     .bs-navbar__underline {
         position: absolute;
         bottom: 0;
@@ -145,17 +145,9 @@
         transform: scaleX(0);
         transform-origin: left center;
         pointer-events: none;
-        /* Own compositing layer — keeps the bar's repaints isolated from the
-           navbar's sticky/fixed layer so scroll never causes a stale clip. */
         will-change: transform;
     }
 
-    /*
-     * .enter-from-left  — bar grows left→right (clicked item is to the right of prev)
-     * .enter-from-right — bar grows right→left (clicked item is to the left of prev)
-     * .exit-to-left     — bar shrinks toward the left  (departing item, new click is to the left)
-     * .exit-to-right    — bar shrinks toward the right (departing item, new click is to the right)
-     */
     .bs-navbar__underline.enter-from-left {
         transform-origin: left center;
         animation: underline-grow 0.32s cubic-bezier(0.4, 0, 0.2, 1) forwards;
@@ -176,7 +168,6 @@
         animation: underline-shrink 0.24s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     }
 
-    /* Active — bar is fully shown, no animation running */
     .bs-navbar__underline.is-shown {
         transform: scaleX(1);
     }
@@ -190,6 +181,140 @@
         from { transform: scaleX(1); }
         to   { transform: scaleX(0); }
     }
+
+    /* ── Sign in button ── */
+    .bs-signin-btn {
+        padding: 0.5rem 1rem;
+        background: #f97316;
+        color: #fff;
+        font-size: 0.875rem;
+        font-weight: 600;
+        border-radius: 9999px;
+        text-decoration: none;
+        transition: background 0.2s ease;
+        white-space: nowrap;
+    }
+
+    .bs-signin-btn:hover {
+        background: #ea6c10;
+    }
+
+    /* ════════════════════════════════════════
+       MOBILE  (≤ 767px) — top bar
+    ════════════════════════════════════════ */
+    @media (max-width: 767px) {
+
+        /* The nav itself sits at the top, full width */
+        .bs-navbar {
+            position: fixed !important;
+            top: 0 !important;
+            bottom: auto !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100% !important;
+            height: 60px !important;
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            padding: 0 !important;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0,0,0,0.07);
+            border-top: none !important;
+            border-radius: 0 !important;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+        }
+
+        /* Add top padding to page body so content isn't hidden under the bar */
+        body {
+            padding-top: 60px;
+            padding-bottom: 0;
+        }
+
+        /* Logo area — left side, show only the image, hide the text name */
+        .bs-navbar__logo-name {
+            display: flex !important;
+            align-items: center;
+            padding: 0 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .bs-navbar__name {
+            display: none !important;
+        }
+
+        .bs-navbar__logo {
+            width: 32px !important;
+            height: 32px !important;
+        }
+
+        /* Center nav links — flex: 1 so they fill all remaining space between logo and avatar */
+        .bs-navbar__links--center {
+            flex: 1;
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+            gap: 0;
+            height: 100%;
+        }
+
+        /* Each nav link: taller tap targets, underline shifts to top on mobile */
+        .bs-navbar__link {
+            padding: 0 1.1rem;
+            padding-top: 0.4rem;
+            height: 100%;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* On mobile the underline stays at the BOTTOM (standard for top nav) */
+        .bs-navbar__underline {
+            bottom: 0;
+            top: auto;
+            border-radius: 2px 2px 0 0;
+        }
+
+        /* ── User menu: avatar circle only, no name, no chevron ── */
+        .bs-user-menu {
+            padding: 0 0.75rem;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .bs-user-menu__name,
+        .bs-user-menu__chevron {
+            display: none !important;
+        }
+
+        .bs-user-menu__trigger {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .bs-user-avatar {
+            width: 34px;
+            height: 34px;
+            font-size: 0.875rem;
+        }
+
+        /* Dropdown opens DOWNWARD on mobile (navbar is at top) */
+        .bs-user-menu__dropdown {
+            top: calc(100% + 8px) !important;
+            bottom: auto !important;
+            right: 0.5rem !important;
+            left: auto !important;
+            min-width: 180px;
+        }
+
+        /* Sign-in button on mobile — compact */
+        .bs-signin-btn {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.75rem;
+        }
+    }
 </style>
 
 <script>
@@ -202,12 +327,12 @@
         const path = window.location.pathname;
         let activeIdx = 0;
         links.forEach(function (link, i) {
-            // Parse the href so route() generated absolute URLs work correctly
             const linkPath = new URL(link.getAttribute('href'), window.location.origin).pathname;
             if (
                 (linkPath === '/dashboard' && path === '/dashboard') ||
                 (linkPath.startsWith('/explore') && path.startsWith('/explore')) ||
-                (linkPath.startsWith('/saved')   && path.startsWith('/saved'))
+                (linkPath.startsWith('/saved')   && path.startsWith('/saved')) ||
+                (linkPath.startsWith('/vendor-dashboard') && path.startsWith('/vendor-dashboard'))
             ) {
                 activeIdx = i;
             }
@@ -222,44 +347,33 @@
             );
         }
 
-        /* Set the active link's icon color and show its underline immediately (no animation on load) */
         function initActive(idx) {
-            links.forEach(function (link, i) {
-                link.classList.toggle('is-active', i === idx);
-            });
-            const bar = underlines[idx];
-            clearUnderlineClasses(bar);
-            bar.classList.add('is-shown');
+            if (links.length > 0 && links[idx]) {
+                links.forEach(function (link, i) {
+                    link.classList.toggle('is-active', i === idx);
+                });
+                const bar = underlines[idx];
+                clearUnderlineClasses(bar);
+                bar.classList.add('is-shown');
+            }
         }
 
-        /* Animate the transition from oldIdx → newIdx */
         function animateTransition(oldIdx, newIdx) {
-            if (oldIdx === newIdx) return;
+            if (oldIdx === newIdx || !underlines[oldIdx] || !underlines[newIdx]) return;
 
             const direction = newIdx > oldIdx ? 'right' : 'left';
-            // "direction" = which side the new item is on relative to the old one.
-            // The exiting bar should shrink toward the new item (chase it).
-            // The entering bar should grow from the side closest to the old item.
-
             const oldBar = underlines[oldIdx];
             const newBar = underlines[newIdx];
 
-            /* ── exit old bar ── */
             clearUnderlineClasses(oldBar);
-            // Shrink toward new item's direction
             oldBar.classList.add(direction === 'right' ? 'exit-to-right' : 'exit-to-left');
 
-            /* ── enter new bar ── */
             clearUnderlineClasses(newBar);
-            // Grow from the side closest to the old item
             newBar.classList.add(direction === 'right' ? 'enter-from-left' : 'enter-from-right');
 
-            /* ── icon colors ── */
             links[oldIdx].classList.remove('is-active');
             links[newIdx].classList.add('is-active');
 
-            /* After the grow animation ends, lock the bar as is-shown so
-               it stays visible without an ongoing animation */
             newBar.addEventListener('animationend', function handler() {
                 newBar.removeEventListener('animationend', handler);
                 clearUnderlineClasses(newBar);
@@ -267,10 +381,8 @@
             });
         }
 
-        /* ── init ── */
         initActive(activeIdx);
 
-        /* ── click handler ── */
         links.forEach(function (link, i) {
             link.addEventListener('click', function () {
                 if (i === activeIdx) return;

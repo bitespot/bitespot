@@ -45,4 +45,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Review::class);
     }
+
+    // NEW METHOD ADDED HERE
+    public function isVendor(): bool
+    {
+        return $this->role === 'vendor';
+    }
 }

@@ -73,6 +73,18 @@ Route::middleware('auth')->group(function () {
      Route::get('/profile/edit', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
      Route::put('/profile',      [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
 
+     // =======================================================================
+     // NEW: The React-style Vendor Dashboard route
+     // =======================================================================
+     Route::get('/vendor-dashboard', function () {
+          // Double-check if the user is actually a vendor
+          if (!auth()->user()->isVendor()) {
+               abort(403, 'Access Denied. You must be a registered vendor.'); 
+          }
+
+          return view('pages.vendordashboard');
+     });
+
 });
 
 // ---------------------------------------------------------------------------
