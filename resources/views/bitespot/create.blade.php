@@ -4,6 +4,10 @@
 @section('content')
 @include('components.navbar')
 
+{{-- Leaflet CSS and JS for the Map --}}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <style>
     .create-root { background: #f9fafb; min-height: calc(100vh - 64px); padding: 2rem 1rem; }
     .create-container { max-width: 680px; margin: 0 auto; background: #fff; border-radius: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); overflow: hidden; }
@@ -28,27 +32,37 @@
     .star-rating label svg { width: 28px; height: 28px; fill: currentColor; }
     .star-rating input:checked ~ label, .star-rating label:hover, .star-rating label:hover ~ label { color: #facc15; }
 
-    /* Dynamic Food Items */
-    .food-item-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 1rem; padding: 1.5rem; margin-top: 1rem; position: relative; }
-    .remove-food-btn { position: absolute; top: 1rem; right: 1rem; color: #ef4444; background: #fef2f2; border: none; border-radius: 0.5rem; padding: 0.4rem; cursor: pointer; display: flex; }
+    /* Map Styles */
+    #create-map { z-index: 10; }
+    .autocomplete-dropdown { max-height: 200px; overflow-y: auto; }
 </style>
 
 <div class="create-root">
     <div class="create-container">
         <div class="create-header">
             <h1 class="text-2xl font-bold text-gray-900">Post a BiteSpot</h1>
-            <p class="text-gray-500 text-sm mt-1">Share your experience. Location will be auto-detected.</p>
+            <p class="text-gray-500 text-sm mt-1">Share your experience with the community.</p>
         </div>
 
         <form action="{{ route('bitespot.store') }}" method="POST" enctype="multipart/form-data" class="create-body" id="bitespot-form">
             @csrf
             
-            {{-- General Spot Information --}}
-            <div class="form-group">
+            {{-- Hidden Inputs for Location & Vendor Association --}}
+            <input type="hidden" name="latitude" id="lat-input" value="">
+            <input type="hidden" name="longitude" id="lng-input" value="">
+            <input type="hidden" name="vendor_id" id="vendor-id-input" value="">
+            
+            {{-- Establishment Name (Search Bar) --}}
+            <div class="form-group relative">
                 <label class="form-label">Establishment Name</label>
-                <input type="text" name="spot_name" class="form-input" placeholder="e.g. Jepoy's Grill & Resto" required>
+                <input type="text" id="spot-name-input" name="spot_name" class="form-input" placeholder="Search a known spot or type a new one..." autocomplete="off" required>
+                
+                {{-- Dropdown Results --}}
+                <div id="autocomplete-results" class="autocomplete-dropdown absolute z-50 w-full bg-white border border-gray-200 rounded-lg shadow-xl mt-1 hidden">
+                    </div>
             </div>
 
+            {{-- General Photo --}}
             <div class="form-group">
                 <label class="form-label">Add a Photo of the Place</label>
                 <div class="upload-zone" onclick="document.getElementById('general-photo').click()">
@@ -60,6 +74,21 @@
                 </div>
             </div>
 
+            {{-- Map Location Panel (Appears conditionally) --}}
+            <div id="location-panel" class="form-group bg-gray-50 p-4 rounded-xl border border-gray-100" style="display: none;">
+                <div class="flex items-center justify-between mb-3">
+                    <label class="form-label mb-0">Pinpoint Location <span class="text-orange-500 text-xs ml-1 font-bold">NEW ESTABLISHMENT</span></label>
+                    <button type="button" id="use-location-btn" class="flex items-center gap-1.5 text-xs font-semibold text-white bg-gray-900 px-3 py-1.5 rounded-md hover:bg-gray-800 transition-colors">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
+                        Use My Location
+                    </button>
+                </div>
+                
+                <div id="create-map" class="w-full h-48 rounded-lg shadow-inner mb-2"></div>
+                <p class="text-xs text-gray-500 text-center">Drag the marker to the exact location of the establishment.</p>
+            </div>
+
+            {{-- Ratings & Reviews --}}
             <div class="form-group">
                 <label class="form-label">Overall Rating</label>
                 <div class="star-rating">
@@ -77,7 +106,7 @@
             </div>
 
             <div class="mt-8">
-                <button type="submit" class="w-full py-3.5 bg-primary hover:bg-primary-hover text-white rounded-xl font-bold text-lg shadow-lg transition-colors">
+                <button type="submit" class="w-full py-3.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold text-lg shadow-lg transition-colors">
                     Post BiteSpot
                 </button>
             </div>
@@ -86,6 +115,7 @@
 </div>
 
 <script>
+    // --- Image Preview Logic ---
     function previewImage(input, previewId, removeId) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
@@ -105,21 +135,140 @@
         document.getElementById(removeId).style.display = 'none';
     }
 
-    // Capture location silently on load
-    window.onload = function() {
+    // --- Leaflet Map Logic ---
+    let map, marker;
+    const locationPanel = document.getElementById('location-panel');
+    const latInput = document.getElementById('lat-input');
+    const lngInput = document.getElementById('lng-input');
+    const vendorIdInput = document.getElementById('vendor-id-input');
+
+    function initMap() {
+        // Default Center (Approximate Philippines)
+        const defaultLat = 11.248;
+        const defaultLng = 125.007;
+
+        map = L.map('create-map').setView([defaultLat, defaultLng], 14);
+        
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap &copy; CARTO'
+        }).addTo(map);
+
+        marker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(map);
+
+        // Update hidden inputs when marker is dragged
+        marker.on('dragend', function() {
+            const position = marker.getLatLng();
+            latInput.value = position.lat;
+            lngInput.value = position.lng;
+        });
+
+        // Set initial values
+        latInput.value = defaultLat;
+        lngInput.value = defaultLng;
+    }
+
+    function toggleMapPanel(show) {
+        if (show) {
+            locationPanel.style.display = 'block';
+            // Important: Leaflet requires a resize trigger when a hidden map becomes visible
+            setTimeout(() => { if (map) map.invalidateSize(); }, 100);
+        } else {
+            locationPanel.style.display = 'none';
+        }
+    }
+
+    document.getElementById('use-location-btn').addEventListener('click', function() {
         if (navigator.geolocation) {
+            const btn = this;
+            btn.innerHTML = 'Locating...';
             navigator.geolocation.getCurrentPosition(
                 pos => {
                     const lat = pos.coords.latitude;
                     const lng = pos.coords.longitude;
-                    // Inject into form
-                    const form = document.getElementById('bitespot-form');
-                    form.insertAdjacentHTML('beforeend', `<input type="hidden" name="latitude" value="${lat}">`);
-                    form.insertAdjacentHTML('beforeend', `<input type="hidden" name="longitude" value="${lng}">`);
+                    latInput.value = lat;
+                    lngInput.value = lng;
+                    map.setView([lat, lng], 16);
+                    marker.setLatLng([lat, lng]);
+                    btn.innerHTML = 'Use My Location';
                 },
-                err => console.log("Location denied or unavailable.")
+                err => {
+                    alert("Location access denied. Please drag the pin manually.");
+                    btn.innerHTML = 'Use My Location';
+                }
             );
         }
+    });
+
+    // --- Autocomplete Search Logic ---
+    const searchInput = document.getElementById('spot-name-input');
+    const resultsBox = document.getElementById('autocomplete-results');
+    let debounceTimer;
+
+    searchInput.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        const query = this.value.trim();
+        
+        // Every time they type, we assume it's a NEW spot until they click a dropdown item
+        vendorIdInput.value = ''; 
+        toggleMapPanel(true);
+
+        if (query.length < 2) {
+            resultsBox.classList.add('hidden');
+            return;
+        }
+
+        debounceTimer = setTimeout(() => {
+            fetch(`/api/vendors?q=${encodeURIComponent(query)}&limit=5`)
+                .then(res => res.json())
+                .then(json => {
+                    const vendors = json.data || [];
+                    if (vendors.length === 0) {
+                        resultsBox.classList.add('hidden');
+                        return;
+                    }
+
+                    resultsBox.innerHTML = vendors.map(v => `
+                        <div class="px-4 py-3 cursor-pointer hover:bg-orange-50 border-b border-gray-100 last:border-0" 
+                             onclick="selectVendor('${v.id}', '${v.business_name.replace(/'/g, "\\'")}', '${v.latitude}', '${v.longitude}')">
+                            <p class="text-sm font-semibold text-gray-800">${v.business_name}</p>
+                            <p class="text-xs text-gray-500">${v.city || 'Vendor Database'}</p>
+                        </div>
+                    `).join('');
+                    resultsBox.classList.remove('hidden');
+                }).catch(err => console.log('Search error:', err));
+        }, 300);
+    });
+
+    window.selectVendor = function(id, name, lat, lng) {
+        // Fill input and ID
+        searchInput.value = name;
+        vendorIdInput.value = id;
+        
+        // Populate coordinates if they exist in DB
+        if(lat && lng && lat !== 'null') {
+            latInput.value = lat;
+            lngInput.value = lng;
+        }
+
+        resultsBox.classList.add('hidden');
+        
+        // Hide the map because the user selected an existing spot
+        toggleMapPanel(false);
     };
+
+    // Close dropdown if clicked outside
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !resultsBox.contains(e.target)) {
+            resultsBox.classList.add('hidden');
+        }
+    });
+
+    // Initialize Map on load
+    window.addEventListener('DOMContentLoaded', () => {
+        initMap();
+        // Since input is empty on load, it's considered "New", so show map
+        toggleMapPanel(true);
+    });
+
 </script>
 @endsection

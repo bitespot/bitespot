@@ -14,6 +14,7 @@ class BiteSpot extends Model
     // These match the inputs from your create.blade.php form
     protected $fillable = [
         'user_id',
+        'vendor_id',
         'spot_name',
         'general_photo',
         'spot_rating',
@@ -44,5 +45,10 @@ class BiteSpot extends Model
     public function saves(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'bitespot_saves', 'bitespot_id', 'user_id')->withTimestamps();
+    }
+
+    public function vendor(): BelongsTo
+    {
+        return $this->belongsTo(Vendor::class);
     }
 }

@@ -18,7 +18,8 @@ class BiteSpotController extends Controller
         // 1. Validate the incoming data
         $validated = $request->validate([
             'spot_name' => 'required|string|max:255',
-            'general_photo' => 'nullable|image|max:5120', // Max 5MB
+            'vendor_id' => 'nullable|exists:vendors,id',
+            'general_photo' => 'nullable|image|max:5120', 
             'spot_rating' => 'required|integer|min:1|max:5',
             'spot_review' => 'nullable|string',
             'latitude' => 'nullable|numeric',
@@ -35,6 +36,7 @@ class BiteSpotController extends Controller
         // 3. Save to the Database
         BiteSpot::create([
             'user_id' => auth()->id(),
+            'vendor_id' => $validated['vendor_id'] ?? null,
             'spot_name' => $validated['spot_name'],
             'general_photo' => $photoPath,
             'spot_rating' => $validated['spot_rating'],

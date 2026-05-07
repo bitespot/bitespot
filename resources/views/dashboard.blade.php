@@ -51,7 +51,23 @@
 
                         @if($post->spot_review)
                             <div class="px-4 pb-3">
-                                <p class="text-sm">{{ $post->spot_review }}</p>
+                                {{--<p class="text-sm">{{ $post->spot_review }}</p>--}}
+                                {{-- NEW: Dynamic Star Rating --}}
+                                @if(isset($post->spot_rating))
+                                    <div class="flex items-center gap-0.5 mb-2">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="{{ $i <= $post->spot_rating ? '#facc15' : '#e5e7eb' }}" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                            </svg>
+                                        @endfor
+                                        <span class="text-xs text-gray-500 ml-1.5 font-medium">{{ $post->spot_rating }}/5</span>
+                                    </div>
+                                @endif
+
+                                {{-- Existing Review Text --}}
+                                @if($post->spot_review)
+                                    <p class="text-sm text-gray-800">{{ $post->spot_review }}</p>
+                                @endif
                             </div>
                         @endif
 
