@@ -238,6 +238,6 @@ Route::post('/bitespot/store', function (\Illuminate\Http\Request $request) {
         'status'  => 'approved',
     ]);
 
-    return redirect()->route('place.show', $vendor->slug)
-        ->with('success', $vendor->business_name . ' has been added! Be the first to claim ownership.');
+    return redirect('/dashboard')
+        ->with('success', $vendor->business_name . ' has been added!');
 })->middleware('auth')->name('bitespot.store');
