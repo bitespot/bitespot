@@ -220,13 +220,15 @@ Route::get('/bitespot/create', function () {
 Route::post('/bitespot/store', function (\Illuminate\Http\Request $request) {
     $validated = $request->validate([
         'business_name' => 'required|string|max:255',
-        'category_id'   => 'nullable|exists:categories,id',
-        'address'       => 'required|string|max:500',
+        'category_id'   => 'required|exists:categories,id',
+        'description'   => 'nullable|string|max:1000',
+        'lat'           => 'required|numeric',
+        'lng'           => 'required|numeric',
+        'address'       => 'nullable|string|max:500',
         'city'          => 'nullable|string|max:100',
         'province'      => 'nullable|string|max:100',
-        'description'   => 'nullable|string|max:1000',
-        'phone'         => 'nullable|string|max:30',
-        'price_tier'    => 'nullable|in:$,$$,$$$',
+        'district'      => 'nullable|string|max:100',
+        'price_tier'    => 'required|in:$,$$,$$$',
     ]);
 
     $vendor = \App\Models\Vendor::create([
@@ -237,5 +239,5 @@ Route::post('/bitespot/store', function (\Illuminate\Http\Request $request) {
     ]);
 
     return redirect()->route('place.show', $vendor->slug)
-        ->with('success', $vendor->name . ' has been added! Be the first to claim ownership.');
+        ->with('success', $vendor->business_name . ' has been added! Be the first to claim ownership.');
 })->middleware('auth')->name('bitespot.store');
