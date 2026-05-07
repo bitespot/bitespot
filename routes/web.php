@@ -141,4 +141,19 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 });
 
-Route::get('/bitespot/create', [\App\Http\Controllers\BiteSpotController::class, 'create'])->name('bitespot.create');
+//Route::get('/bitespot/create', [\App\Http\Controllers\BiteSpotController::class, 'create'])->name('bitespot.create');
+
+// ---------------------------------------------------------------------------
+// TEMPORARY UI PROTOTYPE ROUTES
+// ---------------------------------------------------------------------------
+
+// 1. Shows the page directly without needing a controller
+Route::get('/bitespot/create', function () {
+    return view('bitespot.create');
+})->name('bitespot.create');
+
+// 2. Catches the form submission and redirects back to the dashboard so it doesn't crash
+Route::post('/bitespot/store', function () {
+    // Later, backend logic goes here. For now, just go back to the dashboard.
+    return redirect('/dashboard')->with('status', 'BiteSpot prototype posted!');
+})->name('bitespot.store');
