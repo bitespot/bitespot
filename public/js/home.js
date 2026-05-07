@@ -1,5 +1,28 @@
-// public/js/home.js — SID_05 (hero search dropdown) + SID_07 (trending spots)
-// Depends on: api.js (apiFetch), ui.js (showToast, renderSkeleton)
+// --- Custom API Fetch Wrapper ---
+window.apiFetch = async function(endpoint, options = {}) {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+    const defaultHeaders = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+    };
+
+    if (csrfToken) {
+        defaultHeaders['X-CSRF-TOKEN'] = csrfToken;
+    }
+
+    const config = {
+        ...options,
+        headers: {
+            ...defaultHeaders,
+            ...options.headers
+        }
+    };
+
+    const response = await fetch(endpoint, config);
+    if (!response.ok) throw new Error(`API Error: ${response.status}`);
+    return response.json();
+};
 
 // ---------------------------------------------------------------------------
 // Shared
@@ -48,7 +71,7 @@ const fetchSuggestions = debounce((query) => {
 
     apiFetch(`/api/vendors?q=${encodeURIComponent(query)}&limit=5`)
         .then(json => renderDropdown(json.data ?? []))
-        .catch(err  => {
+        .catch(err => {
             console.error('[SID_05] Suggestion fetch failed:', err);
             clearDropdown();
         });
@@ -61,56 +84,107 @@ document.addEventListener('click', e => {
 });
 
 // ---------------------------------------------------------------------------
-// SID_07: Trending spots
+// SID_07: Trending Spots & Hidden Gems — grid card renderer
 // ---------------------------------------------------------------------------
 
+// These IDs match dashboard.blade.php exactly
 const trendingContainer = document.getElementById('trending-container');
+const gemsContainer     = document.getElementById('gems-container');
 
-function renderVendorCard(vendor) {
-    const rating = vendor.avg_rating ? Number(vendor.avg_rating).toFixed(1) : 'New';
-    const photo  = vendor.primary_photo
-        ? `<img src="${vendor.primary_photo}" alt="${vendor.business_name}" class="w-full h-full object-cover">`
-        : `<div class="w-full h-full flex items-center justify-center text-gray-300 text-sm">No photo</div>`;
+function renderGridCard(vendor) {
+    const name        = vendor.business_name || 'Unknown Spot';
+    const slug        = vendor.slug || '#';
+    const category    = vendor.category?.name ?? vendor.category ?? '';
+    const city        = vendor.city ?? '';
+    const rating      = vendor.avg_rating ? Number(vendor.avg_rating).toFixed(1) : null;
+    const reviewCount = vendor.reviews_count || 0;
+    const priceTier   = vendor.price_tier_label ?? vendor.price_tier ?? '';
+
+    const photoUrl = vendor.primary_photo
+        || (vendor.photos && vendor.photos.length > 0
+            ? `/storage/${vendor.photos[0].photo_path}`
+            : null);
+
+    const imgHtml = photoUrl
+        ? `<img src="${photoUrl}" alt="${name}" class="bs-card__img">`
+        : `<div class="bs-card__img bs-card__img--placeholder">🍽️</div>`;
+
+    const ratingHtml = rating
+        ? `<svg class="w-3.5 h-3.5 text-yellow-400 fill-current" viewBox="0 0 20 20">
+               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+           </svg>
+           <span>${rating}</span>
+           <span class="text-gray-400">(${reviewCount})</span>`
+        : `<span class="text-gray-400 text-xs">New</span>`;
+
+    const meta = [category, priceTier].filter(Boolean).join(' · ');
 
     return `
-        <a href="/place/${vendor.slug}"
-           class="block bg-white rounded-xl shadow hover:shadow-md transition overflow-hidden">
-            <div class="h-40 bg-gray-100 overflow-hidden">
-                ${photo}
+        <a href="/place/${slug}" class="bs-card">
+            <div class="bs-card__img-wrap">
+                ${imgHtml}
             </div>
-            <div class="p-4">
-                <h3 class="font-semibold text-gray-800 text-sm truncate">${vendor.business_name}</h3>
-                <p class="text-xs text-gray-400 mt-1 truncate">${vendor.category?.name ?? ''} &middot; ${vendor.city ?? ''}</p>
-                <div class="flex items-center gap-1 mt-2">
-                    <span class="text-yellow-400 text-sm">&#9733;</span>
-                    <span class="text-xs text-gray-600">${rating}</span>
-                    <span class="text-xs text-gray-400 ml-auto">${vendor.price_tier ?? ''}</span>
+            <div class="bs-card__body">
+                <h3 class="bs-card__name">${name}</h3>
+                ${meta  ? `<p class="bs-card__meta">${meta}</p>` : ''}
+                ${city  ? `<p class="bs-card__city">${city}</p>` : ''}
+                <div class="bs-card__rating">
+                    ${ratingHtml}
                 </div>
             </div>
         </a>
     `;
 }
 
-function loadTrendingSpots() {
-    if (!trendingContainer) return;
+function loadDashboardSpots() {
+    if (!trendingContainer && !gemsContainer) return;
 
-    renderSkeleton(trendingContainer, 6);
+    // Use the two real endpoints from routes/api.php:
+    //   GET /api/trending  → top-rated / featured spots
+    //   GET /api/vendors   → full listing pool for hidden gems
+    Promise.all([
+        apiFetch('/api/trending'),
+        apiFetch('/api/vendors?limit=50'),
+    ])
+    .then(([trendingJson, vendorsJson]) => {
+        // /api/trending returns an array or {data:[...]}
+        const trendingVendors = Array.isArray(trendingJson)
+            ? trendingJson
+            : (trendingJson.data ?? []);
 
-    apiFetch('/mock/trending.json')
-        .then(json => {
-            const vendors = json.data ?? [];
-            if (!vendors.length) {
+        // /api/vendors returns {data:[...]} (standard Laravel paginator)
+        const allVendors = Array.isArray(vendorsJson)
+            ? vendorsJson
+            : (vendorsJson.data ?? []);
+
+        // ── Trending Spots (up to 6 from /api/trending) ──
+        if (trendingContainer) {
+            if (!trendingVendors.length) {
                 trendingContainer.innerHTML =
-                    '<p class="text-gray-400 col-span-full text-center py-8">No trending spots yet.</p>';
-                return;
+                    '<p class="text-sm text-gray-400 col-span-full">No trending spots found.</p>';
+            } else {
+                const shuffled = [...trendingVendors].sort(() => 0.5 - Math.random());
+                trendingContainer.innerHTML = shuffled.slice(0, 6).map(renderGridCard).join('');
             }
-            trendingContainer.innerHTML = vendors.map(renderVendorCard).join('');
-        })
-        .catch(err => {
-            console.error('[SID_07] Trending fetch failed:', err);
-            trendingContainer.innerHTML =
-                '<p class="text-gray-400 col-span-full text-center py-8">Could not load trending spots.</p>';
-        });
+        }
+
+        // ── Hidden Gems (3 random picks from the full vendor pool) ──
+        if (gemsContainer) {
+            if (!allVendors.length) {
+                gemsContainer.innerHTML =
+                    '<p class="text-sm text-gray-400 col-span-full">No gems found.</p>';
+            } else {
+                const shuffled = [...allVendors].sort(() => 0.5 - Math.random());
+                gemsContainer.innerHTML = shuffled.slice(0, 3).map(renderGridCard).join('');
+            }
+        }
+    })
+    .catch(err => {
+        console.error('[SID_07] Dashboard spots fetch failed:', err);
+        const errorHtml = '<p class="text-sm text-red-400 col-span-full">Could not load spots.</p>';
+        if (trendingContainer) trendingContainer.innerHTML = errorHtml;
+        if (gemsContainer)     gemsContainer.innerHTML     = errorHtml;
+    });
 }
 
-loadTrendingSpots();
+loadDashboardSpots();
