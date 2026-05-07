@@ -207,7 +207,7 @@
                 </div>
 
                 @auth
-                    @if(auth()->user()->isVendor() && auth()->id() !== $vendor->user_id)
+                    @if(auth()->id() !== $vendor->user_id)
                     <button onclick="document.getElementById('claim-modal').classList.remove('hidden')"
                             class="block w-full px-4 py-3 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition text-center">
                         Claim Ownership

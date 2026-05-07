@@ -209,16 +209,33 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 //Route::get('/bitespot/create', [\App\Http\Controllers\BiteSpotController::class, 'create'])->name('bitespot.create');
 
 // ---------------------------------------------------------------------------
-// TEMPORARY UI PROTOTYPE ROUTES
+// ADD ESTABLISHMENT (any authenticated user, unowned)
 // ---------------------------------------------------------------------------
 
-// 1. Shows the page directly without needing a controller
 Route::get('/bitespot/create', function () {
-    return view('bitespot.create');
-})->name('bitespot.create');
+    $categories = \App\Models\Category::orderBy('name')->get();
+    return view('bitespot.create', compact('categories'));
+})->middleware('auth')->name('bitespot.create');
 
-// 2. Catches the form submission and redirects back to the dashboard so it doesn't crash
-Route::post('/bitespot/store', function () {
-    // Later, backend logic goes here. For now, just go back to the dashboard.
-    return redirect('/dashboard')->with('status', 'BiteSpot prototype posted!');
-})->name('bitespot.store');
+Route::post('/bitespot/store', function (\Illuminate\Http\Request $request) {
+    $validated = $request->validate([
+        'business_name' => 'required|string|max:255',
+        'category_id'   => 'nullable|exists:categories,id',
+        'address'       => 'required|string|max:500',
+        'city'          => 'nullable|string|max:100',
+        'province'      => 'nullable|string|max:100',
+        'description'   => 'nullable|string|max:1000',
+        'phone'         => 'nullable|string|max:30',
+        'price_tier'    => 'nullable|in:$,$$,$$$',
+    ]);
+
+    $vendor = \App\Models\Vendor::create([
+        ...$validated,
+        'user_id' => null,
+        'slug'    => \Illuminate\Support\Str::slug($validated['business_name']) . '-' . \Illuminate\Support\Str::random(6),
+        'status'  => 'approved',
+    ]);
+
+    return redirect()->route('place.show', $vendor->slug)
+        ->with('success', $vendor->name . ' has been added! Be the first to claim ownership.');
+})->middleware('auth')->name('bitespot.store');
