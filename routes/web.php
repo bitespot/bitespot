@@ -68,6 +68,9 @@ Route::middleware('auth')->group(function () {
           return view('dashboard');
      })->name('dashboard');
 
+     // Saved places
+     Route::get('/saved', [\App\Http\Controllers\SavedController::class, 'index'])->name('saved');
+
      // User profile (Norman)
      Route::get('/profile',      [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
      Route::get('/profile/edit', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
