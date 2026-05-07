@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Storage;
 
 class Vendor extends Model
 {
@@ -69,20 +68,27 @@ class Vendor extends Model
         return self::PRICE_TIER_MAP[$this->price_tier] ?? $this->price_tier;
     }
 
+    private static function s3Url(string $key): string
+    {
+        $bucket = config('filesystems.disks.s3.bucket');
+        $region = config('filesystems.disks.s3.region');
+        return "https://{$bucket}.s3.{$region}.amazonaws.com/{$key}";
+    }
+
     public function getPrimaryPhotoAttribute(): ?string
     {
         $key = $this->profile_photo ?? $this->cover_photo;
-        return $key ? Storage::url($key) : null;
+        return $key ? self::s3Url($key) : null;
     }
 
     public function getCoverPhotoUrlAttribute(): ?string
     {
-        return $this->cover_photo ? Storage::url($this->cover_photo) : null;
+        return $this->cover_photo ? self::s3Url($this->cover_photo) : null;
     }
 
     public function getProfilePhotoUrlAttribute(): ?string
     {
-        return $this->profile_photo ? Storage::url($this->profile_photo) : null;
+        return $this->profile_photo ? self::s3Url($this->profile_photo) : null;
     }
 
     public function discoveries(): HasMany

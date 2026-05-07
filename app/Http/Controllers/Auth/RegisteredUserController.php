@@ -128,7 +128,7 @@ class RegisteredUserController extends Controller
             'province'      => $request->province,
             'lat'           => $request->lat,
             'lng'           => $request->lng,
-            'price_tier'    => $request->price_tier,
+            'price_tier'    => ['$' => '₱', '$$' => '₱₱', '$$$' => '₱₱₱'][$request->price_tier] ?? $request->price_tier,
             'status'        => 'approved',
         ]);
 
