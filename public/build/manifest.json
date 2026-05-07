@@ -1,6 +1,6 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-CLvrxeo4.css",
+    "file": "assets/app-Cl-bV2zX.css",
     "name": "app",
     "names": [
       "app.css"
@@ -15,7 +15,7 @@
     "isEntry": true
   },
   "resources/js/vendor-dashboard.js": {
-    "file": "assets/vendor-dashboard-LT7Xpc79.js",
+    "file": "assets/vendor-dashboard-BKmL1Mx3.js",
     "name": "vendor-dashboard",
     "src": "resources/js/vendor-dashboard.js",
     "isEntry": true

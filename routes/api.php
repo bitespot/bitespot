@@ -98,9 +98,10 @@ Route::middleware('auth')->group(function () {
     // -----------------------------------------------------------------------
     Route::middleware('role:vendor')->prefix('vendor')->group(function () {
 
-        // List / create the authenticated user's establishments
-        Route::get('/establishments',  [\App\Http\Controllers\Api\VendorEstablishmentController::class, 'index']);
-        Route::post('/establishments', [\App\Http\Controllers\Api\VendorEstablishmentController::class, 'store']);
+        // List / create / delete the authenticated user's establishments
+        Route::get('/establishments',          [\App\Http\Controllers\Api\VendorEstablishmentController::class, 'index']);
+        Route::post('/establishments',         [\App\Http\Controllers\Api\VendorEstablishmentController::class, 'store']);
+        Route::delete('/establishments/{vendor}', [\App\Http\Controllers\Api\VendorEstablishmentController::class, 'destroy']);
 
         // Per-establishment management — all scoped to a specific vendor the user owns
         Route::prefix('establishments/{vendor}')->group(function () {

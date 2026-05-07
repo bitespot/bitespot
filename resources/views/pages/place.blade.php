@@ -207,7 +207,7 @@
                 </div>
 
                 @auth
-                    @if(auth()->id() !== $vendor->user_id)
+                    @if(auth()->user()->isVendor() && auth()->id() !== $vendor->user_id)
                     <a href="{{ route('place.claim', $vendor->slug) }}"
                        class="block w-full px-4 py-3 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition text-center">
                         📋 Claim Ownership
@@ -239,6 +239,7 @@
 
 </div>
 
+@push('scripts')
 <script>
 window.VENDOR_ID     = {{ $vendor->id }};
 window.IS_BOOKMARKED = {{ $isBookmarked ? 'true' : 'false' }};
@@ -247,5 +248,6 @@ window.USER_ID       = {{ auth()->check() ? auth()->id() : 'null' }};
 window.AUTH_NAME     = @json(auth()->check() ? auth()->user()->name : null);
 </script>
 <script src="{{ asset('js/place.js') }}"></script>
+@endpush
 
 @endsection

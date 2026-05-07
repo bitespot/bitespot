@@ -1,6 +1,6 @@
 <x-guest-layout>
     <div class="flex items-center justify-center min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 py-8 px-4">
-        <div class="w-full max-w-lg bg-white rounded-3xl shadow-2xl p-12 flex flex-col md:flex-row gap-8 md:gap-0 md:items-center">
+        <div class="w-full max-w-3xl bg-white rounded-3xl shadow-2xl p-12 flex flex-col md:flex-row gap-8 md:gap-0 md:items-center">
             <div class="hidden md:flex flex-col items-center justify-center w-1/2 pr-8 border-r border-gray-100">
                 <img src="{{ asset('logo.png') }}" alt="BiteSpot Logo" class="w-24 h-24 mb-4">
                 <h2 class="text-3xl font-extrabold text-gray-900 mb-2">Welcome Back!</h2>

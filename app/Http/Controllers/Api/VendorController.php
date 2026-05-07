@@ -67,11 +67,11 @@ class VendorController extends Controller
 
     public function trending(Request $request)
     {
-        // Simple trending logic: featured first, then highly rated (we'll just use created_at/featured for now)
+        // Trending: highest rated approved vendors, most recently added as tiebreaker
         $vendors = Vendor::query()
             ->with('category')
             ->where('status', 'approved')
-            ->orderBy('isFeatured', 'desc')
+            ->orderByDesc('avg_rating')
             ->latest()
             ->take(10)
             ->get();
@@ -105,7 +105,7 @@ class VendorController extends Controller
 
         $vendor->user_id = auth()->id();
         $vendor->slug = Str::slug($request->business_name) . '-' . uniqid();
-        $vendor->status = 'pending'; // Default status
+        $vendor->status = 'approved';
         $vendor->save();
 
         return response()->json([
