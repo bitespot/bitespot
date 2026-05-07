@@ -112,6 +112,35 @@
     </div>
 </div>
 
+{{-- Delete Establishment Confirmation --}}
+<div class="vd-modal-backdrop" id="delete-modal">
+    <div class="vd-modal" style="max-width:420px;">
+        <div class="vd-modal-header" style="border-bottom:1px solid #fee2e2;background:#fff5f5;">
+            <span class="vd-modal-title" style="color:#dc2626;">Delete Establishment</span>
+            <button class="vd-icon-btn" onclick="closeDeleteModal()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="vd-modal-body" style="padding:1.5rem;">
+            <div style="display:flex;gap:1rem;align-items:flex-start;">
+                <div style="flex-shrink:0;width:40px;height:40px;border-radius:50%;background:#fee2e2;display:flex;align-items:center;justify-content:center;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </div>
+                <div>
+                    <div style="font-weight:600;font-size:0.95rem;color:#1a1612;margin-bottom:0.4rem;">Are you sure?</div>
+                    <div style="font-size:0.85rem;color:#78716c;line-height:1.5;">This will permanently delete <strong id="delete-modal-name" style="color:#1a1612;">this establishment</strong> and all its data — menu items, photos, reviews, and promotions. This cannot be undone.</div>
+                </div>
+            </div>
+        </div>
+        <div class="vd-modal-footer">
+            <button class="vd-btn vd-btn-ghost" onclick="closeDeleteModal()">Cancel</button>
+            <button class="vd-btn" id="delete-confirm-btn" onclick="confirmDeleteEstablishment()" style="background:#dc2626;color:#fff;border:none;">
+                Delete
+            </button>
+        </div>
+    </div>
+</div>
+
     {{-- ── SIDEBAR ─────────────────────────────────── --}}
     <aside class="vd-sidebar">
         <div class="vd-sidebar-header">
@@ -375,6 +404,22 @@
                         <button class="vd-btn vd-btn-primary" onclick="saveSettings()" style="padding:0.7rem 1.75rem;font-size:0.9rem;">
                             Save Changes
                         </button>
+                    </div>
+
+                    {{-- Danger Zone --}}
+                    <div class="vd-card" style="border:1.5px solid #fecaca;">
+                        <div class="vd-card-header" style="background:#fff5f5;">
+                            <span class="vd-card-title" style="color:#dc2626;">Danger Zone</span>
+                        </div>
+                        <div style="padding:1.4rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
+                            <div>
+                                <div style="font-weight:600;font-size:0.9rem;color:#1a1612;margin-bottom:0.2rem;">Delete this establishment</div>
+                                <div style="font-size:0.82rem;color:#78716c;">This will permanently remove the establishment and all its data. This action cannot be undone.</div>
+                            </div>
+                            <button onclick="deleteEstablishment()" style="flex-shrink:0;padding:0.6rem 1.25rem;background:#dc2626;color:#fff;border:none;border-radius:9px;font-weight:600;font-size:0.85rem;cursor:pointer;">
+                                Delete Establishment
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
