@@ -1,0 +1,606 @@
+[
+  {
+    "business_name": "Ocho Seafood and Grill",
+    "slug": "ocho-seafood-and-grill",
+    "category": "Restaurants",
+    "description": "Popular seafood restaurant known for fresh paluto-style dishes and grilled seafood.",
+    "address": "Senator Enage Street",
+    "district": "Downtown",
+    "city": "Tacloban City",
+    "lat": 11.2440,
+    "lng": 125.0037,
+    "phone": "053-325-4171",
+    "hours": {
+      "mon": "10:00-22:00",
+      "tue": "10:00-22:00",
+      "wed": "10:00-22:00"
+    },
+    "price_tier": "₱₱₱",
+    "photos": {
+      "cover": "ocho_cover.jpg",
+      "profile": "ocho_profile.png"
+    },
+    "menu": [
+      {
+        "name": "Baked Scallops",
+        "description": "Fresh scallops baked with garlic butter and cheese.",
+        "price": 280,
+        "category": "Seafood",
+        "photo": "ocho_scallops.jpg"
+      },
+      {
+        "name": "Grilled Tuna Belly",
+        "description": "Char-grilled tuna belly with calamansi soy dip.",
+        "price": 420,
+        "category": "Seafood",
+        "photo": "ocho_tuna.jpg"
+      },
+      {
+        "name": "Butter Garlic Shrimp",
+        "description": "Shrimp sauteed in butter and garlic.",
+        "price": 350,
+        "category": "Seafood",
+        "photo": "ocho_shrimp.jpg"
+      }
+    ]
+  },
+  {
+    "business_name": "Chew Love Tacloban",
+    "slug": "chew-love-tacloban",
+    "category": "Cafés",
+    "description": "Instagram-worthy cafe serving comfort food and coffee.",
+    "address": "P. Gomez Street",
+    "district": "Downtown",
+    "city": "Tacloban City",
+    "lat": 11.2435,
+    "lng": 125.0019,
+    "phone": "0917-123-4567",
+    "hours": {
+      "mon": "11:00-21:00",
+      "tue": "11:00-21:00"
+    },
+    "price_tier": "₱₱",
+    "photos": {
+      "cover": "chewlove_cover.jpg",
+      "profile": "chewlove_profile.jpg"
+    },
+    "menu": [
+      {
+        "name": "Tapsilog",
+        "description": "Classic beef tapa with garlic rice and egg.",
+        "price": 140,
+        "category": "Rice Meals",
+        "photo": "chewlove_tapsilog.jpg"
+      },
+      {
+        "name": "Spanish Latte",
+        "description": "Espresso with sweetened milk.",
+        "price": 160,
+        "category": "Coffee",
+        "photo": "chewlove_latte.jpg"
+      }
+    ]
+  },
+  {
+    "business_name": "Jose Karlo's Coffee",
+    "slug": "jose-karlos-coffee",
+    "category": "Cafés",
+    "description": "Cozy coffee shop famous for cheesecakes and handcrafted coffee.",
+    "address": "Juan Luna Street",
+    "district": "Downtown",
+    "city": "Tacloban City",
+    "lat": 11.2454,
+    "lng": 125.0049,
+    "phone": "053-832-1378",
+    "hours": {
+      "mon": "08:00-22:00",
+      "tue": "08:00-22:00"
+    },
+    "price_tier": "₱₱",
+    "photos": {
+      "cover": "jk_cover.jpg",
+      "profile": "jk_profile.jpg"
+    },
+    "menu": [
+      {
+        "name": "Blueberry Cheesecake",
+        "description": "Creamy cheesecake topped with blueberry compote.",
+        "price": 180,
+        "category": "Dessert",
+        "photo": "jk_cheesecake.jpg"
+      },
+      {
+        "name": "Caramel Macchiato",
+        "description": "Espresso drink with caramel drizzle.",
+        "price": 170,
+        "category": "Coffee",
+        "photo": "jk_macchiato.jpg"
+      }
+    ]
+  },
+  {
+    "business_name": "Cafe Lucia",
+    "slug": "cafe-lucia",
+    "category": "Cafés",
+    "description": "Seaside cafe with relaxing ambiance and pasta dishes.",
+    "address": "Real Sagkahan Street",
+    "district": "Sagkahan",
+    "city": "Tacloban City",
+    "lat": 11.2328,
+    "lng": 125.0214,
+    "phone": "053-888-3729",
+    "hours": {
+      "mon": "09:00-22:00",
+      "tue": "09:00-22:00"
+    },
+    "price_tier": "₱₱",
+    "photos": {
+      "cover": "lucia_cover.jpg",
+      "profile": "lucia_profile.jpg"
+    },
+    "menu": [
+      {
+        "name": "Seafood Marinara",
+        "description": "Pasta with shrimp and squid in tomato sauce.",
+        "price": 260,
+        "category": "Pasta",
+        "photo": "lucia_marinara.jpg"
+      },
+      {
+        "name": "Cafe Latte",
+        "description": "Smooth espresso latte.",
+        "price": 150,
+        "category": "Coffee",
+        "photo": "lucia_latte.jpg"
+      }
+    ]
+  },
+  {
+    "business_name": "FyZZ Gastropub",
+    "slug": "fyzz-gastropub",
+    "category": "Restaurants",
+    "description": "Modern gastropub inside Hotel XYZ serving international cuisine.",
+    "address": "P. Zamora Street",
+    "district": "Downtown",
+    "city": "Tacloban City",
+    "lat": 11.2447,
+    "lng": 125.0028,
+    "phone": "0917-773-8008",
+    "hours": {
+      "mon": "11:00-23:00",
+      "tue": "11:00-23:00"
+    },
+    "price_tier": "₱₱₱",
+    "photos": {
+      "cover": "fyzz_cover.jpg",
+      "profile": "fyzz_profile.jpg"
+    },
+    "menu": [
+      {
+        "name": "Lamb Kebabs",
+        "description": "Middle Eastern-inspired grilled lamb skewers.",
+        "price": 480,
+        "category": "International",
+        "photo": "fyzz_kebab.jpg"
+      },
+      {
+        "name": "Hummus Platter",
+        "description": "Creamy hummus served with pita bread.",
+        "price": 260,
+        "category": "Appetizer",
+        "photo": "fyzz_hummus.jpg"
+      }
+    ]
+  },
+  {
+    "business_name": "The Q Kitchen",
+    "slug": "the-q-kitchen",
+    "category": "Restaurants",
+    "description": "Upscale dining restaurant inside Hotel XYZ.",
+    "address": "P. Zamora Street",
+    "district": "Downtown",
+    "city": "Tacloban City",
+    "lat": 11.2448,
+    "lng": 125.0027,
+    "phone": "053-888-1185",
+    "hours": {
+      "mon": "06:00-22:00",
+      "tue": "06:00-22:00"
+    },
+    "price_tier": "₱₱₱",
+    "photos": {
+      "cover": "qkitchen_cover.jpg",
+      "profile": "qkitchen_profile.jpg"
+    },
+    "menu": [
+      {
+        "name": "US Ribeye Steak",
+        "description": "Premium ribeye steak with mashed potatoes.",
+        "price": 950,
+        "category": "Main Course",
+        "photo": "qkitchen_steak.jpg"
+      },
+      {
+        "name": "Chicken Alfredo",
+        "description": "Creamy Alfredo pasta topped with grilled chicken.",
+        "price": 320,
+        "category": "Pasta",
+        "photo": "qkitchen_alfredo.jpg"
+      }
+    ]
+  },
+  {
+    "business_name": "Kitchen 2K",
+    "slug": "kitchen-2k",
+    "category": "Restaurants",
+    "description": "Contemporary restaurant known for pasta and comfort food.",
+    "address": "Barangay 75, Fatima",
+    "district": "Fatima",
+    "city": "Tacloban City",
+    "lat": 11.2217,
+    "lng": 125.0005,
+    "phone": "053-832-4684",
+    "hours": {
+      "mon": "10:00-21:00",
+      "tue": "10:00-21:00"
+    },
+    "price_tier": "₱₱",
+    "photos": {
+      "cover": "k2k_cover.jpg",
+      "profile": "k2k_profile.jpg"
+    },
+    "menu": [
+      {
+        "name": "Seafood Pasta",
+        "description": "Creamy seafood pasta with shrimp and mussels.",
+        "price": 290,
+        "category": "Pasta",
+        "photo": "k2k_pasta.jpg"
+      },
+      {
+        "name": "Crispy Pork Belly",
+        "description": "Crunchy pork belly with dipping sauce.",
+        "price": 340,
+        "category": "Filipino",
+        "photo": "k2k_belly.jpg"
+      }
+    ]
+  },
+  {
+    "business_name": "Libro Atbp.",
+    "slug": "libro-cafe",
+    "category": "Cafés",
+    "description": "Book cafe with desserts, coffee, and cozy interiors.",
+    "address": "Sto. Niño Street corner Gomez Street",
+    "district": "Downtown",
+    "city": "Tacloban City",
+    "lat": 11.2441,
+    "lng": 125.0009,
+    "phone": "0915-138-0872",
+    "hours": {
+      "mon": "09:00-22:00",
+      "tue": "09:00-22:00"
+    },
+    "price_tier": "₱₱",
+    "photos": {
+      "cover": "libro_cover.jpg",
+      "profile": "libro_profile.jpg"
+    },
+    "menu": [
+      {
+        "name": "Red Velvet Cake",
+        "description": "Moist red velvet cake with cream cheese frosting.",
+        "price": 175,
+        "category": "Dessert",
+        "photo": "libro_redvelvet.jpg"
+      },
+      {
+        "name": "Cold Brew Coffee",
+        "description": "Smooth cold brewed coffee.",
+        "price": 150,
+        "category": "Coffee",
+        "photo": "libro_coldbrew.jpg"
+      }
+    ]
+  },
+  {
+    "business_name": "Giuseppe's Restaurant",
+    "slug": "giuseppes-italian-restaurant",
+    "category": "Restaurants",
+    "description": "Classic Italian restaurant serving authentic pasta and pizza.",
+    "address": "Imelda Street",
+    "district": "Downtown",
+    "city": "Tacloban City",
+    "lat": 11.2486,
+    "lng": 125.0034,
+    "phone": "053-321-1111",
+    "hours": {
+      "mon": "11:00-22:00",
+      "tue": "11:00-22:00"
+    },
+    "price_tier": "₱₱₱",
+    "photos": {
+      "cover": "giuseppes_cover.jpg",
+      "profile": "giuseppes_profile.jpg"
+    },
+    "menu": [
+      {
+        "name": "Truffle Pasta",
+        "description": "Creamy truffle mushroom pasta.",
+        "price": 420,
+        "category": "Italian",
+        "photo": "giu_truffle.jpg"
+      },
+      {
+        "name": "Margherita Pizza",
+        "description": "Classic Italian pizza with basil and mozzarella.",
+        "price": 480,
+        "category": "Pizza",
+        "photo": "giu_pizza.jpg"
+      }
+    ]
+  },
+  {
+    "business_name": "Otabeya Japanese Ramen",
+    "slug": "otabeya-japanese-ramen",
+    "category": "Restaurants",
+    "description": "Authentic Japanese ramen and rice bowls.",
+    "address": "Esperas Avenue",
+    "district": "Downtown",
+    "city": "Tacloban City",
+    "lat": 11.2461,
+    "lng": 125.0040,
+    "phone": "0905-028-0900",
+    "hours": {
+      "mon": "11:00-21:00",
+      "tue": "11:00-21:00"
+    },
+    "price_tier": "₱₱",
+    "photos": {
+      "cover": "otabeya_cover.jpg",
+      "profile": "otabeya_profile.jpg"
+    },
+    "menu": [
+      {
+        "name": "Tonkotsu Ramen",
+        "description": "Rich pork broth ramen with chashu.",
+        "price": 320,
+        "category": "Japanese",
+        "photo": "otabeya_ramen.jpg"
+      },
+      {
+        "name": "Katsudon",
+        "description": "Breaded pork cutlet over rice.",
+        "price": 280,
+        "category": "Japanese",
+        "photo": "otabeya_katsudon.jpg"
+      }
+    ]
+  },
+  {
+    "business_name": "Sunzibar",
+    "slug": "sunzibar",
+    "category": "Restaurants",
+    "description": "Long-running Tacloban restaurant known for ribs and comfort food.",
+    "address": "Magsaysay Boulevard",
+    "district": "Downtown",
+    "city": "Tacloban City",
+    "lat": 11.2384,
+    "lng": 125.0067,
+    "phone": "053-325-0000",
+    "hours": {
+      "mon": "10:00-22:00",
+      "tue": "10:00-22:00"
+    },
+    "price_tier": "₱₱",
+    "photos": {
+      "cover": "sunzi_cover.jpg",
+      "profile": "sunzi_profile.jpg"
+    },
+    "menu": [
+      {
+        "name": "Baby Back Ribs",
+        "description": "Slow-cooked pork ribs with barbecue glaze.",
+        "price": 420,
+        "category": "Main Course",
+        "photo": "sunzi_ribs.jpg"
+      },
+      {
+        "name": "Tomato Soup",
+        "description": "Creamy tomato soup served hot.",
+        "price": 120,
+        "category": "Soup",
+        "photo": "sunzi_soup.jpg"
+      }
+    ]
+  },
+  {
+    "business_name": "Raj Burger",
+    "slug": "raj-burger",
+    "category": "Street Food",
+    "description": "Tacloban burger staple known for affordable burgers and snacks.",
+    "address": "Gomez Street corner Juan Luna Street",
+    "district": "Downtown",
+    "city": "Tacloban City",
+    "lat": 11.2444,
+    "lng": 125.0021,
+    "phone": "0917-555-1234",
+    "hours": {
+      "mon": "08:00-23:00",
+      "tue": "08:00-23:00"
+    },
+    "price_tier": "₱",
+    "photos": {
+      "cover": "raj_cover.jpg",
+      "profile": "raj_profile.jpg"
+    },
+    "menu": [
+      {
+        "name": "Classic Burger",
+        "description": "Classic Tacloban-style burger with dressing.",
+        "price": 65,
+        "category": "Burger",
+        "photo": "raj_burger.jpg"
+      },
+      {
+        "name": "Footlong",
+        "description": "Grilled footlong sandwich.",
+        "price": 80,
+        "category": "Sandwich",
+        "photo": "raj_footlong.jpg"
+      }
+    ]
+  },
+  {
+    "business_name": "Generation Bread",
+    "slug": "generation-bread",
+    "category": "Cafés",
+    "description": "Modern bakery and cafe serving pastries and specialty coffee.",
+    "address": "Magsaysay Boulevard",
+    "district": "Downtown",
+    "city": "Tacloban City",
+    "lat": 11.2398,
+    "lng": 125.0080,
+    "phone": "0917-222-8899",
+    "hours": {
+      "mon": "07:00-21:00",
+      "tue": "07:00-21:00"
+    },
+    "price_tier": "₱₱",
+    "photos": {
+      "cover": "genbread_cover.jpg",
+      "profile": "genbread_profile.jpg"
+    },
+    "menu": [
+      {
+        "name": "Croissant",
+        "description": "Buttery flaky croissant.",
+        "price": 95,
+        "category": "Pastry",
+        "photo": "genbread_croissant.jpg"
+      },
+      {
+        "name": "Iced Americano",
+        "description": "Cold espresso-based coffee.",
+        "price": 140,
+        "category": "Coffee",
+        "photo": "genbread_americano.jpg"
+      }
+    ]
+  },
+  {
+    "business_name": "Yolanda's Eatery",
+    "slug": "yolandas-eatery",
+    "category": "Restaurants",
+    "description": "Local seafood eatery known for affordable fresh seafood paluto.",
+    "address": "San Jose",
+    "district": "San Jose",
+    "city": "Tacloban City",
+    "lat": 11.2145,
+    "lng": 124.9808,
+    "phone": "0918-888-1122",
+    "hours": {
+      "mon": "10:00-21:00",
+      "tue": "10:00-21:00"
+    },
+    "price_tier": "₱₱",
+    "photos": {
+      "cover": "yolanda_cover.jpg",
+      "profile": "yolanda_profile.jpg"
+    },
+    "menu": [
+      {
+        "name": "Kinilaw na Tuna",
+        "description": "Fresh tuna ceviche in vinegar and spices.",
+        "price": 220,
+        "category": "Seafood",
+        "photo": "yolanda_kinilaw.jpg"
+      },
+      {
+        "name": "Grilled Squid",
+        "description": "Charred squid stuffed with onions and tomatoes.",
+        "price": 280,
+        "category": "Seafood",
+        "photo": "yolanda_squid.jpg"
+      }
+    ]
+  },
+  {
+    "business_name": "La Maison Punjab",
+    "slug": "la-maison-punjab",
+    "category": "Restaurants",
+    "description": "Indian restaurant serving curries, naan, and grilled dishes.",
+    "address": "Magsaysay Boulevard",
+    "district": "Downtown",
+    "city": "Tacloban City",
+    "lat": 11.2401,
+    "lng": 125.0072,
+    "phone": "0917-444-7788",
+    "hours": {
+      "mon": "11:00-22:00",
+      "tue": "11:00-22:00"
+    },
+    "price_tier": "₱₱₱",
+    "photos": {
+      "cover": "lmp_cover.jpg",
+      "profile": "lmp_profile.jpg"
+    },
+    "menu": [
+      {
+        "name": "Butter Chicken",
+        "description": "Creamy tomato-based Indian chicken curry.",
+        "price": 420,
+        "category": "Indian",
+        "photo": "lmp_butterchicken.jpg"
+      },
+      {
+        "name": "Garlic Naan",
+        "description": "Fresh naan bread topped with garlic.",
+        "price": 120,
+        "category": "Bread",
+        "photo": "lmp_naan.jpg"
+      }
+    ]
+  },
+  {
+    "business_name": "Binalay",
+    "slug": "binalay",
+    "category": "Restaurants",
+    "description": "Binalay offers paluto packages/food trays, lunch packs/bento meals and full catering services.",
+    "address": "Gomez Street",
+    "district": "Downtown",
+    "city": "Tacloban City",
+    "lat": 11.24333,
+    "lng": 125.00472,
+    "phone": "0917-323-7584",
+    "hours": {
+      "mon": "10:00-22:00",
+      "tue": "11:00-22:00",
+      "wed": "10:00-22:00",
+      "thur": "10:00-22:00",
+      "fri": "10:00-22:00",
+      "sat": "10:30-22:00"
+    },
+    "price_tier": "₱",
+    "photos": {
+      "cover": "binalay_cover.jpg",
+      "profile": "binalay_profile.jpg"
+    },
+    "menu": [
+      {
+        "name": "BBQ Pork",
+        "description": "Yummy and saucy bbq.",
+        "price": 10,
+        "category": "BBQ",
+        "photo": "lmp_butterchicken.jpg"
+      },
+      {
+        "name": "Dugo",
+        "description": "Fresh and yummy bbq dugo.",
+        "price": 10,
+        "category": "BBQ",
+        "photo": "lmp_naan.jpg"
+      }
+    ]
+  }
+]

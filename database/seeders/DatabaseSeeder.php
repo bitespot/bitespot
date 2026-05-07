@@ -75,6 +75,9 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        $this->call(VendorPhotoSeeder::class);
+        $this->call([
+            VendorPhotoSeeder::class,
+            TaclobanVendorSeeder::class,
+            ]);
     }
 }

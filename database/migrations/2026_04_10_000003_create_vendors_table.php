@@ -49,7 +49,7 @@ return new class extends Migration
             $table->string('profile_photo')->nullable();    // thumbnail/avatar
 
             // Business details
-            $table->enum('price_tier', ['$', '$$', '$$$'])->default('$');
+            $table->enum('price_tier', ['₱', '₱₱', '₱₱₱'])->default('₱');
 
             // Subscription tier (FR-V06 / Monetization)
             $table->enum('tier', ['free', 'basic', 'premium'])->default('free');
