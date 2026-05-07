@@ -78,9 +78,8 @@ Route::middleware('auth')->group(function () {
      Route::get('/applications/{application}', [\App\Http\Controllers\Vendor\OwnershipController::class, 'showApplication'])->name('application.show');
      Route::delete('/applications/{application}', [\App\Http\Controllers\Vendor\OwnershipController::class, 'withdrawApplication'])->name('application.withdraw');
 
-     // Claim ownership of existing establishments (authenticated users)
-     Route::get('/place/{vendor}/claim', [\App\Http\Controllers\Vendor\OwnershipController::class, 'showClaimForm'])->name('place.claim');
-     Route::post('/place/{vendor}/claim', [\App\Http\Controllers\Vendor\OwnershipController::class, 'submitClaim'])->name('place.claim.submit');
+     // Claim ownership of existing establishments (authenticated vendors)
+     Route::post('/place/{vendor:slug}/claim', [\App\Http\Controllers\Vendor\OwnershipController::class, 'submitClaim'])->name('place.claim.submit');
 
      // ===== NEW VENDOR SETUP (accessible right after registration) =====
      Route::get('/vendor/setup', function () {

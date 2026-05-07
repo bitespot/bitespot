@@ -25,6 +25,7 @@ documents/
 .DS_Store
 vendor/
 !resources/views/vendor/
+!app/Http/Controllers/Vendor/
 /node_modules
 /public/hot
 /public/build

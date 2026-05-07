@@ -208,10 +208,34 @@
 
                 @auth
                     @if(auth()->user()->isVendor() && auth()->id() !== $vendor->user_id)
-                    <a href="{{ route('place.claim', $vendor->slug) }}"
-                       class="block w-full px-4 py-3 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition text-center">
-                        📋 Claim Ownership
-                    </a>
+                    <button onclick="document.getElementById('claim-modal').classList.remove('hidden')"
+                            class="block w-full px-4 py-3 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition text-center">
+                        Claim Ownership
+                    </button>
+
+                    {{-- Claim confirmation modal --}}
+                    <div id="claim-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                        <div class="bg-white rounded-2xl shadow-xl p-6 max-w-sm mx-4 w-full">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Claim Ownership</h3>
+                            <p class="text-sm text-gray-600 mb-6">
+                                Are you sure you want to claim ownership of <strong>{{ $vendor->name }}</strong>?
+                                You will immediately become the owner of this establishment.
+                            </p>
+                            <div class="flex gap-3">
+                                <button onclick="document.getElementById('claim-modal').classList.add('hidden')"
+                                        class="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
+                                    Cancel
+                                </button>
+                                <form method="POST" action="{{ route('place.claim.submit', $vendor->slug) }}" class="flex-1">
+                                    @csrf
+                                    <button type="submit"
+                                            class="w-full px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-lg hover:bg-green-600 transition">
+                                        Yes, Claim It
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                     @endif
                 @else
                 <div class="bg-orange-50 border border-orange-200 rounded-xl p-4 text-center">
