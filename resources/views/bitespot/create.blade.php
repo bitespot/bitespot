@@ -76,23 +76,6 @@
                 <textarea name="spot_review" class="form-textarea" rows="3" placeholder="How was the ambiance? The service?"></textarea>
             </div>
 
-            <hr class="my-8 border-gray-200">
-
-            {{-- Dynamic Food/Drinks Section --}}
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-bold text-gray-900">What did you eat?</h2>
-                <span class="text-sm text-gray-500">(Optional)</span>
-            </div>
-
-            <div id="food-items-container">
-                {{-- Food Items injected here via JS --}}
-            </div>
-
-            <button type="button" onclick="addFoodItem()" class="w-full py-3 mt-4 border-2 border-dashed border-primary text-primary rounded-xl font-semibold hover:bg-cream transition-colors flex items-center justify-center gap-2">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                Add Food or Drink
-            </button>
-
             <div class="mt-8">
                 <button type="submit" class="w-full py-3.5 bg-primary hover:bg-primary-hover text-white rounded-xl font-bold text-lg shadow-lg transition-colors">
                     Post BiteSpot
@@ -103,55 +86,6 @@
 </div>
 
 <script>
-    let foodCount = 0;
-
-    function addFoodItem() {
-        foodCount++;
-        const container = document.getElementById('food-items-container');
-        const id = `food_${foodCount}`;
-        
-        const html = `
-            <div class="food-item-card" id="${id}">
-                <button type="button" class="remove-food-btn" onclick="document.getElementById('${id}').remove()">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                </button>
-                
-                <div class="form-group pr-10">
-                    <label class="form-label">Food/Drink Name</label>
-                    <input type="text" name="foods[${foodCount}][name]" class="form-input" placeholder="e.g. Spicy Ramen" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Photo</label>
-                    <div class="upload-zone" style="padding: 1.5rem;" onclick="document.getElementById('photo_${id}').click()">
-                        <span class="text-sm text-gray-500 font-medium">+ Add Photo</span>
-                        <input type="file" id="photo_${id}" name="foods[${foodCount}][photo]" accept="image/*" class="hidden" onchange="previewImage(this, 'preview_${id}', 'remove_${id}')">
-                        <img id="preview_${id}" class="upload-preview" alt="Preview">
-                        <button type="button" id="remove_${id}" class="upload-remove" onclick="event.stopPropagation(); removeImage('photo_${id}', 'preview_${id}', 'remove_${id}')">&times;</button>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Rating</label>
-                    <div class="star-rating">
-                        <input type="radio" id="star5_${id}" name="foods[${foodCount}][rating]" value="5"><label for="star5_${id}"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></label>
-                        <input type="radio" id="star4_${id}" name="foods[${foodCount}][rating]" value="4"><label for="star4_${id}"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></label>
-                        <input type="radio" id="star3_${id}" name="foods[${foodCount}][rating]" value="3"><label for="star3_${id}"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></label>
-                        <input type="radio" id="star2_${id}" name="foods[${foodCount}][rating]" value="2"><label for="star2_${id}"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></label>
-                        <input type="radio" id="star1_${id}" name="foods[${foodCount}][rating]" value="1" checked><label for="star1_${id}"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></label>
-                    </div>
-                </div>
-
-                <div class="form-group mb-0">
-                    <label class="form-label">Review</label>
-                    <textarea name="foods[${foodCount}][review]" class="form-textarea" rows="2" placeholder="Was it tasty?"></textarea>
-                </div>
-            </div>
-        `;
-        
-        container.insertAdjacentHTML('beforeend', html);
-    }
-
     function previewImage(input, previewId, removeId) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();

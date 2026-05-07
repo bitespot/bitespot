@@ -32,7 +32,9 @@
 
     {{-- Empty state (hidden until JS decides) --}}
     <div id="est-empty" style="display:none;text-align:center;padding:4rem 1rem;">
-        <div style="font-size:2.5rem;margin-bottom:1rem;">🏪</div>
+        <span class="bs-who-emoji" style="display: flex; align-items: center; justify-content: center; height: 2.8em;">
+            <img src="/images/dashboard/who_uses_bitespot/vendors.png" alt="Vendors" style="width: 2.2em; height: 2.2em; object-fit: contain; display: block;" loading="lazy">
+        </span>
         <h2 style="font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;color:#1a1612;margin-bottom:0.5rem;">No establishments yet</h2>
         <p style="color:#78716c;font-size:0.9rem;margin-bottom:1.5rem;">Register your first establishment to get started.</p>
         <a href="/vendor/register"

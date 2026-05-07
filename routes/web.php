@@ -4,20 +4,9 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Support\Facades\Route;
 
-/* 
-|--------------------------------------------------------------------------
+/* |--------------------------------------------------------------------------
 | BiteSpot — Web Routes (routes/web.php)
 |--------------------------------------------------------------------------
-|
-| Organised into four sections:
-|   1. Guest-only routes (login, register)
-|   2. Authenticated routes (profile, bookmarks)
-|   3. Vendor-only routes (dashboard, menu, media, settings)
-|   4. Admin-only routes (panel, approvals, moderation)
-|
-| The 'role' middleware alias is registered in bootstrap/app.php:
-|   $middleware->alias(['role' => \App\Http\Middleware\CheckRole::class]);
-|
 */
 
 // ---------------------------------------------------------------------------
@@ -42,16 +31,12 @@ Route::get('/place/{vendor:slug}', [\App\Http\Controllers\EstablishmentControlle
 // ---------------------------------------------------------------------------
 
 Route::middleware('guest')->group(function () {
-
-    // User auth
     Route::get('/login',    [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('/login',   [AuthenticatedSessionController::class, 'store']);
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('/register',[RegisteredUserController::class, 'store']);
-
 });
 
-// Vendor registration (also available to guests and logged-in users)
 Route::get('/vendor/register',  [RegisteredUserController::class, 'createVendor'])->name('vendor.register');
 Route::post('/vendor/register', [RegisteredUserController::class, 'storeVendor']);
 
@@ -64,11 +49,17 @@ Route::middleware('auth')->group(function () {
      Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
      // General dashboard for all authenticated users
-     Route::get('/dashboard', function () {
-          return view('dashboard');
-     })->name('dashboard');
+     Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
-     // User profile (Norman)
+     // ---> NEW: Feed Action Routes <---
+     Route::post('/bitespots/{bitespot}/toggle-like', [\App\Http\Controllers\BiteSpotController::class, 'toggleLike'])->name('bitespots.like');
+     Route::post('/bitespots/{bitespot}/toggle-save', [\App\Http\Controllers\BiteSpotController::class, 'toggleSave'])->name('bitespots.save');
+
+     // ---> NEW: BiteSpot Creation Routes <---
+     Route::get('/bitespot/create', [\App\Http\Controllers\BiteSpotController::class, 'create'])->name('bitespot.create');
+     Route::post('/bitespot/store', [\App\Http\Controllers\BiteSpotController::class, 'store'])->name('bitespot.store');
+
+     // User profile
      Route::get('/profile',      [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
      Route::get('/profile/edit', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
      Route::put('/profile',      [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
@@ -78,49 +69,35 @@ Route::middleware('auth')->group(function () {
      Route::get('/applications/{application}', [\App\Http\Controllers\Vendor\OwnershipController::class, 'showApplication'])->name('application.show');
      Route::delete('/applications/{application}', [\App\Http\Controllers\Vendor\OwnershipController::class, 'withdrawApplication'])->name('application.withdraw');
 
-     // Claim ownership of existing establishments (authenticated users)
+     // Claim ownership of existing establishments
      Route::get('/place/{vendor}/claim', [\App\Http\Controllers\Vendor\OwnershipController::class, 'showClaimForm'])->name('place.claim');
      Route::post('/place/{vendor}/claim', [\App\Http\Controllers\Vendor\OwnershipController::class, 'submitClaim'])->name('place.claim.submit');
 
-     // ===== NEW VENDOR SETUP (accessible right after registration) =====
+     // Vendor Setup
      Route::get('/vendor/setup', function () {
-          // For new vendors immediately after registration
-          if (!auth()->check()) {
-               return redirect('/login');
-          }
-
-          if (auth()->user()->role !== 'vendor') {
-               return redirect('/');
-          }
+          if (!auth()->check()) return redirect('/login');
+          if (auth()->user()->role !== 'vendor') return redirect('/');
 
           $vendor = \App\Models\Vendor::where('user_id', auth()->id())->first();
-          if (!$vendor) {
-               return redirect('/vendor-dashboard')->with('error', 'Vendor establishment not found.');
-          }
+          if (!$vendor) return redirect('/vendor-dashboard')->with('error', 'Vendor establishment not found.');
 
           return view('vendor.setup', compact('vendor'));
-     })->middleware('auth')->name('vendor.setup.direct');
+     })->name('vendor.setup.direct');
 
-     // =======================================================================
-     // Vendor: Establishment list + per-establishment management
-     // =======================================================================
-
-     // List all establishments owned by this vendor account
+     // Vendor Dashboard Access
      Route::get('/vendor-dashboard', function () {
-          if (!auth()->user()->isVendor()) {
-               abort(403, 'Access Denied. You must be a registered vendor.');
-          }
+          if (!auth()->user()->isVendor()) abort(403, 'Access Denied. You must be a registered vendor.');
           return view('pages.vendor-establishments');
      });
 
-     // Manage a specific establishment
      Route::get('/vendor-dashboard/{vendor}', function (\App\Models\Vendor $vendor) {
-          if (!auth()->user()->isVendor() || $vendor->user_id !== auth()->id()) {
-               abort(403, 'Access Denied.');
-          }
+          if (!auth()->user()->isVendor() || $vendor->user_id !== auth()->id()) abort(403, 'Access Denied.');
           return view('pages.vendordashboard', compact('vendor'));
      })->where('vendor', '[0-9]+');
 
+     // General dashboard for all authenticated users
+     Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+     Route::get('/saved', [\App\Http\Controllers\DashboardController::class, 'saved'])->name('saved');
 });
 
 // ---------------------------------------------------------------------------
@@ -130,48 +107,32 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->group(function () {
 
     Route::get('/setup', function () {
-        // For new vendors, this is the first landing page after registration
         $user = auth()->user();
         $vendor = \App\Models\Vendor::where('user_id', $user->id)->first();
         
         if (!$vendor) {
-            // If no vendor found but user is authenticated as vendor role,
-            // something went wrong. Log it and redirect safely.
             \Log::error('Vendor setup: No vendor record for vendor user', [
                 'user_id' => $user->id,
                 'user_role' => $user->role,
             ]);
             return redirect('/vendor-dashboard')->with('error', 'Vendor establishment not found. Please contact support.');
         }
-        
         return view('vendor.setup', compact('vendor'));
     })->name('setup');
 
-    Route::get('/dashboard', [\App\Http\Controllers\Vendor\DashboardController::class, 'index'])
-         ->name('dashboard');
-
-    Route::get('/menu',      [\App\Http\Controllers\Vendor\MenuController::class, 'index'])
-         ->name('menu');
-
-    Route::get('/media',     [\App\Http\Controllers\Vendor\MediaController::class, 'index'])
-         ->name('media');
-
-    Route::get('/photos',         function () {
+    Route::get('/dashboard', [\App\Http\Controllers\Vendor\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/menu',      [\App\Http\Controllers\Vendor\MenuController::class, 'index'])->name('menu');
+    Route::get('/media',     [\App\Http\Controllers\Vendor\MediaController::class, 'index'])->name('media');
+    
+    Route::get('/photos', function () {
          $vendor = \App\Models\Vendor::where('user_id', auth()->id())->firstOrFail();
          return view('vendor.upload-photos', ['vendor' => $vendor]);
     })->name('photos');
 
-    Route::post('/photos/cover',   [\App\Http\Controllers\Vendor\PhotosController::class, 'uploadCover'])
-         ->name('photos.cover');
-
-    Route::post('/photos/profile', [\App\Http\Controllers\Vendor\PhotosController::class, 'uploadProfile'])
-         ->name('photos.profile');
-
-    Route::get('/reviews',   [\App\Http\Controllers\Vendor\ReviewsController::class, 'index'])
-         ->name('reviews');
-
-    Route::get('/settings',  [\App\Http\Controllers\Vendor\SettingsController::class, 'index'])
-         ->name('settings');
+    Route::post('/photos/cover',   [\App\Http\Controllers\Vendor\PhotosController::class, 'uploadCover'])->name('photos.cover');
+    Route::post('/photos/profile', [\App\Http\Controllers\Vendor\PhotosController::class, 'uploadProfile'])->name('photos.profile');
+    Route::get('/reviews',   [\App\Http\Controllers\Vendor\ReviewsController::class, 'index'])->name('reviews');
+    Route::get('/settings',  [\App\Http\Controllers\Vendor\SettingsController::class, 'index'])->name('settings');
 });
 
 // ---------------------------------------------------------------------------
@@ -179,47 +140,14 @@ Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->g
 // ---------------------------------------------------------------------------
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/vendors',          [\App\Http\Controllers\Admin\VendorApprovalController::class, 'index'])->name('vendors');
+    Route::get('/moderation',       [\App\Http\Controllers\Admin\ModerationController::class, 'index'])->name('moderation');
+    Route::get('/analytics',        [\App\Http\Controllers\Admin\AnalyticsController::class, 'index'])->name('analytics');
 
-    Route::get('/', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])
-         ->name('dashboard');
-
-    // Additional admin sub-routes (Norman)
-    Route::get('/vendors',          [\App\Http\Controllers\Admin\VendorApprovalController::class, 'index'])
-         ->name('vendors');
-
-    Route::get('/moderation',       [\App\Http\Controllers\Admin\ModerationController::class, 'index'])
-         ->name('moderation');
-
-    Route::get('/analytics',        [\App\Http\Controllers\Admin\AnalyticsController::class, 'index'])
-         ->name('analytics');
-
-    // Ownership applications review
-    Route::get('/ownership-applications', [\App\Http\Controllers\Admin\OwnershipApplicationController::class, 'index'])
-         ->name('ownership-applications');
-    Route::get('/ownership-applications/{application}', [\App\Http\Controllers\Admin\OwnershipApplicationController::class, 'show'])
-         ->name('ownership-application.show');
-    Route::post('/ownership-applications/{application}/approve', [\App\Http\Controllers\Admin\OwnershipApplicationController::class, 'approve'])
-         ->name('ownership-application.approve');
-    Route::post('/ownership-applications/{application}/reject', [\App\Http\Controllers\Admin\OwnershipApplicationController::class, 'reject'])
-         ->name('ownership-application.reject');
-    Route::post('/ownership-applications/{application}/revoke', [\App\Http\Controllers\Admin\OwnershipApplicationController::class, 'revoke'])
-         ->name('ownership-application.revoke');
-
+    Route::get('/ownership-applications', [\App\Http\Controllers\Admin\OwnershipApplicationController::class, 'index'])->name('ownership-applications');
+    Route::get('/ownership-applications/{application}', [\App\Http\Controllers\Admin\OwnershipApplicationController::class, 'show'])->name('ownership-application.show');
+    Route::post('/ownership-applications/{application}/approve', [\App\Http\Controllers\Admin\OwnershipApplicationController::class, 'approve'])->name('ownership-application.approve');
+    Route::post('/ownership-applications/{application}/reject', [\App\Http\Controllers\Admin\OwnershipApplicationController::class, 'reject'])->name('ownership-application.reject');
+    Route::post('/ownership-applications/{application}/revoke', [\App\Http\Controllers\Admin\OwnershipApplicationController::class, 'revoke'])->name('ownership-application.revoke');
 });
-
-//Route::get('/bitespot/create', [\App\Http\Controllers\BiteSpotController::class, 'create'])->name('bitespot.create');
-
-// ---------------------------------------------------------------------------
-// TEMPORARY UI PROTOTYPE ROUTES
-// ---------------------------------------------------------------------------
-
-// 1. Shows the page directly without needing a controller
-Route::get('/bitespot/create', function () {
-    return view('bitespot.create');
-})->name('bitespot.create');
-
-// 2. Catches the form submission and redirects back to the dashboard so it doesn't crash
-Route::post('/bitespot/store', function () {
-    // Later, backend logic goes here. For now, just go back to the dashboard.
-    return redirect('/dashboard')->with('status', 'BiteSpot prototype posted!');
-})->name('bitespot.store');

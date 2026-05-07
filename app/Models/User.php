@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany; // Added this import
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -64,5 +65,19 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    // ==========================================
+    // NEW: Feed Interactions
+    // ==========================================
+
+    public function likedBiteSpots(): BelongsToMany
+    {
+        return $this->belongsToMany(BiteSpot::class, 'bitespot_likes', 'user_id', 'bitespot_id')->withTimestamps();
+    }
+
+    public function savedBiteSpots(): BelongsToMany
+    {
+        return $this->belongsToMany(BiteSpot::class, 'bitespot_saves', 'user_id', 'bitespot_id')->withTimestamps();
     }
 }
