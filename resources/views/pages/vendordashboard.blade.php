@@ -7,6 +7,9 @@
 
 @if(auth()->check() && auth()->user()->isVendor())
 
+{{-- DASHBOARD ROOT — toast and modals live inside here so --orange CSS var is in scope --}}
+<div class="vd-root" id="vd-root">
+
 {{-- TOAST --}}
 <div class="vd-toast" id="vd-toast">
     <span class="vd-toast-dot"></span>
@@ -109,13 +112,10 @@
     </div>
 </div>
 
-{{-- DASHBOARD ROOT --}}
-<div class="vd-root" id="vd-root">
-
     {{-- ── SIDEBAR ─────────────────────────────────── --}}
     <aside class="vd-sidebar">
         <div class="vd-sidebar-header">
-            <div class="vd-sidebar-biz-name">{{ auth()->user()->name }}</div>
+            <div class="vd-sidebar-biz-name">{{ $vendor->business_name }}</div>
             <span class="vd-sidebar-biz-badge">Vendor</span>
         </div>
 
@@ -153,6 +153,11 @@
         </nav>
 
         <div class="vd-sidebar-footer">
+            <a href="/vendor-dashboard"
+               style="display:flex;align-items:center;gap:6px;color:#a8a29e;font-size:0.78rem;text-decoration:none;margin-bottom:0.5rem;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                All Establishments
+            </a>
             BiteSpot Vendor Portal
         </div>
     </aside>
@@ -378,6 +383,9 @@
     </div>{{-- /.vd-main --}}
 </div>{{-- /.vd-root --}}
 
+<script>
+window.VENDOR_API_BASE = '/api/vendor/establishments/{{ $vendor->id }}';
+</script>
 @vite(['resources/js/vendor-dashboard.js'])
 
 @else

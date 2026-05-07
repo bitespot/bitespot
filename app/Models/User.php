@@ -46,9 +46,23 @@ class User extends Authenticatable
         return $this->hasMany(Review::class);
     }
 
-    // NEW METHOD ADDED HERE
+    public function vendor(): HasMany
+    {
+        return $this->hasMany(Vendor::class);
+    }
+
+    public function ownershipApplications(): HasMany
+    {
+        return $this->hasMany(VendorOwnershipApplication::class);
+    }
+
     public function isVendor(): bool
     {
         return $this->role === 'vendor';
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
     }
 }

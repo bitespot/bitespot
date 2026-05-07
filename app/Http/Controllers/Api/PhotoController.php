@@ -3,159 +3,171 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Photo;
+use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use App\Models\Vendor;
 
 class PhotoController extends Controller
 {
     /**
-     * Upload cover photo to S3
-     * POST /api/vendor/photos/cover
+     * GET /api/vendors/{vendor}/photos  — public gallery for establishment page
      */
-    public function uploadCover(Request $request)
+    public function publicIndex(Request $request, Vendor $vendor)
     {
-        // Ensure authenticated vendor
-        if (!auth()->check()) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
-
-        $vendor = Vendor::where('user_id', auth()->id())->first();
-        if (!$vendor) {
+        if ($vendor->status !== 'approved') {
             return response()->json(['message' => 'Vendor not found'], 404);
         }
 
-        // Validate file
+        $photos = $vendor->photos()->orderByDesc('is_primary')->orderBy('created_at')->get();
+
+        return response()->json(['data' => $photos]);
+    }
+
+    /**
+     * GET /api/vendor/establishments/{vendor}/photos
+     */
+    public function index(Request $request, Vendor $vendor)
+    {
+        if ($vendor->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $photos = $vendor->photos()->orderByDesc('is_primary')->orderBy('created_at')->get();
+
+        return response()->json(['data' => $photos]);
+    }
+
+    /**
+     * POST /api/vendor/establishments/{vendor}/photos  — upload a gallery photo
+     */
+    public function store(Request $request, Vendor $vendor)
+    {
+        if ($vendor->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $request->validate([
+            'photo' => 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
+        ]);
+
+        $file = $request->file('photo');
+        $key  = 'vendors/' . $vendor->id . '/gallery/' . Str::uuid() . '.' . $file->getClientOriginalExtension();
+
+        Storage::disk('s3')->put($key, file_get_contents($file));
+
+        $isPrimary = $vendor->photos()->count() === 0;
+
+        $photo = $vendor->photos()->create([
+            'url'        => $key,
+            'is_primary' => $isPrimary,
+        ]);
+
+        if ($isPrimary) {
+            $vendor->update(['profile_photo' => $key]);
+        }
+
+        return response()->json($photo, 201);
+    }
+
+    /**
+     * PUT /api/vendor/establishments/{vendor}/photos/{photo}/primary
+     */
+    public function setPrimary(Request $request, Vendor $vendor, Photo $photo)
+    {
+        if ($vendor->user_id !== auth()->id() || $photo->vendor_id !== $vendor->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $vendor->photos()->update(['is_primary' => false]);
+        $photo->update(['is_primary' => true]);
+        $vendor->update(['profile_photo' => $photo->url]);
+
+        return response()->json(['message' => 'Primary photo updated', 'photo' => $photo]);
+    }
+
+    /**
+     * DELETE /api/vendor/establishments/{vendor}/photos/{photo}
+     */
+    public function destroy(Request $request, Vendor $vendor, Photo $photo)
+    {
+        if ($vendor->user_id !== auth()->id() || $photo->vendor_id !== $vendor->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        Storage::disk('s3')->delete($photo->url);
+
+        if ($photo->is_primary) {
+            $next = $vendor->photos()->where('id', '!=', $photo->id)->latest()->first();
+            $vendor->update(['profile_photo' => $next?->url]);
+            if ($next) {
+                $next->update(['is_primary' => true]);
+            }
+        }
+
+        $photo->delete();
+
+        return response()->json(['message' => 'Photo deleted']);
+    }
+
+    /**
+     * POST /api/vendor/establishments/{vendor}/photos/cover
+     */
+    public function uploadCover(Request $request, Vendor $vendor)
+    {
+        if ($vendor->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
         $request->validate([
             'cover_photo' => 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
         ]);
 
-        if ($request->hasFile('cover_photo')) {
-            $file = $request->file('cover_photo');
-            
-            // Delete old photo if exists
-            if ($vendor->cover_photo) {
-                Storage::disk('s3')->delete($vendor->cover_photo);
-            }
+        $file = $request->file('cover_photo');
 
-            // Generate unique filename
-            $fileName = 'vendors/covers/' . Str::slug($vendor->business_name) . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
-
-            // Upload to S3 with public visibility
-            Storage::disk('s3')->put($fileName, file_get_contents($file));
-
-            // Update database
-            $vendor->cover_photo = $fileName;
-            $vendor->save();
-
-            return response()->json([
-                'message' => 'Cover photo uploaded successfully',
-                'cover_photo' => $fileName,
-                'cover_photo_url' => Storage::disk('s3')->url($fileName),
-            ], 200);
+        if ($vendor->cover_photo) {
+            Storage::disk('s3')->delete($vendor->cover_photo);
         }
 
-        return response()->json(['message' => 'No file uploaded'], 400);
+        $key = 'vendors/covers/' . Str::slug($vendor->business_name) . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
+        Storage::disk('s3')->put($key, file_get_contents($file));
+
+        $vendor->update(['cover_photo' => $key]);
+
+        return response()->json([
+            'message'         => 'Cover photo updated',
+            'cover_photo_url' => Storage::disk('s3')->url($key),
+        ]);
     }
 
     /**
-     * Upload profile photo to S3
-     * POST /api/vendor/photos/profile
+     * POST /api/vendor/establishments/{vendor}/photos/profile
      */
-    public function uploadProfile(Request $request)
+    public function uploadProfile(Request $request, Vendor $vendor)
     {
-        if (!auth()->check()) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
-
-        $vendor = Vendor::where('user_id', auth()->id())->first();
-        if (!$vendor) {
-            return response()->json(['message' => 'Vendor not found'], 404);
+        if ($vendor->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         $request->validate([
             'profile_photo' => 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
         ]);
 
-        if ($request->hasFile('profile_photo')) {
-            $file = $request->file('profile_photo');
-            
-            if ($vendor->profile_photo) {
-                Storage::disk('s3')->delete($vendor->profile_photo);
-            }
+        $file = $request->file('profile_photo');
 
-            $fileName = 'vendors/profiles/' . Str::slug($vendor->business_name) . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
-            Storage::disk('s3')->put($fileName, file_get_contents($file));
-
-            $vendor->profile_photo = $fileName;
-            $vendor->save();
-
-            return response()->json([
-                'message' => 'Profile photo uploaded successfully',
-                'profile_photo' => $fileName,
-                'profile_photo_url' => Storage::disk('s3')->url($fileName),
-            ], 200);
-        }
-
-        return response()->json(['message' => 'No file uploaded'], 400);
-    }
-
-    /**
-     * Get vendor photos (public)
-     * GET /api/vendors/{vendor}/photos
-     */
-    public function publicIndex(Request $request, Vendor $vendor)
-    {
-        if ($vendor->status !== 'approved') {
-            return response()->json(['message' => 'Vendor not found or not approved'], 404);
-        }
-
-        $photos = [];
-        if ($vendor->cover_photo) {
-            $photos[] = [
-                'type' => 'cover',
-                'path' => $vendor->cover_photo,
-                'url' => Storage::disk('s3')->url($vendor->cover_photo),
-            ];
-        }
         if ($vendor->profile_photo) {
-            $photos[] = [
-                'type' => 'profile',
-                'path' => $vendor->profile_photo,
-                'url' => Storage::disk('s3')->url($vendor->profile_photo),
-            ];
+            Storage::disk('s3')->delete($vendor->profile_photo);
         }
 
-        return response()->json(['data' => $photos]);
-    }
+        $key = 'vendors/profiles/' . Str::slug($vendor->business_name) . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
+        Storage::disk('s3')->put($key, file_get_contents($file));
 
-    /**
-     * Get vendor's own photos (authenticated)
-     * GET /api/vendor/photos
-     */
-    public function index(Request $request)
-    {
-        if (!auth()->check()) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
+        $vendor->update(['profile_photo' => $key]);
 
-        $vendor = Vendor::where('user_id', auth()->id())->first();
-        if (!$vendor) {
-            return response()->json(['message' => 'Vendor not found'], 404);
-        }
-
-        return $this->publicIndex($request, $vendor);
-    }
-
-    public function store(Request $request)
-    {
-        // Deprecated - use uploadCover or uploadProfile
-        return response()->json(['message' => 'Use uploadCover or uploadProfile endpoints'], 400);
-    }
-
-    public function destroy(Request $request)
-    {
-        return response()->json(['message' => 'Not implemented'], 400);
+        return response()->json([
+            'message'            => 'Profile photo updated',
+            'profile_photo_url'  => Storage::disk('s3')->url($key),
+        ]);
     }
 }

@@ -206,9 +206,26 @@
 
                 </div>
 
-                @guest
+                @auth
+                    @if(auth()->id() !== $vendor->user_id)
+                    <a href="{{ route('place.claim', $vendor->slug) }}"
+                       class="block w-full px-4 py-3 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition text-center">
+                        📋 Claim Ownership
+                    </a>
+                    @endif
+                @else
                 <div class="bg-orange-50 border border-orange-200 rounded-xl p-4 text-center">
                     <p class="text-sm text-orange-700 mb-3">Sign in to save this BiteSpot.</p>
+                    <a href="/login"
+                       class="inline-block px-4 py-2 bg-orange-500 text-white text-sm font-medium rounded-full hover:bg-orange-600 transition">
+                        Sign In
+                    </a>
+                </div>
+                @endauth
+
+                @guest
+                <div class="bg-orange-50 border border-orange-200 rounded-xl p-4 text-center">
+                    <p class="text-sm text-orange-700 mb-3">Sign in to save this BiteSpot or claim ownership.</p>
                     <a href="/login"
                        class="inline-block px-4 py-2 bg-orange-500 text-white text-sm font-medium rounded-full hover:bg-orange-600 transition">
                         Sign In

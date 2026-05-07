@@ -12,12 +12,12 @@ use Illuminate\Support\Facades\Validator;
 class MenuItemController extends Controller
 {
     /**
-     * Display a listing of the menu items for a specific vendor (Public).
+     * GET /api/vendors/{vendor}/menu  — public menu for establishment page
      */
     public function publicIndex(Request $request, Vendor $vendor): JsonResponse
     {
         $menuItems = $vendor->menuItems()
-            ->where('is_available', true)
+            ->where('status', 'Active')
             ->orderBy('sort_order')
             ->get()
             ->groupBy('category');
@@ -26,89 +26,85 @@ class MenuItemController extends Controller
     }
 
     /**
-     * Display a listing of the menu items for the authenticated vendor owner.
+     * GET /api/vendor/establishments/{vendor}/menu
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request, Vendor $vendor): JsonResponse
     {
-        $vendor = Vendor::where('user_id', auth()->id())->first();
-
-        if (!$vendor) {
-            return response()->json(['message' => 'Vendor profile not found.'], 404);
+        if ($vendor->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        $menuItems = $vendor->menuItems()
-            ->orderBy('sort_order')
-            ->get();
-
-        return response()->json($menuItems);
+        return response()->json($vendor->menuItems()->orderBy('sort_order')->get());
     }
 
     /**
-     * Store a newly created menu item in storage.
+     * POST /api/vendor/establishments/{vendor}/menu
      */
-    public function store(Request $request): JsonResponse
+    public function store(Request $request, Vendor $vendor): JsonResponse
     {
-        $vendor = Vendor::where('user_id', auth()->id())->first();
-
-        if (!$vendor) {
-            return response()->json(['message' => 'Vendor profile not found.'], 404);
+        if ($vendor->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
+            'name'        => 'required|string|max:255',
             'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'category' => 'nullable|string|max:100',
-            'is_available' => 'boolean',
-            'sort_order' => 'integer',
+            'price'       => 'required|numeric|min:0',
+            'category'    => 'nullable|string|max:100',
+            'status'      => 'nullable|in:Active,Sold Out,Hidden',
+            'sort_order'  => 'integer',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $menuItem = $vendor->menuItems()->create($request->all());
+        $data = $request->only(['name', 'description', 'price', 'category', 'status', 'sort_order']);
+        $data['is_available'] = ($data['status'] ?? 'Active') === 'Active';
+
+        $menuItem = $vendor->menuItems()->create($data);
 
         return response()->json($menuItem, 201);
     }
 
     /**
-     * Update the specified menu item in storage.
+     * PUT /api/vendor/establishments/{vendor}/menu/{item}
      */
-    public function update(Request $request, MenuItem $item): JsonResponse
+    public function update(Request $request, Vendor $vendor, MenuItem $item): JsonResponse
     {
-        $vendor = Vendor::where('user_id', auth()->id())->first();
-
-        if (!$vendor || $item->vendor_id !== $vendor->id) {
+        if ($vendor->user_id !== auth()->id() || $item->vendor_id !== $vendor->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         $validator = Validator::make($request->all(), [
-            'name' => 'sometimes|required|string|max:255',
+            'name'        => 'sometimes|required|string|max:255',
             'description' => 'nullable|string',
-            'price' => 'sometimes|required|numeric|min:0',
-            'category' => 'nullable|string|max:100',
-            'is_available' => 'boolean',
-            'sort_order' => 'integer',
+            'price'       => 'sometimes|required|numeric|min:0',
+            'category'    => 'nullable|string|max:100',
+            'status'      => 'nullable|in:Active,Sold Out,Hidden',
+            'sort_order'  => 'integer',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $item->update($request->all());
+        $data = $request->only(['name', 'description', 'price', 'category', 'status', 'sort_order']);
+        if (isset($data['status'])) {
+            $data['is_available'] = $data['status'] === 'Active';
+        }
+
+        $item->update($data);
 
         return response()->json($item);
     }
 
     /**
-     * Remove the specified menu item from storage.
+     * DELETE /api/vendor/establishments/{vendor}/menu/{item}
      */
-    public function destroy(Request $request, MenuItem $item): JsonResponse
+    public function destroy(Request $request, Vendor $vendor, MenuItem $item): JsonResponse
     {
-        $vendor = Vendor::where('user_id', auth()->id())->first();
-
-        if (!$vendor || $item->vendor_id !== $vendor->id) {
+        if ($vendor->user_id !== auth()->id() || $item->vendor_id !== $vendor->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
