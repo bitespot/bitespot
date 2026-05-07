@@ -24,14 +24,19 @@
                 <div class="mb-8">
                     <p class="text-sm font-semibold text-gray-700 mb-3">I want to register as:</p>
                     <div class="grid grid-cols-2 gap-3">
-                        <button type="button" onclick="selectRole('user')" class="role-btn-user px-4 py-3 rounded-lg border-2 border-orange-500 bg-orange-50 text-orange-700 font-semibold text-sm transition-all active">
-                            👤 Customer
+                        
+                        <button type="button" onclick="selectRole('user')" class="role-btn-user flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl border-2 border-orange-500 bg-orange-50 text-orange-700 font-bold text-sm transition-all active">
+                            <img src="/images/dashboard/who_uses_bitespot/diners.png" alt="Food Customers" class="w-5 h-5 object-contain" loading="lazy">
+                            <span>Customer</span>
                         </button>
-                        <a href="{{ route('vendor.register') }}" class="px-4 py-3 rounded-lg border-2 border-gray-300 bg-white text-gray-700 font-semibold text-sm transition-all hover:border-green-500 flex items-center justify-center">
-                            🏪 Vendor
-                        </a>
+                        
+                        <button type="button" onclick="selectRole('vendor')" class="role-btn-vendor flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl border-2 border-gray-300 bg-white text-gray-700 font-bold text-sm transition-all hover:border-green-500 hover:bg-green-50 hover:text-green-700">
+                            <img src="/images/dashboard/who_uses_bitespot/vendors.png" alt="Food Vendors" class="w-5 h-5 object-contain opacity-80" loading="lazy">
+                            <span>Vendor</span>
+                        </button>
+
                     </div>
-                </div>
+                </div> 
 
                 <form method="POST" action="{{ route('register') }}" class="space-y-5" id="register-form">
                     @csrf
@@ -80,11 +85,21 @@
     <script>
         function selectRole(role) {
             document.getElementById('role-input').value = role;
-            document.querySelectorAll('.role-btn-user').forEach(el => {
-                if (role === 'user') {
-                    el.classList.add('active', 'border-orange-500', 'bg-orange-50', 'text-orange-700');
-                }
-            });
+            
+            const userBtn = document.querySelector('.role-btn-user');
+            const vendorBtn = document.querySelector('.role-btn-vendor');
+
+            if (role === 'user') {
+                // Highlight User (Orange) & Reset Vendor (Gray)
+                userBtn.className = "role-btn-user flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl border-2 border-orange-500 bg-orange-50 text-orange-700 font-bold text-sm transition-all";
+                
+                vendorBtn.className = "role-btn-vendor flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl border-2 border-gray-300 bg-white text-gray-700 font-bold text-sm transition-all hover:border-green-500 hover:bg-green-50 hover:text-green-700";
+            } else if (role === 'vendor') {
+                // Highlight Vendor (Green) & Reset User (Gray)
+                vendorBtn.className = "role-btn-vendor flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl border-2 border-green-500 bg-green-50 text-green-700 font-bold text-sm transition-all";
+                
+                userBtn.className = "role-btn-user flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl border-2 border-gray-300 bg-white text-gray-700 font-bold text-sm transition-all hover:border-orange-500 hover:bg-orange-50 hover:text-orange-700";
+            }
         }
     </script>
 </x-guest-layout>

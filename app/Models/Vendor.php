@@ -72,21 +72,17 @@ class Vendor extends Model
     public function getPrimaryPhotoAttribute(): ?string
     {
         $key = $this->profile_photo ?? $this->cover_photo;
-        return $key ? Storage::disk('s3')->url($key) : null;
+        return $key ? Storage::url($key) : null;
     }
 
     public function getCoverPhotoUrlAttribute(): ?string
     {
-        return $this->cover_photo
-            ? Storage::disk('s3')->url($this->cover_photo)
-            : null;
+        return $this->cover_photo ? Storage::url($this->cover_photo) : null;
     }
 
     public function getProfilePhotoUrlAttribute(): ?string
     {
-        return $this->profile_photo
-            ? Storage::disk('s3')->url($this->profile_photo)
-            : null;
+        return $this->profile_photo ? Storage::url($this->profile_photo) : null;
     }
 
     public function discoveries(): HasMany
