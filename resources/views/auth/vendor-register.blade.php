@@ -57,7 +57,7 @@
                         </div>
                     </div>
                     @endguest
-
+                    
                     <!-- Establishment Information Section -->
                     <div class="border-b pb-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Establishment Information</h3>
@@ -180,6 +180,7 @@
                             Register Establishment
                         </button>
                     </div>
+                    
                 </form>
 
                 <p class="text-xs text-gray-500 text-center mt-6">By registering, your establishment will be pending admin approval. Once approved, you'll have full access to manage your profile.</p>

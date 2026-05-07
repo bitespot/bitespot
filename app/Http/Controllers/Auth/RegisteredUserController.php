@@ -52,7 +52,7 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('home', absolute: false));
+        return redirect()->route('dashboard');
     }
 
     /**
@@ -137,11 +137,7 @@ class RegisteredUserController extends Controller
             'status' => 'pending', // Requires admin approval
         ]);
 
-        if ($is_new_user) {
-            // Redirect to the direct setup route (has simpler middleware chain)
-            return redirect('/vendor/setup')->with('success', 'Establishment registered! Please add photos and wait for admin approval.');
-        }
-
-        return redirect('/vendor-dashboard/' . $vendor->id)->with('success', 'Establishment added! Please manage your photos and details.');
+        // Send everyone directly to the main newsfeed dashboard
+        return redirect()->route('dashboard')->with('status', 'Establishment registered successfully! Wait for admin approval.');
     }
 }
