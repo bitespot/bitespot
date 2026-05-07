@@ -2,32 +2,96 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
+use App\Models\Promotion;
+use App\Models\Vendor;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class PromotionController extends StubController
+class PromotionController extends Controller
 {
-    public function publicIndex(\Illuminate\Http\Request $request, $param = null): \Illuminate\Http\JsonResponse
+    /**
+     * GET /api/vendors/{vendor}/promotions  — public active promos
+     */
+    public function publicIndex(Request $request, Vendor $vendor): JsonResponse
     {
-        return $this->stub('PromotionController::publicIndex');
+        if ($vendor->status !== 'approved') {
+            return response()->json(['data' => []]);
+        }
+
+        $promos = $vendor->promotions()
+            ->where('is_active', true)
+            ->where('valid_until', '>=', now())
+            ->orderBy('valid_until')
+            ->get();
+
+        return response()->json(['data' => $promos]);
     }
 
-    public function index(\Illuminate\Http\Request $request, $param = null): \Illuminate\Http\JsonResponse
+    /**
+     * GET /api/vendor/establishments/{vendor}/promotions
+     */
+    public function index(Request $request, Vendor $vendor): JsonResponse
     {
-        return $this->stub('PromotionController::index');
+        if ($vendor->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        return response()->json(['data' => $vendor->promotions()->orderByDesc('valid_until')->get()]);
     }
 
-    public function store(\Illuminate\Http\Request $request, $param = null): \Illuminate\Http\JsonResponse
+    /**
+     * POST /api/vendor/establishments/{vendor}/promotions
+     */
+    public function store(Request $request, Vendor $vendor): JsonResponse
     {
-        return $this->stub('PromotionController::store');
+        if ($vendor->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'title'       => 'required|string|max:255',
+            'description' => 'nullable|string|max:1000',
+            'discount'    => 'required|numeric|min:0|max:100',
+            'valid_until' => 'required|date|after:today',
+        ]);
+
+        return response()->json($vendor->promotions()->create($validated), 201);
     }
 
-    public function update(\Illuminate\Http\Request $request, $param = null): \Illuminate\Http\JsonResponse
+    /**
+     * PUT /api/vendor/establishments/{vendor}/promotions/{promotion}
+     */
+    public function update(Request $request, Vendor $vendor, Promotion $promotion): JsonResponse
     {
-        return $this->stub('PromotionController::update');
+        if ($vendor->user_id !== auth()->id() || $promotion->vendor_id !== $vendor->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'title'       => 'sometimes|required|string|max:255',
+            'description' => 'nullable|string|max:1000',
+            'discount'    => 'sometimes|required|numeric|min:0|max:100',
+            'valid_until' => 'sometimes|required|date',
+            'is_active'   => 'boolean',
+        ]);
+
+        $promotion->update($validated);
+
+        return response()->json($promotion);
     }
 
-    public function destroy(\Illuminate\Http\Request $request, $param = null): \Illuminate\Http\JsonResponse
+    /**
+     * DELETE /api/vendor/establishments/{vendor}/promotions/{promotion}
+     */
+    public function destroy(Request $request, Vendor $vendor, Promotion $promotion): JsonResponse
     {
-        return $this->stub('PromotionController::destroy');
+        if ($vendor->user_id !== auth()->id() || $promotion->vendor_id !== $vendor->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $promotion->delete();
+
+        return response()->json(['message' => 'Promotion deleted']);
     }
 }

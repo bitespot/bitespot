@@ -32,19 +32,21 @@ class ReviewController extends Controller
         return response()->json($reviews);
     }
 
-    public function vendorIndex(Request $request): JsonResponse
+    public function vendorIndex(Request $request, Vendor $vendor): JsonResponse
     {
-        // Assuming the vendor owner is the one logged in
-        $vendor = Vendor::where('user_id', auth()->id())->first();
-        
-        if (!$vendor) {
-            return response()->json(['message' => 'Vendor profile not found.'], 404);
+        if ($vendor->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         $reviews = $vendor->reviews()
-            ->with('user:id,name')
+            ->with(['user:id,name', 'vendorReply:review_id,body'])
             ->latest()
-            ->paginate(10);
+            ->paginate(20);
+
+        $reviews->getCollection()->transform(fn($r) => array_merge($r->toArray(), [
+            'user_name' => $r->user?->name,
+            'reply'     => $r->vendorReply?->body,
+        ]));
 
         return response()->json($reviews);
     }

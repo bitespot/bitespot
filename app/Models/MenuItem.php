@@ -18,6 +18,7 @@ class MenuItem extends Model
         'photo',
         'category',
         'is_available',
+        'status',
         'sort_order',
     ];
 

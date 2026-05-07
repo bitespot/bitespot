@@ -1,6 +1,6 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-Dn8gS1NN.css",
+    "file": "assets/app-CLvrxeo4.css",
     "name": "app",
     "names": [
       "app.css"
@@ -9,9 +9,15 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-DcCJqnGR.js",
+    "file": "assets/app-C83oLLQb.js",
     "name": "app",
     "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/vendor-dashboard.js": {
+    "file": "assets/vendor-dashboard-LT7Xpc79.js",
+    "name": "vendor-dashboard",
+    "src": "resources/js/vendor-dashboard.js",
     "isEntry": true
   }
 }

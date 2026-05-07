@@ -98,35 +98,45 @@ Route::middleware('auth')->group(function () {
     // -----------------------------------------------------------------------
     Route::middleware('role:vendor')->prefix('vendor')->group(function () {
 
-        // Dashboard KPIs
-        Route::get('/dashboard', [\App\Http\Controllers\Api\VendorDashboardController::class, 'index']);
+        // List / create the authenticated user's establishments
+        Route::get('/establishments',  [\App\Http\Controllers\Api\VendorEstablishmentController::class, 'index']);
+        Route::post('/establishments', [\App\Http\Controllers\Api\VendorEstablishmentController::class, 'store']);
 
-        // Listing info
-        Route::get('/profile',  [\App\Http\Controllers\Api\VendorDashboardController::class, 'show']);
-        Route::put('/profile',  [\App\Http\Controllers\Api\VendorDashboardController::class, 'update']);
+        // Per-establishment management — all scoped to a specific vendor the user owns
+        Route::prefix('establishments/{vendor}')->group(function () {
 
-        // Menu management
-        Route::get('/menu',          [\App\Http\Controllers\Api\MenuItemController::class, 'index']);
-        Route::post('/menu',         [\App\Http\Controllers\Api\MenuItemController::class, 'store']);
-        Route::put('/menu/{item}',   [\App\Http\Controllers\Api\MenuItemController::class, 'update']);
-        Route::delete('/menu/{item}',[\App\Http\Controllers\Api\MenuItemController::class, 'destroy']);
+            // Dashboard KPIs
+            Route::get('/dashboard', [\App\Http\Controllers\Api\VendorDashboardController::class, 'index']);
 
-        // Photo management
-        Route::get('/photos',                    [\App\Http\Controllers\Api\PhotoController::class, 'index']);
-        Route::post('/photos/cover',             [\App\Http\Controllers\Api\PhotoController::class, 'uploadCover']);
-        Route::post('/photos/profile',           [\App\Http\Controllers\Api\PhotoController::class, 'uploadProfile']);
-        Route::delete('/photos/{photo}',         [\App\Http\Controllers\Api\PhotoController::class, 'destroy']);
+            // Listing info
+            Route::get('/profile', [\App\Http\Controllers\Api\VendorDashboardController::class, 'show']);
+            Route::put('/profile', [\App\Http\Controllers\Api\VendorDashboardController::class, 'update']);
 
-        // Promotions
-        Route::get('/promotions',              [\App\Http\Controllers\Api\PromotionController::class, 'index']);
-        Route::post('/promotions',             [\App\Http\Controllers\Api\PromotionController::class, 'store']);
-        Route::put('/promotions/{promotion}',  [\App\Http\Controllers\Api\PromotionController::class, 'update']);
-        Route::delete('/promotions/{promotion}',[\App\Http\Controllers\Api\PromotionController::class, 'destroy']);
+            // Menu management
+            Route::get('/menu',           [\App\Http\Controllers\Api\MenuItemController::class, 'index']);
+            Route::post('/menu',          [\App\Http\Controllers\Api\MenuItemController::class, 'store']);
+            Route::put('/menu/{item}',    [\App\Http\Controllers\Api\MenuItemController::class, 'update']);
+            Route::delete('/menu/{item}', [\App\Http\Controllers\Api\MenuItemController::class, 'destroy']);
 
-        // Review replies
-        Route::get('/reviews',                    [\App\Http\Controllers\Api\ReviewController::class, 'vendorIndex']);
-        Route::post('/reviews/{review}/reply',    [\App\Http\Controllers\Api\VendorReplyController::class, 'store']);
-        Route::put('/reviews/{review}/reply',     [\App\Http\Controllers\Api\VendorReplyController::class, 'update']);
+            // Photo management
+            Route::get('/photos',                    [\App\Http\Controllers\Api\PhotoController::class, 'index']);
+            Route::post('/photos',                   [\App\Http\Controllers\Api\PhotoController::class, 'store']);
+            Route::post('/photos/cover',             [\App\Http\Controllers\Api\PhotoController::class, 'uploadCover']);
+            Route::post('/photos/profile',           [\App\Http\Controllers\Api\PhotoController::class, 'uploadProfile']);
+            Route::put('/photos/{photo}/primary',    [\App\Http\Controllers\Api\PhotoController::class, 'setPrimary']);
+            Route::delete('/photos/{photo}',         [\App\Http\Controllers\Api\PhotoController::class, 'destroy']);
+
+            // Promotions
+            Route::get('/promotions',                 [\App\Http\Controllers\Api\PromotionController::class, 'index']);
+            Route::post('/promotions',                [\App\Http\Controllers\Api\PromotionController::class, 'store']);
+            Route::put('/promotions/{promotion}',     [\App\Http\Controllers\Api\PromotionController::class, 'update']);
+            Route::delete('/promotions/{promotion}',  [\App\Http\Controllers\Api\PromotionController::class, 'destroy']);
+
+            // Reviews & replies
+            Route::get('/reviews',                 [\App\Http\Controllers\Api\ReviewController::class, 'vendorIndex']);
+            Route::post('/reviews/{review}/reply', [\App\Http\Controllers\Api\VendorReplyController::class, 'store']);
+            Route::put('/reviews/{review}/reply',  [\App\Http\Controllers\Api\VendorReplyController::class, 'update']);
+        });
     });
  
     // -----------------------------------------------------------------------
@@ -143,6 +153,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/reviews/{review}',      [\App\Http\Controllers\Api\AdminController::class, 'removeReview']);
         Route::post('/users/{user}/ban',        [\App\Http\Controllers\Api\AdminController::class, 'banUser']);
         Route::post('/vendors/{vendor}/suspend',[\App\Http\Controllers\Api\AdminController::class, 'suspendVendor']);
+        Route::post('/vendors/{vendor}/toggle-featured', [\App\Http\Controllers\Api\AdminController::class, 'toggleFeatured']);
 
         // Platform analytics
         Route::get('/analytics',                [\App\Http\Controllers\Api\AdminController::class, 'analytics']);

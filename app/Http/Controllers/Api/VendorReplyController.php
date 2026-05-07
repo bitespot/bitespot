@@ -2,17 +2,62 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
+use App\Models\Review;
+use App\Models\Vendor;
+use App\Models\VendorReply;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class VendorReplyController extends StubController
+class VendorReplyController extends Controller
 {
-    public function store(\Illuminate\Http\Request $request, $param = null): \Illuminate\Http\JsonResponse
+    /**
+     * POST /api/vendor/establishments/{vendor}/reviews/{review}/reply
+     */
+    public function store(Request $request, Vendor $vendor, Review $review): JsonResponse
     {
-        return $this->stub('VendorReplyController::store');
+        if ($vendor->user_id !== auth()->id() || $review->vendor_id !== $vendor->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        if ($review->vendorReply) {
+            return response()->json(['message' => 'Reply already exists. Use PUT to update.'], 422);
+        }
+
+        $validated = $request->validate(['reply' => 'required|string|max:1000']);
+
+        $reply = VendorReply::create([
+            'review_id' => $review->id,
+            'vendor_id' => $vendor->id,
+            'body'      => $validated['reply'],
+        ]);
+
+        return response()->json(['message' => 'Reply posted', 'reply' => $reply], 201);
     }
 
-    public function update(\Illuminate\Http\Request $request, $param = null): \Illuminate\Http\JsonResponse
+    /**
+     * PUT /api/vendor/establishments/{vendor}/reviews/{review}/reply
+     */
+    public function update(Request $request, Vendor $vendor, Review $review): JsonResponse
     {
-        return $this->stub('VendorReplyController::update');
+        if ($vendor->user_id !== auth()->id() || $review->vendor_id !== $vendor->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate(['reply' => 'required|string|max:1000']);
+
+        $reply = $review->vendorReply;
+
+        if ($reply) {
+            $reply->update(['body' => $validated['reply']]);
+        } else {
+            $reply = VendorReply::create([
+                'review_id' => $review->id,
+                'vendor_id' => $vendor->id,
+                'body'      => $validated['reply'],
+            ]);
+        }
+
+        return response()->json(['message' => 'Reply updated', 'reply' => $reply]);
     }
 }

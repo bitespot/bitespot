@@ -3,7 +3,8 @@
 /* ═══════════════════════════════════════════
    UTILITIES
 ═══════════════════════════════════════════ */
-const CSRF = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+const CSRF    = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+const API_BASE = window.VENDOR_API_BASE ?? '';
 
 async function api(method, url, body) {
     const opts = {
@@ -34,7 +35,7 @@ function stars(n) {
     return s;
 }
 
-function deltaEl(val, suffix = '', isRating = false) {
+function deltaEl(val, suffix = '') {
     let cls, arrow, label;
     if (val > 0) { cls = 'up'; arrow = '↑'; label = '+' + val + suffix; }
     else if (val < 0) { cls = 'down'; arrow = '↓'; label = val + suffix; }
@@ -83,18 +84,20 @@ window.switchTab = function (tab, btn) {
 };
 
 /* ═══════════════════════════════════════════
-   SID_25 — METRICS
+   SID_25 — METRICS (real data from /api/vendor/dashboard)
 ═══════════════════════════════════════════ */
 async function loadOverview() {
     window._overviewLoaded = true;
     try {
-        const data = await api('GET', '/api/vendor/metrics');
+        const data = await api('GET', API_BASE + '/dashboard');
         renderKpis(data);
         renderReviewList(data.recent_reviews ?? [], 'overview-reviews', 2);
     } catch {
-        // Fallback demo data so the UI is never empty
-        renderKpis({ views: 12400, views_delta: 14, rating: 4.8, rating_delta: 0.2, menu_count: 24, menu_delta: 2, recent_reviews: demoReviews() });
-        renderReviewList(demoReviews(), 'overview-reviews', 2);
+        document.getElementById('kpi-views').textContent  = '—';
+        document.getElementById('kpi-rating').textContent = '—';
+        document.getElementById('kpi-menu').textContent   = '—';
+        document.getElementById('overview-reviews').innerHTML =
+            `<div class="vd-empty"><div class="vd-empty-sub">Could not load overview data.</div></div>`;
     }
 }
 
@@ -103,7 +106,7 @@ function renderKpis({ views, views_delta, rating, rating_delta, menu_count, menu
     document.getElementById('kpi-rating').innerHTML = parseFloat(rating).toFixed(1);
     document.getElementById('kpi-menu').innerHTML   = menu_count;
     document.getElementById('kpi-views-delta').outerHTML  = deltaEl(views_delta, '%');
-    document.getElementById('kpi-rating-delta').outerHTML = deltaEl(rating_delta, '', true);
+    document.getElementById('kpi-rating-delta').outerHTML = deltaEl(rating_delta);
     document.getElementById('kpi-menu-delta').outerHTML   = deltaEl(menu_delta);
 }
 
@@ -113,14 +116,14 @@ function renderKpis({ views, views_delta, rating, rating_delta, menu_count, menu
 async function loadReviews() {
     window._reviewsLoaded = true;
     try {
-        const data = await api('GET', '/api/vendor/reviews');
+        const data = await api('GET', API_BASE + '/reviews');
         const reviews = data.data ?? data;
         document.getElementById('reviews-count').textContent = reviews.length + ' review' + (reviews.length !== 1 ? 's' : '');
         renderReviewList(reviews, 'all-reviews', 99);
     } catch {
-        const demo = demoReviews();
-        document.getElementById('reviews-count').textContent = demo.length + ' reviews';
-        renderReviewList(demo, 'all-reviews', 99);
+        document.getElementById('reviews-count').textContent = '';
+        document.getElementById('all-reviews').innerHTML =
+            `<div class="vd-empty"><div class="vd-empty-sub">Could not load reviews.</div></div>`;
     }
 }
 
@@ -137,9 +140,9 @@ function renderReviewList(reviews, containerId, limit) {
                 <div class="vd-review-meta">
                     <span class="vd-review-author">${escHtml(r.user_name || r.author || 'Anonymous')}</span>
                     <span class="vd-review-stars">${stars(r.rating)}</span>
-                    <span class="vd-review-time">${r.created_at ? timeAgo(r.created_at) : r.time || ''}</span>
+                    <span class="vd-review-time">${r.created_at ? timeAgo(r.created_at) : ''}</span>
                 </div>
-                <p class="vd-review-text">${escHtml(r.body || r.comment || '')}</p>
+                <p class="vd-review-text">${escHtml(r.body || '')}</p>
                 ${r.reply
                     ? `<div class="vd-reply-existing"><div class="vd-reply-existing-label">Your reply</div>${escHtml(r.reply)}</div>`
                     : `<button class="vd-btn vd-btn-ghost" style="font-size:0.75rem;padding:0.3rem 0.7rem;margin-top:0.25rem;" onclick="toggleReplyArea(${r.id})">
@@ -169,9 +172,8 @@ window.submitReply = async function (id) {
     const reply = input?.value.trim();
     if (!reply) { toast('Please write a reply first.', 'error'); return; }
     try {
-        await api('POST', `/api/vendor/reviews/${id}/reply`, { reply });
+        await api('POST', `${API_BASE}/reviews/${id}/reply`, { reply });
         toast('Reply posted!');
-        // Refresh review list
         window._reviewsLoaded = false;
         loadReviews();
     } catch {
@@ -187,10 +189,10 @@ let menuItems = [];
 async function loadMenu() {
     window._menuLoaded = true;
     try {
-        const data = await api('GET', '/api/vendor/menu-items');
+        const data = await api('GET', API_BASE + '/menu');
         menuItems = data.data ?? data;
     } catch {
-        menuItems = demoMenuItems();
+        menuItems = [];
     }
     renderMenuTable();
 }
@@ -295,10 +297,10 @@ window.saveMenuItem = async function () {
 
     try {
         if (id) {
-            await api('PUT', `/api/vendor/menu-items/${id}`, payload);
+            await api('PUT', `${API_BASE}/menu/${id}`, payload);
             toast('Menu item updated!');
         } else {
-            await api('POST', '/api/vendor/menu-items', payload);
+            await api('POST', API_BASE + '/menu', payload);
             toast('Menu item added!');
         }
         closeMenuModal();
@@ -312,7 +314,7 @@ window.saveMenuItem = async function () {
 window.deleteMenuItem = async function (id) {
     if (!confirm('Delete this menu item?')) return;
     try {
-        await api('DELETE', `/api/vendor/menu-items/${id}`);
+        await api('DELETE', `${API_BASE}/menu/${id}`);
         toast('Item deleted.');
         window._menuLoaded = false;
         loadMenu();
@@ -329,7 +331,7 @@ let photos = [];
 async function loadMedia() {
     window._mediaLoaded = true;
     try {
-        const data = await api('GET', '/api/vendor/photos');
+        const data = await api('GET', API_BASE + '/photos');
         photos = data.data ?? data;
     } catch {
         photos = [];
@@ -341,14 +343,14 @@ async function loadMedia() {
 function renderPhotos() {
     const grid = document.getElementById('photo-grid');
     const add  = grid.querySelector('.vd-photo-add');
-    // remove existing photo cells
     grid.querySelectorAll('.vd-photo-cell').forEach(c => c.remove());
 
     photos.forEach((p, i) => {
         const cell = document.createElement('div');
         cell.className = 'vd-photo-cell';
+        const imgSrc = p.full_url || p.url;
         cell.innerHTML = `
-            <img src="${p.url}" alt="Photo ${i + 1}">
+            <img src="${imgSrc}" alt="Photo ${i + 1}">
             ${p.is_primary ? '<span class="vd-photo-primary-badge">Primary</span>' : ''}
             <div class="vd-photo-cell-actions">
                 ${!p.is_primary ? `<button class="vd-btn vd-btn-ghost" style="font-size:0.72rem;padding:0.3rem 0.6rem;background:rgba(255,255,255,.9)" onclick="setPrimaryPhoto(${p.id})">Set Primary</button>` : ''}
@@ -366,26 +368,32 @@ window.handlePhotoUpload = async function (input) {
     const oversized = files.filter(f => f.size > 5 * 1024 * 1024);
     if (oversized.length) { toast(`${oversized.length} file(s) exceed 5 MB limit.`, 'error'); return; }
 
+    let failed = 0;
     for (const file of files) {
         const fd = new FormData();
         fd.append('photo', file);
         fd.append('_token', CSRF);
         try {
-            const r = await fetch('/api/vendor/photos', { method: 'POST', body: fd });
+            const r = await fetch(API_BASE + '/photos', { method: 'POST', body: fd });
             if (!r.ok) throw new Error();
         } catch {
-            toast('Upload failed for ' + file.name, 'error');
-            return;
+            failed++;
         }
     }
-    toast(files.length + ' photo' + (files.length !== 1 ? 's' : '') + ' uploaded!');
+
+    if (failed > 0) {
+        toast(`${failed} upload(s) failed.`, 'error');
+    } else {
+        toast(files.length + ' photo' + (files.length !== 1 ? 's' : '') + ' uploaded!');
+    }
+
     window._mediaLoaded = false;
     loadMedia();
 };
 
 window.setPrimaryPhoto = async function (id) {
     try {
-        await api('PUT', `/api/vendor/photos/${id}/primary`, {});
+        await api('PUT', `${API_BASE}/photos/${id}/primary`, {});
         toast('Primary photo updated!');
         window._mediaLoaded = false;
         loadMedia();
@@ -395,7 +403,7 @@ window.setPrimaryPhoto = async function (id) {
 window.deletePhoto = async function (id) {
     if (!confirm('Delete this photo?')) return;
     try {
-        await api('DELETE', `/api/vendor/photos/${id}`);
+        await api('DELETE', `${API_BASE}/photos/${id}`);
         toast('Photo deleted.');
         window._mediaLoaded = false;
         loadMedia();
@@ -409,10 +417,10 @@ let promos = [];
 
 async function loadPromos() {
     try {
-        const data = await api('GET', '/api/vendor/promotions');
+        const data = await api('GET', API_BASE + '/promotions');
         promos = data.data ?? data;
     } catch {
-        promos = demoPromos();
+        promos = [];
     }
     renderPromos();
 }
@@ -450,7 +458,7 @@ window.savePromo = async function () {
     const until    = document.getElementById('promo-valid-until').value;
     if (!title || !discount || !until) { toast('Please fill all fields.', 'error'); return; }
     try {
-        await api('POST', '/api/vendor/promotions', {
+        await api('POST', API_BASE + '/promotions', {
             title,
             description: document.getElementById('promo-desc').value.trim(),
             discount: parseInt(discount, 10),
@@ -466,7 +474,7 @@ window.savePromo = async function () {
 window.deletePromo = async function (id) {
     if (!confirm('Delete this promotion?')) return;
     try {
-        await api('DELETE', `/api/vendor/promotions/${id}`);
+        await api('DELETE', `${API_BASE}/promotions/${id}`);
         toast('Promotion deleted.');
         window._mediaLoaded = false;
         loadMedia();
@@ -480,24 +488,38 @@ const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sun
 
 async function loadSettings() {
     window._settingsLoaded = true;
-    let profile = {};
-    try {
-        const data = await api('GET', '/api/vendor/profile');
-        profile = data.data ?? data;
-    } catch {}
 
+    // Load categories and vendor profile in parallel
+    let profile = {}, categories = [];
+    try {
+        [{ data: categories }, profile] = await Promise.all([
+            fetch('/api/categories', { headers: { Accept: 'application/json' } }).then(r => r.json()),
+            api('GET', API_BASE + '/profile').then(d => d.data ?? d),
+        ]);
+    } catch {
+        try { profile = await api('GET', API_BASE + '/profile').then(d => d.data ?? d); } catch {}
+    }
+
+    // Populate category select from DB
+    const catSelect = document.getElementById('s-category');
+    catSelect.innerHTML = categories.map(c =>
+        `<option value="${escHtml(c.name)}">${escHtml(c.name)}</option>`
+    ).join('');
+
+    // Fill form fields
     document.getElementById('s-biz-name').value = profile.business_name || '';
-    document.getElementById('s-location').value  = profile.location || '';
+    document.getElementById('s-location').value  = profile.address || '';
     document.getElementById('s-phone').value     = profile.phone || '';
     document.getElementById('s-desc').value      = profile.description || '';
-    if (profile.category) document.getElementById('s-category').value = profile.category;
-    if (profile.price_range) document.getElementById('s-price').value = profile.price_range;
+    if (profile.price_tier) document.getElementById('s-price').value = profile.price_tier;
+    if (profile.category)   catSelect.value = profile.category;
 
     // Operating hours
     const hours = profile.hours || {};
     const grid  = document.getElementById('hours-grid');
     grid.innerHTML = DAYS.map(day => {
-        const h    = hours[day.toLowerCase()] || {};
+        const key    = day.toLowerCase();
+        const h      = hours[key] || {};
         const closed = h.closed ?? true;
         return `
         <div class="vd-hours-grid">
@@ -530,48 +552,21 @@ window.saveSettings = async function () {
 
     const payload = {
         business_name: document.getElementById('s-biz-name').value.trim(),
-        location:      document.getElementById('s-location').value.trim(),
+        address:       document.getElementById('s-location').value.trim(),
         phone:         document.getElementById('s-phone').value.trim(),
         description:   document.getElementById('s-desc').value.trim(),
         category:      document.getElementById('s-category').value,
-        price_range:   document.getElementById('s-price').value,
+        price_tier:    document.getElementById('s-price').value,
         hours,
     };
 
     try {
-        await api('PUT', '/api/vendor/profile', payload);
+        await api('PUT', API_BASE + '/profile', payload);
         toast('Settings saved!');
     } catch {
         toast('Could not save settings.', 'error');
     }
 };
-
-/* ═══════════════════════════════════════════
-   DEMO DATA (fallback when API not ready)
-═══════════════════════════════════════════ */
-function demoReviews() {
-    return [
-        { id: 1, user_name: 'Maria Santos',  rating: 5, body: 'Amazing food and great service! The spicy noodles are absolutely fantastic.', created_at: new Date(Date.now() - 7200000).toISOString() },
-        { id: 2, user_name: 'Juan dela Cruz', rating: 4, body: 'Really good place. The portions are generous and the staff is very friendly.', created_at: new Date(Date.now() - 86400000).toISOString() },
-        { id: 3, user_name: 'Ana Reyes',      rating: 5, body: 'Best restaurant in Cebu! I always recommend this place to my friends.', created_at: new Date(Date.now() - 172800000).toISOString() },
-    ];
-}
-
-function demoMenuItems() {
-    return [
-        { id: 1, name: 'Signature Dish',  category: 'Mains',    price: 185, status: 'Active',   description: 'Our signature house specialty.' },
-        { id: 2, name: 'Spicy Noodles',   category: 'Mains',    price: 140, status: 'Active',   description: 'Classic spicy broth noodle bowl.' },
-        { id: 3, name: 'Classic Burger',  category: 'Mains',    price: 160, status: 'Sold Out', description: 'Juicy beef patty with fresh greens.' },
-        { id: 4, name: 'Fresh Salad',     category: 'Starters', price: 120, status: 'Active',   description: 'Garden fresh daily salad.' },
-    ];
-}
-
-function demoPromos() {
-    return [
-        { id: 1, title: 'Weekend Special', description: '20% off all mains', discount: 20, valid_until: new Date(Date.now() + 7 * 86400000).toISOString() },
-        { id: 2, title: 'Lunch Deal',      description: 'Free drink with any main', discount: 10, valid_until: new Date(Date.now() - 86400000).toISOString() },
-    ];
-}
 
 /* ═══════════════════════════════════════════
    HELPERS

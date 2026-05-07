@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 
 class Vendor extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     protected $fillable = [
         'user_id',
         'category_id',
@@ -33,6 +34,7 @@ class Vendor extends Model
         'tier',
         'status',
         'rejection_reason',
+        'is_featured',
         'view_count',
         'avg_rating',
         'review_count',
@@ -107,8 +109,18 @@ class Vendor extends Model
         return $this->hasMany(Photo::class);
     }
 
+    public function ownershipApplications(): HasMany
+    {
+        return $this->hasMany(VendorOwnershipApplication::class);
+    }
+
     public function bookmarks(): HasMany
     {
         return $this->hasMany(Bookmark::class);
+    }
+
+    public function promotions(): HasMany
+    {
+        return $this->hasMany(Promotion::class);
     }
 }

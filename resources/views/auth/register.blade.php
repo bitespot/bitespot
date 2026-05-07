@@ -20,17 +20,23 @@
                     <p class="text-sm text-gray-500 mt-2">Enter your details to register.</p>
                 </div>
 
+                <!-- Choose Registration Type -->
+                <div class="mb-8">
+                    <p class="text-sm font-semibold text-gray-700 mb-3">I want to register as:</p>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button type="button" onclick="selectRole('user')" class="role-btn-user px-4 py-3 rounded-lg border-2 border-orange-500 bg-orange-50 text-orange-700 font-semibold text-sm transition-all active">
+                            👤 Customer
+                        </button>
+                        <a href="{{ route('vendor.register') }}" class="px-4 py-3 rounded-lg border-2 border-gray-300 bg-white text-gray-700 font-semibold text-sm transition-all hover:border-green-500 flex items-center justify-center">
+                            🏪 Vendor
+                        </a>
+                    </div>
+                </div>
+
                 <form method="POST" action="{{ route('register') }}" class="space-y-5" id="register-form">
                     @csrf
                     
-                    <!-- Role Toggle -->
-                    <div class="flex justify-center lg:justify-start mb-6">
-                        <div class="flex bg-gray-100 rounded-full p-1 w-full max-w-xs lg:max-w-none">
-                            <button type="button" id="role-user" class="flex-1 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-400 text-gray-700 bg-white shadow" aria-pressed="true">User</button>
-                            <button type="button" id="role-vendor" class="flex-1 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-400 text-gray-700">Vendor</button>
-                        </div>
-                        <input type="hidden" name="role" id="role-input" value="user">
-                    </div>
+                    <input type="hidden" name="role" id="role-input" value="user">
 
                     <div>
                         <label for="name" class="block text-sm font-semibold text-gray-700 mb-1">Name</label>
@@ -72,21 +78,13 @@
     </div>
 
     <script>
-        // Toggle role selection
-        const userBtn = document.getElementById('role-user');
-        const vendorBtn = document.getElementById('role-vendor');
-        const roleInput = document.getElementById('role-input');
-        
-        userBtn.addEventListener('click', function() {
-            userBtn.classList.add('bg-white', 'shadow');
-            vendorBtn.classList.remove('bg-white', 'shadow');
-            roleInput.value = 'user';
-        });
-        
-        vendorBtn.addEventListener('click', function() {
-            vendorBtn.classList.add('bg-white', 'shadow');
-            userBtn.classList.remove('bg-white', 'shadow');
-            roleInput.value = 'vendor';
-        });
+        function selectRole(role) {
+            document.getElementById('role-input').value = role;
+            document.querySelectorAll('.role-btn-user').forEach(el => {
+                if (role === 'user') {
+                    el.classList.add('active', 'border-orange-500', 'bg-orange-50', 'text-orange-700');
+                }
+            });
+        }
     </script>
 </x-guest-layout>

@@ -49,11 +49,11 @@ Route::middleware('guest')->group(function () {
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('/register',[RegisteredUserController::class, 'store']);
 
-    // Vendor registration (also available to guests)
-    Route::get('/vendor/register',  [RegisteredUserController::class, 'createVendor'])->name('vendor.register');
-    Route::post('/vendor/register', [RegisteredUserController::class, 'storeVendor']);
-
 });
+
+// Vendor registration (also available to guests and logged-in users)
+Route::get('/vendor/register',  [RegisteredUserController::class, 'createVendor'])->name('vendor.register');
+Route::post('/vendor/register', [RegisteredUserController::class, 'storeVendor']);
 
 // ---------------------------------------------------------------------------
 // 3. AUTHENTICATED — all logged-in users (any role)
@@ -73,17 +73,53 @@ Route::middleware('auth')->group(function () {
      Route::get('/profile/edit', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
      Route::put('/profile',      [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
 
-     // =======================================================================
-     // NEW: The React-style Vendor Dashboard route
-     // =======================================================================
-     Route::get('/vendor-dashboard', function () {
-          // Double-check if the user is actually a vendor
-          if (!auth()->user()->isVendor()) {
-               abort(403, 'Access Denied. You must be a registered vendor.'); 
+     // Ownership applications
+     Route::get('/my-applications', [\App\Http\Controllers\Vendor\OwnershipController::class, 'myApplications'])->name('my-applications');
+     Route::get('/applications/{application}', [\App\Http\Controllers\Vendor\OwnershipController::class, 'showApplication'])->name('application.show');
+     Route::delete('/applications/{application}', [\App\Http\Controllers\Vendor\OwnershipController::class, 'withdrawApplication'])->name('application.withdraw');
+
+     // Claim ownership of existing establishments (authenticated users)
+     Route::get('/place/{vendor}/claim', [\App\Http\Controllers\Vendor\OwnershipController::class, 'showClaimForm'])->name('place.claim');
+     Route::post('/place/{vendor}/claim', [\App\Http\Controllers\Vendor\OwnershipController::class, 'submitClaim'])->name('place.claim.submit');
+
+     // ===== NEW VENDOR SETUP (accessible right after registration) =====
+     Route::get('/vendor/setup', function () {
+          // For new vendors immediately after registration
+          if (!auth()->check()) {
+               return redirect('/login');
           }
 
-          return view('pages.vendordashboard');
+          if (auth()->user()->role !== 'vendor') {
+               return redirect('/');
+          }
+
+          $vendor = \App\Models\Vendor::where('user_id', auth()->id())->first();
+          if (!$vendor) {
+               return redirect('/vendor-dashboard')->with('error', 'Vendor establishment not found.');
+          }
+
+          return view('vendor.setup', compact('vendor'));
+     })->middleware('auth')->name('vendor.setup.direct');
+
+     // =======================================================================
+     // Vendor: Establishment list + per-establishment management
+     // =======================================================================
+
+     // List all establishments owned by this vendor account
+     Route::get('/vendor-dashboard', function () {
+          if (!auth()->user()->isVendor()) {
+               abort(403, 'Access Denied. You must be a registered vendor.');
+          }
+          return view('pages.vendor-establishments');
      });
+
+     // Manage a specific establishment
+     Route::get('/vendor-dashboard/{vendor}', function (\App\Models\Vendor $vendor) {
+          if (!auth()->user()->isVendor() || $vendor->user_id !== auth()->id()) {
+               abort(403, 'Access Denied.');
+          }
+          return view('pages.vendordashboard', compact('vendor'));
+     })->where('vendor', '[0-9]+');
 
 });
 
@@ -92,6 +128,24 @@ Route::middleware('auth')->group(function () {
 // ---------------------------------------------------------------------------
 
 Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->group(function () {
+
+    Route::get('/setup', function () {
+        // For new vendors, this is the first landing page after registration
+        $user = auth()->user();
+        $vendor = \App\Models\Vendor::where('user_id', $user->id)->first();
+        
+        if (!$vendor) {
+            // If no vendor found but user is authenticated as vendor role,
+            // something went wrong. Log it and redirect safely.
+            \Log::error('Vendor setup: No vendor record for vendor user', [
+                'user_id' => $user->id,
+                'user_role' => $user->role,
+            ]);
+            return redirect('/vendor-dashboard')->with('error', 'Vendor establishment not found. Please contact support.');
+        }
+        
+        return view('vendor.setup', compact('vendor'));
+    })->name('setup');
 
     Route::get('/dashboard', [\App\Http\Controllers\Vendor\DashboardController::class, 'index'])
          ->name('dashboard');
@@ -138,6 +192,18 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('/analytics',        [\App\Http\Controllers\Admin\AnalyticsController::class, 'index'])
          ->name('analytics');
+
+    // Ownership applications review
+    Route::get('/ownership-applications', [\App\Http\Controllers\Admin\OwnershipApplicationController::class, 'index'])
+         ->name('ownership-applications');
+    Route::get('/ownership-applications/{application}', [\App\Http\Controllers\Admin\OwnershipApplicationController::class, 'show'])
+         ->name('ownership-application.show');
+    Route::post('/ownership-applications/{application}/approve', [\App\Http\Controllers\Admin\OwnershipApplicationController::class, 'approve'])
+         ->name('ownership-application.approve');
+    Route::post('/ownership-applications/{application}/reject', [\App\Http\Controllers\Admin\OwnershipApplicationController::class, 'reject'])
+         ->name('ownership-application.reject');
+    Route::post('/ownership-applications/{application}/revoke', [\App\Http\Controllers\Admin\OwnershipApplicationController::class, 'revoke'])
+         ->name('ownership-application.revoke');
 
 });
 
