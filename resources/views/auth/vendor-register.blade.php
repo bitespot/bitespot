@@ -20,6 +20,19 @@
     }
     #search-results li:last-child { border-bottom: none; }
     #search-results li:hover { background: #f0fdf4; }
+
+    /* Munching Food Animation */
+    @keyframes bite1 { 0%, 20% { opacity: 0; } 21%, 100% { opacity: 1; } }
+    @keyframes bite2 { 0%, 40% { opacity: 0; } 41%, 100% { opacity: 1; } }
+    @keyframes bite3 { 0%, 60% { opacity: 0; } 61%, 100% { opacity: 1; } }
+    @keyframes bite4 { 0%, 80% { opacity: 0; } 81%, 100% { opacity: 1; } }
+    @keyframes respawnFood { 0%, 95% { transform: scale(1); } 96%, 100% { transform: scale(0); } }
+
+    .animate-bite-1 { animation: bite1 1.2s infinite; }
+    .animate-bite-2 { animation: bite2 1.2s infinite; }
+    .animate-bite-3 { animation: bite3 1.2s infinite; }
+    .animate-bite-4 { animation: bite4 1.2s infinite; }
+    .animate-respawn { animation: respawnFood 1.2s infinite; transform-origin: center; }
 </style>
 
 <div class="h-screen w-full flex bg-gray-50 overflow-hidden">
@@ -114,9 +127,27 @@
 
                     <div style="position:relative;" class="mb-3">
                         <div class="flex gap-2">
-                            <input id="map-search" type="text" placeholder="Search address or place name…"
-                                class="flex-1 rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-green-500 shadow-sm transition"
-                                autocomplete="off">
+                            <div class="relative flex-1">
+                                <input id="map-search" type="text" placeholder="Search address or place name…"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-green-500 shadow-sm transition pr-10"
+                                    autocomplete="off">
+                                
+                                <div id="search-spinner" class="absolute right-3 top-3 hidden">
+                                    <svg class="h-5 w-5 animate-respawn" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="12" cy="12" r="10" fill="#d97706" />
+                                        <circle cx="9" cy="9" r="1.5" fill="#78350f" />
+                                        <circle cx="15" cy="14" r="1.5" fill="#78350f" />
+                                        <circle cx="14" cy="7" r="1" fill="#78350f" />
+                                        <circle cx="8" cy="15" r="1" fill="#78350f" />
+                                        
+                                        <circle cx="20" cy="8" r="5" fill="#ffffff" class="animate-bite-1" />
+                                        <circle cx="14" cy="2" r="6" fill="#ffffff" class="animate-bite-2" />
+                                        <circle cx="6" cy="20" r="5" fill="#ffffff" class="animate-bite-3" />
+                                        <circle cx="2" cy="10" r="7" fill="#ffffff" class="animate-bite-4" />
+                                    </svg>
+                                </div>
+                            </div>
+
                             <button type="button" id="use-location-btn"
                                 class="px-4 py-2.5 bg-green-500 text-white text-sm font-semibold rounded-lg hover:bg-green-600 transition shadow-sm whitespace-nowrap flex items-center gap-2">
                                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 2C8.686 2 6 4.686 6 8c0 4.5 6 12 6 12s6-7.5 6-12c0-3.314-2.686-6-6-6z"/><circle cx="12" cy="8" r="2.5"/></svg>
@@ -275,18 +306,41 @@
 
     // Search & Current Location functionality
     const searchInput    = document.getElementById('map-search');
+    const searchSpinner  = document.getElementById('search-spinner');
     const useLocationBtn = document.getElementById('use-location-btn');
     const resultsList    = document.getElementById('search-results');
 
-    // Keep text search functional on "Enter" key
+    // Debounce function to prevent spamming the API
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
     function doSearch() {
         const q = searchInput.value.trim();
-        if (!q) return;
+        if (!q) {
+            resultsList.style.display = 'none';
+            return;
+        }
+
+        // Show the loading spinner
+        searchSpinner.classList.remove('hidden');
+
         fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&countrycodes=ph&limit=5`, {
             headers: { 'Accept-Language': 'en' }
         })
         .then(r => r.json())
         .then(results => {
+            // Hide the loading spinner
+            searchSpinner.classList.add('hidden');
+            
             resultsList.innerHTML = '';
             if (!results.length) {
                 const li = document.createElement('li');
@@ -309,8 +363,27 @@
                 });
             }
             resultsList.style.display = 'block';
+        })
+        .catch(() => {
+            // Hide spinner even if there's an error
+            searchSpinner.classList.add('hidden');
         });
     }
+
+    // Apply debounce to the search function (waits 500ms after user stops typing)
+    const debouncedSearch = debounce(doSearch, 500);
+
+    // Listen for typing instead of just the Enter key
+    searchInput.addEventListener('input', debouncedSearch);
+
+    // Prevent form submission if the user presses Enter in the search bar
+    searchInput.addEventListener('keydown', e => { 
+        if (e.key === 'Enter') { 
+            e.preventDefault(); 
+            // If they hit enter, execute search immediately rather than waiting for debounce
+            doSearch();
+        } 
+    });
 
     searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); doSearch(); } });
     
