@@ -16,12 +16,16 @@ class VendorController extends Controller
             ->with(['category'])
             ->where('status', 'approved');
 
-        // Search by query (business name, description)
+        // Search by query (business name, description, or menu item name/description)
         if ($request->has('q') && $request->q) {
             $q = $request->q;
             $query->where(function($qBuilder) use ($q) {
                 $qBuilder->where('business_name', 'like', "%{$q}%")
-                         ->orWhere('description', 'like', "%{$q}%");
+                         ->orWhere('description', 'like', "%{$q}%")
+                         ->orWhereHas('menuItems', function($m) use ($q) {
+                             $m->where('name', 'like', "%{$q}%")
+                               ->orWhere('description', 'like', "%{$q}%");
+                         });
             });
         }
 

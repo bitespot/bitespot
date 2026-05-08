@@ -10,7 +10,7 @@ class ExploreController extends Controller
 {
     public function index(Request $request): View
     {
-        $spots = Vendor::with('category')->where('status', 'approved')->get();
+        $spots = Vendor::with(['category', 'menuItems'])->where('status', 'approved')->get();
 
         $bitespots = $spots->map(fn($spot) => [
             'id'            => $spot->id,
@@ -25,6 +25,7 @@ class ExploreController extends Controller
             'image_url'        => $spot->primary_photo,
             'lat'           => $spot->lat !== null ? (float) $spot->lat : null,
             'lng'           => $spot->lng !== null ? (float) $spot->lng : null,
+            'menu_items'    => $spot->menuItems->pluck('name')->filter()->values()->toArray(),
         ]);
 
         // All vendors as JSON for JS (sidebar list + grid view)

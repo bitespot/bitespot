@@ -33,6 +33,7 @@ function normalize(v) {
         image_url:       v.image_url ?? v.primary_photo ?? null,
         lat:             v.lat != null ? parseFloat(v.lat) : null,
         lng:             v.lng != null ? parseFloat(v.lng) : null,
+        menu_items:      (v.menu_items ?? []).map(m => m.toLowerCase()),
     };
 }
 
@@ -291,7 +292,7 @@ function filterLocally() {
     const minRating = filters.rating ? parseFloat(filters.rating) : null;
 
     const results = ALL_VENDORS.filter(v => {
-        if (q && !v.name.toLowerCase().includes(q) && !v.category.toLowerCase().includes(q)) return false;
+        if (q && !v.name.toLowerCase().includes(q) && !v.category.toLowerCase().includes(q) && !v.menu_items.some(m => m.includes(q))) return false;
         if (filters.category && v.cat_slug !== filters.category) return false;
         if (filters.price    && v.price_tier_raw !== filters.price) return false;
         if (minRating        && (v.rating == null || v.rating < minRating)) return false;
