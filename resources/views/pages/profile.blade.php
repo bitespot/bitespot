@@ -10,9 +10,9 @@
     <div class="bg-gradient-to-br from-orange-500 to-orange-400 pt-12 pb-20 px-4">
         <div class="max-w-lg mx-auto flex flex-col items-center gap-3 text-center">
 
-            @if($user->avatar)
+            @if($user->avatar_url)
                 <img id="profile-avatar-hero"
-                     src="{{ $user->avatar }}"
+                     src="{{ $user->avatar_url }}"
                      alt="{{ $user->name }}"
                      class="w-20 h-20 rounded-full object-cover border-2 border-white/50 shadow">
             @else
@@ -89,8 +89,8 @@
                     <div id="avatar-preview"
                          class="w-20 h-20 rounded-full overflow-hidden bg-orange-100
                                 flex items-center justify-center text-orange-500 text-2xl font-bold">
-                        @if($user->avatar)
-                            <img src="{{ $user->avatar }}" alt="Avatar" class="w-full h-full object-cover">
+                        @if($user->avatar_url)
+                            <img src="{{ $user->avatar_url }}" alt="Avatar" class="w-full h-full object-cover">
                         @else
                             {{ strtoupper(substr($user->name, 0, 1)) }}
                         @endif

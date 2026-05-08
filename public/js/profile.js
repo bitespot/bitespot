@@ -435,9 +435,9 @@ function loadProfile() {
             if (profileEmailInput    && data.email    != null) profileEmailInput.value    = data.email;
             if (profileLocationInput && data.location != null) profileLocationInput.value = data.location;
 
-            if (data.avatar && avatarPreview) {
+            if (data.avatar_url && avatarPreview) {
                 avatarPreview.innerHTML =
-                    `<img src="${_esc(data.avatar)}" alt="Avatar" class="w-full h-full object-cover">`;
+                    `<img src="${_esc(data.avatar_url)}" alt="Avatar" class="w-full h-full object-cover">`;
             }
         })
         .catch(err => {
@@ -482,15 +482,24 @@ profileForm?.addEventListener('submit', async e => {
         if (profileNameDisplay)  profileNameDisplay.textContent  = updated.name  ?? name;
         if (profileEmailDisplay) profileEmailDisplay.textContent = updated.email ?? email;
 
-        if (updated.avatar) {
-            const imgTag = `<img src="${_esc(updated.avatar)}" alt="Avatar" class="w-full h-full object-cover">`;
-            if (avatarPreview)    avatarPreview.innerHTML    = imgTag;
-            if (profileAvatarHero && profileAvatarHero.tagName !== 'IMG') {
-                profileAvatarHero.outerHTML =
-                    `<img id="profile-avatar-hero" src="${_esc(updated.avatar)}" alt="${_esc(updated.name ?? name)}"
-                          class="w-20 h-20 rounded-full object-cover border-2 border-white/50 shadow">`;
-            } else if (profileAvatarHero) {
-                profileAvatarHero.src = updated.avatar;
+        // Update navbar name
+        const navbarName = document.querySelector('.bs-user-menu__name');
+        if (navbarName) navbarName.textContent = updated.name ?? name;
+
+        if (updated.avatar_url) {
+            const imgTag = `<img src="${_esc(updated.avatar_url)}" alt="Avatar" class="w-full h-full object-cover">`;
+            if (avatarPreview) avatarPreview.innerHTML = imgTag;
+
+            // Re-select hero to ensure we have the current DOM element
+            const currentHero = document.getElementById('profile-avatar-hero');
+            if (currentHero) {
+                if (currentHero.tagName !== 'IMG') {
+                    currentHero.outerHTML =
+                        `<img id="profile-avatar-hero" src="${_esc(updated.avatar_url)}" alt="${_esc(updated.name ?? name)}"
+                              class="w-20 h-20 rounded-full object-cover border-2 border-white/50 shadow">`;
+                } else {
+                    currentHero.src = updated.avatar_url;
+                }
             }
         }
 

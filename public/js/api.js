@@ -29,6 +29,15 @@ async function apiFetch(url, options = {}) {
     }
 
     let body = options.body ?? null;
+    let actualMethod = method;
+
+    // Handle Laravel/PHP limitation: multipart/form-data is only parsed on POST requests.
+    // If sending FormData with PUT/PATCH, we spoof the method using _method.
+    if (body instanceof FormData && (method === 'PUT' || method === 'PATCH')) {
+        body.append('_method', method);
+        actualMethod = 'POST';
+    }
+
     if (body !== null && !(body instanceof FormData) && typeof body === 'object') {
         headers['Content-Type'] = 'application/json';
         body = JSON.stringify(body);
@@ -36,7 +45,7 @@ async function apiFetch(url, options = {}) {
 
     const response = await fetch(url, {
         ...options,
-        method,
+        method: actualMethod,
         headers,
         body,
         credentials: 'same-origin',

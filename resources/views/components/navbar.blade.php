@@ -45,7 +45,11 @@
     <div class="bs-user-menu" id="user-menu-wrap">
         <button class="bs-user-menu__trigger" id="user-menu-btn" aria-expanded="false">
             <span class="bs-user-avatar">
-                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                @if(auth()->user()->avatar_url)
+                    <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="w-full h-full rounded-full object-cover">
+                @else
+                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                @endif
             </span>
             <span class="bs-user-menu__name">{{ auth()->user()->name }}</span>
             <svg class="bs-user-menu__chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
