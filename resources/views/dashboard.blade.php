@@ -240,7 +240,6 @@
 
         </div>{{-- /.bs-main --}}
 
-{{--
         <footer class="bs-footer">
             <div class="bs-container bs-footer__inner">
                 <div class="bs-footer__brand">
@@ -262,7 +261,7 @@
                 </div>
             </div>
         </footer>
---}}
+
         <script>
         // ── Search redirect (Enter key only — no button) ──
         document.getElementById('hero-search-input').addEventListener('keydown', function(e) {
