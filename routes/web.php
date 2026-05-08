@@ -64,8 +64,17 @@ Route::middleware('auth')->group(function () {
      Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
      // General dashboard for all authenticated users
+     // General dashboard for all authenticated users
      Route::get('/dashboard', function () {
-          return view('dashboard');
+          $slidesPath = public_path('images/hero_slides');
+          $slideFiles = \Illuminate\Support\Facades\File::exists($slidesPath)
+               ? collect(\Illuminate\Support\Facades\File::files($slidesPath))
+                    ->filter(fn($f) => in_array(strtolower($f->getExtension()), ['jpg','jpeg','png','webp','gif']))
+                    ->map(fn($f) => asset('images/hero_slides/' . $f->getFilename()))
+                    ->values()
+               : collect();
+
+          return view('dashboard', compact('slideFiles'));
      })->name('dashboard');
 
      // Saved places

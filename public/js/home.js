@@ -166,6 +166,7 @@ function loadDashboardSpots() {
                 const shuffled = [...trendingVendors].sort(() => 0.5 - Math.random());
                 trendingContainer.innerHTML = shuffled.slice(0, 6).map(renderGridCard).join('');
             }
+            window.dispatchEvent(new Event('bsTrendingReady'));
         }
 
         // ── Hidden Gems (3 random picks from the full vendor pool) ──
@@ -177,6 +178,7 @@ function loadDashboardSpots() {
                 const shuffled = [...allVendors].sort(() => 0.5 - Math.random());
                 gemsContainer.innerHTML = shuffled.slice(0, 3).map(renderGridCard).join('');
             }
+            window.dispatchEvent(new Event('bsGemsReady'));
         }
     })
     .catch(err => {
@@ -188,3 +190,58 @@ function loadDashboardSpots() {
 }
 
 loadDashboardSpots();
+
+// ---------------------------------------------------------------------------
+// Promotions Carousel — horizontal scroll with arrow controls
+// ---------------------------------------------------------------------------
+
+function loadPromoCarousel() {
+    const track = document.getElementById('bs-promo-track');
+    if (!track) return;
+
+    apiFetch('/api/trending')
+        .then(json => {
+            const vendors = Array.isArray(json) ? json : (json.data ?? []);
+
+            if (!vendors.length) {
+                track.innerHTML = '<p class="text-sm text-gray-400 px-2">No promotions right now.</p>';
+                return;
+            }
+
+            // Build one promo card per vendor
+            track.innerHTML = vendors.map(v => {
+                const name     = v.business_name || 'Featured Spot';
+                const slug     = v.slug || '#';
+                const category = v.category?.name ?? v.category ?? '';
+                const city     = v.city ?? '';
+                const rating   = v.avg_rating ? Number(v.avg_rating).toFixed(1) : null;
+
+                const photoUrl = v.primary_photo
+                    || (v.photos && v.photos.length > 0
+                        ? `/storage/${v.photos[0].photo_path}`
+                        : null);
+
+                return `
+                    <a href="/place/${slug}" class="bs-promo-card" title="${name}">
+                        ${photoUrl
+                            ? `<img src="${photoUrl}" alt="${name}" loading="lazy">`
+                            : `<div style="width:100%;height:100%;background:linear-gradient(135deg,#ff6b35,#f7c59f);display:flex;align-items:center;justify-content:center;font-size:2rem;">🍽️</div>`
+                        }
+                        <div class="bs-promo-card__label">
+                            <span class="bs-promo-card__name">${name}</span>
+                            <span class="bs-promo-card__meta">${[category, city].filter(Boolean).join(' · ')}${rating ? ' · ⭐ ' + rating : ''}</span>
+                        </div>
+                    </a>
+                `;
+            }).join('');
+
+            // Tell the arrow script that cards are ready
+            window.dispatchEvent(new Event('bsPromosReady'));
+        })
+        .catch(err => {
+            console.error('[Promo] Carousel fetch failed:', err);
+            track.innerHTML = '<p class="text-sm text-red-400 px-2">Could not load promotions.</p>';
+        });
+}
+
+loadPromoCarousel();

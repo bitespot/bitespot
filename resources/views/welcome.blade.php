@@ -101,13 +101,27 @@
         {{-- ===================================================
              HERO
              =================================================== --}}
+        {{-- Collect every image from public/images/hero_slides automatically --}}
+        @php
+            $slidesPath = public_path('images/hero_slides');
+            $slideFiles = collect(File::files($slidesPath))
+                ->filter(fn($f) => in_array(strtolower($f->getExtension()), ['jpg','jpeg','png','webp','gif']))
+                ->map(fn($f) => asset('images/hero_slides/' . $f->getFilename()))
+                ->values();
+        @endphp
+
         <section class="bs-hero">
-            <img
-                src="/images/dashboard/jepoysgrillandresto.jpg"
-                alt=""
-                class="bs-hero__bg"
-                aria-hidden="true"
-            >
+            {{-- Slideshow background --}}
+            <div class="bs-hero__slideshow" aria-hidden="true">
+                {{-- Dark overlay for text legibility --}}
+                <div class="bs-hero__overlay" aria-hidden="true"></div>
+                @foreach($slideFiles as $i => $slide)
+                    <div
+                        class="bs-hero__slide{{ $i === 0 ? ' bs-hero__slide--active' : '' }}"
+                        style="background-image: url('{{ $slide }}');"
+                    ></div>
+                @endforeach
+            </div>
 
             <div class="bs-hero__content">
                 <h1 class="bs-hero__title">
@@ -132,7 +146,7 @@
                             autocomplete="off"
                         >
                     </div>
-                    <a href="/explore" class="bs-search__btn w-full sm:w-auto mt-2 sm:mt-0 text-base sm:text-lg py-2 sm:py-3 px-4 sm:px-6 rounded-full sm:rounded-full" id="hero-search-btn">Search</a>
+                    
                 </div>
 
                 <div id="search-dropdown" class="bs-search-dropdown"></div>
@@ -230,52 +244,33 @@
 
                 <div class="bs-categories">
                     <a href="/explore?category=restaurants" class="bs-category-btn">
-                        <div class="bs-category-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/>
-                                <path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>
-                            </svg>
-                        </div>
+                        <span class="bs-who-emoji" style="display: flex; align-items: center; justify-content: center; height: 2.8em;">
+                            <img src="/images/categories/restaurants.png" alt="Everyday Diners" style="width: 2.2em; height: 2.2em; object-fit: contain; display: block;" loading="lazy">
+                        </span>
                         <span class="bs-category-label">Restaurants</span>
                     </a>
                     <a href="/explore?category=street-food" class="bs-category-btn">
-                        <div class="bs-category-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 2 2 22h20L12 2z"/><path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
-                            </svg>
-                        </div>
+                        <span class="bs-who-emoji" style="display: flex; align-items: center; justify-content: center; height: 2.8em;">
+                            <img src="/images/categories/street_foods.png" alt="Everyday Diners" style="width: 2.2em; height: 2.2em; object-fit: contain; display: block;" loading="lazy">
+                        </span>
                         <span class="bs-category-label">Street Food</span>
                     </a>
                     <a href="/explore?category=cafes" class="bs-category-btn">
-                        <div class="bs-category-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/>
-                                <line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/>
-                            </svg>
-                        </div>
+                        <span class="bs-who-emoji" style="display: flex; align-items: center; justify-content: center; height: 2.8em;">
+                            <img src="/images/categories/cafes.png" alt="Everyday Diners" style="width: 2.2em; height: 2.2em; object-fit: contain; display: block;" loading="lazy">
+                        </span>
                         <span class="bs-category-label">Cafés</span>
                     </a>
                     <a href="/explore?category=desserts" class="bs-category-btn">
-                        <div class="bs-category-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 22l3-3-1.5-1.5L12 19l-1.5-1.5L9 19l3 3z"/>
-                                <path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17h8v-2.26C17.81 13.47 19 11.38 19 9a7 7 0 0 0-7-7z"/>
-                            </svg>
-                        </div>
+                        <span class="bs-who-emoji" style="display: flex; align-items: center; justify-content: center; height: 2.8em;">
+                            <img src="/images/categories/desserts.png" alt="Everyday Diners" style="width: 2.2em; height: 2.2em; object-fit: contain; display: block;" loading="lazy">
+                        </span>
                         <span class="bs-category-label">Desserts</span>
                     </a>
                     <a href="/explore?category=drinks" class="bs-category-btn">
-                        <div class="bs-category-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M17 11h1a3 3 0 0 1 0 6h-1"/><path d="M5 11h12v10H5z"/>
-                                <path d="M5 7h14"/><path d="M7 7V5"/><path d="M11 7V5"/><path d="M15 7V5"/>
-                            </svg>
-                        </div>
+                        <span class="bs-who-emoji" style="display: flex; align-items: center; justify-content: center; height: 2.8em;">
+                            <img src="/images/categories/drinks.png" alt="Everyday Diners" style="width: 2.2em; height: 2.2em; object-fit: contain; display: block;" loading="lazy">
+                        </span>
                         <span class="bs-category-label">Drinks</span>
                     </a>
                 </div>
@@ -293,7 +288,7 @@
                 <div class="bs-who-grid">
                     <div class="bs-who-card">
                         <span class="bs-who-emoji" style="display: flex; align-items: center; justify-content: center; height: 2.8em;">
-                            <img src="/images/dashboard/who_uses_bitespot/diners.png" alt="Everyday Diners" style="width: 2.2em; height: 2.2em; object-fit: contain; display: block;" loading="lazy">
+                            <img src="/images/who_uses_bitespot/diners.png" alt="Everyday Diners" style="width: 2.2em; height: 2.2em; object-fit: contain; display: block;" loading="lazy">
                         </span>
                         <h3 class="bs-who-title">Everyday Diners</h3>
                         <p class="bs-who-desc">
@@ -303,7 +298,7 @@
                     </div>
                     <div class="bs-who-card">
                         <span class="bs-who-emoji" style="display: flex; align-items: center; justify-content: center; height: 2.8em;">
-                            <img src="/images/dashboard/who_uses_bitespot/tourists.png" alt="Tourists & Visitors" style="width: 2.2em; height: 2.2em; object-fit: contain; display: block;" loading="lazy">
+                            <img src="/images/who_uses_bitespot/tourists.png" alt="Tourists & Visitors" style="width: 2.2em; height: 2.2em; object-fit: contain; display: block;" loading="lazy">
                         </span>
                         <h3 class="bs-who-title">Tourists & Visitors</h3>
                         <p class="bs-who-desc">
@@ -313,7 +308,7 @@
                     </div>
                     <div class="bs-who-card">
                         <span class="bs-who-emoji" style="display: flex; align-items: center; justify-content: center; height: 2.8em;">
-                            <img src="/images/dashboard/who_uses_bitespot/vendors.png" alt="Food Vendors" style="width: 2.2em; height: 2.2em; object-fit: contain; display: block;" loading="lazy">
+                            <img src="/images/who_uses_bitespot/vendors.png" alt="Food Vendors" style="width: 2.2em; height: 2.2em; object-fit: contain; display: block;" loading="lazy">
                         </span>
                         <h3 class="bs-who-title">Food Vendors</h3>
                         <p class="bs-who-desc">
@@ -368,6 +363,39 @@
         </footer>
 
         <style>
+        /* ── Hero Slideshow ─────────────────────────────────────── */
+        .bs-hero__slideshow {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .bs-hero__slide {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out;
+            will-change: opacity;
+        }
+        .bs-hero__slide--active {
+            opacity: 1;
+        }
+
+        .bs-hero__overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background: rgba(0, 0, 0, 0.35); /* ← change 0.35 to 0.20 or 0.30 to taste */
+            pointer-events: none;
+        }
+        /* Keep existing hero overlay/content above the slides */
+        .bs-hero__content {
+            position: relative;
+            z-index: 2;
+        }
+
         /* Navbar search bar left-aligned, simple rectangle */
         .bs-navbar__links--left {
             display: flex;
@@ -378,6 +406,20 @@
             flex: 1;
         }
         </style>
+
+        <script>
+        // ── Hero Slideshow ────────────────────────────────────────
+        (function () {
+            const slides = document.querySelectorAll('.bs-hero__slide');
+            if (slides.length < 2) return; // nothing to cycle if 0 or 1 slide
+            let current = 0;
+            setInterval(function () {
+                slides[current].classList.remove('bs-hero__slide--active');
+                current = (current + 1) % slides.length;
+                slides[current].classList.add('bs-hero__slide--active');
+            }, 5000); // change every 5 s — adjust to taste
+        })();
+        </script>
 
         <script>
         // No underline indicator logic needed

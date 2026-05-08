@@ -26,12 +26,12 @@
                     <div class="grid grid-cols-2 gap-3">
                         
                         <button type="button" onclick="selectRole('user')" class="role-btn-user flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl border-2 border-orange-500 bg-orange-50 text-orange-700 font-bold text-sm transition-all active">
-                            <img src="/images/dashboard/who_uses_bitespot/diners.png" alt="Food Customers" class="w-5 h-5 object-contain" loading="lazy">
+                            <img src="/images/who_uses_bitespot/diners.png" alt="Food Customers" class="w-5 h-5 object-contain" loading="lazy">
                             <span>Customer</span>
                         </button>
                         
                         <button type="button" onclick="selectRole('vendor')" class="role-btn-vendor flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl border-2 border-gray-300 bg-white text-gray-700 font-bold text-sm transition-all hover:border-green-500 hover:bg-green-50 hover:text-green-700">
-                            <img src="/images/dashboard/who_uses_bitespot/vendors.png" alt="Food Vendors" class="w-5 h-5 object-contain opacity-80" loading="lazy">
+                            <img src="/images/who_uses_bitespot/vendors.png" alt="Food Vendors" class="w-5 h-5 object-contain opacity-80" loading="lazy">
                             <span>Vendor</span>
                         </button>
 
