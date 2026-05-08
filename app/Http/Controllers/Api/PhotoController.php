@@ -55,7 +55,7 @@ class PhotoController extends Controller
         $file = $request->file('photo');
         $key  = 'vendors/' . $vendor->id . '/gallery/' . Str::uuid() . '.' . $file->getClientOriginalExtension();
 
-        Storage::disk('s3')->put($key, file_get_contents($file));
+        Storage::disk('s3')->put($key, file_get_contents($file), 'public');
 
         $isPrimary = $vendor->photos()->count() === 0;
 
@@ -131,7 +131,7 @@ class PhotoController extends Controller
         }
 
         $key = 'vendors/covers/' . Str::slug($vendor->business_name) . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
-        Storage::disk('s3')->put($key, file_get_contents($file));
+        Storage::disk('s3')->put($key, file_get_contents($file), 'public');
 
         $vendor->update(['cover_photo' => $key]);
 
@@ -161,7 +161,7 @@ class PhotoController extends Controller
         }
 
         $key = 'vendors/profiles/' . Str::slug($vendor->business_name) . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
-        Storage::disk('s3')->put($key, file_get_contents($file));
+        Storage::disk('s3')->put($key, file_get_contents($file), 'public');
 
         $vendor->update(['profile_photo' => $key]);
 
