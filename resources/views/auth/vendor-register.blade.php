@@ -22,19 +22,17 @@
     #search-results li:hover { background: #f0fdf4; }
 </style>
 
-<div class="min-h-screen flex bg-gray-50">
-    <!-- Branding Panel -->
-    <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-green-500 to-green-400 justify-center items-center p-12 text-center text-white">
+<div class="h-screen w-full flex bg-gray-50 overflow-hidden">
+    <div class="hidden lg:flex lg:w-1/2 h-full bg-gradient-to-br from-green-500 to-green-400 justify-center items-center p-12 text-center text-white">
         <div class="max-w-lg">
             <img src="{{ asset('logo.png') }}" alt="BiteSpot Logo" class="w-32 h-32 mx-auto mb-8 bg-white p-2 rounded-full shadow-md">
-            <h1 class="text-4xl font-extrabold mb-4">Join as a Vendor</h1>
+            <h1 class="text-4xl font-extrabold mb-4">Register Your Establishment</h1>
             <p class="text-lg text-green-50">Register your food establishment and start reaching more customers today.</p>
         </div>
     </div>
 
-    <!-- Form Panel -->
-    <div class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 overflow-y-auto">
-        <div class="w-full max-w-2xl bg-white rounded-2xl shadow-xl lg:shadow-none p-8 lg:p-2 lg:bg-transparent">
+    <div class="w-full lg:w-1/2 h-full flex p-6 sm:p-12 overflow-y-auto">
+        <div class="w-full max-w-2xl bg-white rounded-2xl shadow-xl lg:shadow-none p-8 lg:p-2 lg:bg-transparent m-auto">
 
             <div class="flex flex-col items-center lg:items-start mb-8">
                 <img src="{{ asset('logo.png') }}" alt="BiteSpot Logo" class="w-16 h-16 mb-4 lg:hidden">
@@ -46,7 +44,6 @@
                 @csrf
 
                 @guest
-                <!-- Account Information -->
                 <div class="border-b pb-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Account Information</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -80,7 +77,6 @@
                 </div>
                 @endguest
 
-                <!-- Establishment Information -->
                 <div class="border-b pb-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Establishment Information</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -112,29 +108,26 @@
                     </div>
                 </div>
 
-                <!-- Location — Pin on Map -->
                 <div class="border-b pb-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-1">Location *</h3>
                     <p class="text-sm text-gray-500 mb-4">Search for your establishment or tap the map to pin its exact location.</p>
 
-                    <!-- Search box -->
                     <div style="position:relative;" class="mb-3">
                         <div class="flex gap-2">
                             <input id="map-search" type="text" placeholder="Search address or place name…"
                                 class="flex-1 rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-green-500 shadow-sm transition"
                                 autocomplete="off">
-                            <button type="button" id="map-search-btn"
-                                class="px-4 py-2.5 bg-green-500 text-white text-sm font-semibold rounded-lg hover:bg-green-600 transition shadow-sm">
-                                Search
+                            <button type="button" id="use-location-btn"
+                                class="px-4 py-2.5 bg-green-500 text-white text-sm font-semibold rounded-lg hover:bg-green-600 transition shadow-sm whitespace-nowrap flex items-center gap-2">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 2C8.686 2 6 4.686 6 8c0 4.5 6 12 6 12s6-7.5 6-12c0-3.314-2.686-6-6-6z"/><circle cx="12" cy="8" r="2.5"/></svg>
+                                Use Location
                             </button>
                         </div>
                         <ul id="search-results" style="display:none;"></ul>
                     </div>
 
-                    <!-- Map -->
                     <div id="map"></div>
 
-                    <!-- Resolved address display -->
                     <div id="location-display" class="unset">
                         <svg width="16" height="16" style="flex-shrink:0;margin-top:1px" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 2C8.686 2 6 4.686 6 8c0 4.5 6 12 6 12s6-7.5 6-12c0-3.314-2.686-6-6-6z"/>
@@ -143,7 +136,6 @@
                         <span id="location-text">No location selected — click the map to pin your establishment.</span>
                     </div>
 
-                    <!-- Hidden inputs populated by map -->
                     <input type="hidden" name="lat" id="input-lat" value="{{ old('lat') }}">
                     <input type="hidden" name="lng" id="input-lng" value="{{ old('lng') }}">
                     <input type="hidden" name="address" id="input-address" value="{{ old('address') }}">
@@ -154,7 +146,6 @@
                     <x-input-error :messages="$errors->get('lat')" class="mt-2" />
                 </div>
 
-                <!-- Business Details -->
                 <div>
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Business Details</h3>
                     <div>
@@ -180,7 +171,6 @@
                     </div>
                 </div>
 
-                <!-- Submit -->
                 <div class="flex items-center justify-between pt-4">
                     <a href="{{ route('login') }}" class="text-sm text-gray-600 hover:text-gray-900 underline">Already have an account?</a>
                     <button type="submit"
@@ -283,11 +273,12 @@
         document.getElementById('location-text').textContent = text;
     }
 
-    // Search
-    const searchInput  = document.getElementById('map-search');
-    const searchBtn    = document.getElementById('map-search-btn');
-    const resultsList  = document.getElementById('search-results');
+    // Search & Current Location functionality
+    const searchInput    = document.getElementById('map-search');
+    const useLocationBtn = document.getElementById('use-location-btn');
+    const resultsList    = document.getElementById('search-results');
 
+    // Keep text search functional on "Enter" key
     function doSearch() {
         const q = searchInput.value.trim();
         if (!q) return;
@@ -321,8 +312,39 @@
         });
     }
 
-    searchBtn.addEventListener('click', doSearch);
     searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); doSearch(); } });
+    
+    // Trigger Geolocation
+    useLocationBtn.addEventListener('click', function () {
+        if (!navigator.geolocation) {
+            alert('Geolocation is not supported by your browser.');
+            return;
+        }
+
+        const originalHTML = useLocationBtn.innerHTML;
+        useLocationBtn.innerHTML = 'Locating...';
+        useLocationBtn.disabled = true;
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                map.setView([lat, lng], 17);
+                placePin(lat, lng);
+
+                useLocationBtn.innerHTML = originalHTML;
+                useLocationBtn.disabled = false;
+            },
+            (error) => {
+                console.error(error);
+                alert('Unable to retrieve your location. Please check your browser location permissions.');
+                useLocationBtn.innerHTML = originalHTML;
+                useLocationBtn.disabled = false;
+            },
+            { enableHighAccuracy: true }
+        );
+    });
+
     document.addEventListener('click', e => {
         if (!e.target.closest('#map-search') && !e.target.closest('#search-results')) {
             resultsList.style.display = 'none';
