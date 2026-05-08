@@ -126,18 +126,44 @@ _applyBookmarkState(isBookmarked);
 bookmarkBtn?.addEventListener('click', _toggleBookmark);
 
 // ---------------------------------------------------------------------------
-// SID_16: Share link — navigator.clipboard + prompt fallback
+// SID_16: Share link — Web Share API → clipboard → execCommand fallback
 // ---------------------------------------------------------------------------
 
 const shareBtn = document.getElementById('share-btn');
 
 shareBtn?.addEventListener('click', async () => {
     const url = window.location.href;
+
+    // 1. Native share sheet (mobile / supported desktop)
+    if (navigator.share) {
+        try {
+            await navigator.share({ url });
+            return;
+        } catch (e) {
+            if (e.name === 'AbortError') return; // user cancelled — do nothing
+        }
+    }
+
+    // 2. Clipboard API (requires HTTPS)
+    if (navigator.clipboard?.writeText) {
+        try {
+            await navigator.clipboard.writeText(url);
+            showToast('Link copied to clipboard!', 'success');
+            return;
+        } catch {}
+    }
+
+    // 3. execCommand fallback (works on plain HTTP)
     try {
-        await navigator.clipboard.writeText(url);
+        const tmp = document.createElement('input');
+        tmp.value = url;
+        document.body.appendChild(tmp);
+        tmp.select();
+        document.execCommand('copy');
+        document.body.removeChild(tmp);
         showToast('Link copied to clipboard!', 'success');
     } catch {
-        window.prompt('Copy this link to share:', url);
+        showToast('Share link: ' + url, 'info', 8000);
     }
 });
 
