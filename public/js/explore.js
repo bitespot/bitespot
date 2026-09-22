@@ -75,6 +75,7 @@ window.exploreMap = {
         const TACLOBAN = [11.2543, 125.0000];
 
         const boot = (center, userCoords = null) => {
+            this._map = L.map('explore-map', { center, zoom: 15 });
             const cartoKey = window.CARTO_API_KEY || window.cartoApiKey || '';
             const cartoUrl = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png' + (cartoKey ? `?key=${cartoKey}` : '');
             L.tileLayer(cartoUrl, {
