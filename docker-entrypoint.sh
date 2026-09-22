@@ -30,8 +30,8 @@ if [ "${DB_CONNECTION:-sqlite}" = "sqlite" ]; then
     chown -R www-data:www-data "$(dirname "$DB_FILE")" || true
 fi
 
-chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database || true
-chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database || true
+chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database /var/www/html/data || true
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database /var/www/html/data || true
 
 chmod 666 /var/www/html/.env 2>/dev/null || true
 chown www-data:www-data /var/www/html/.env 2>/dev/null || true
