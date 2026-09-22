@@ -260,6 +260,6 @@ window.INITIAL_MAP_SPOTS = {!! json_encode($mapspotsJson) !!};
 window.CARTO_API_KEY     = {!! json_encode(config('services.carto.key', env('CARTO_API_KEY', ''))) !!};
 </script>
 
-<script src="{{ asset('js/explore.js') }}"></script>
+<script src="{{ asset('js/explore.js') }}?v={{ file_exists(public_path('js/explore.js')) ? filemtime(public_path('js/explore.js')) : time() }}"></script>
 @endpush
 @endsection
