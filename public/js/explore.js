@@ -75,8 +75,9 @@ window.exploreMap = {
         const TACLOBAN = [11.2543, 125.0000];
 
         const boot = (center, userCoords = null) => {
-            this._map = L.map('explore-map', { center, zoom: 15 });
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            const cartoKey = window.CARTO_API_KEY || window.cartoApiKey || '';
+            const cartoUrl = 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png' + (cartoKey ? `?key=${cartoKey}` : '');
+            L.tileLayer(cartoUrl, {
                 maxZoom: 20,
                 attribution: '© OpenStreetMap contributors © CARTO',
             }).addTo(this._map);

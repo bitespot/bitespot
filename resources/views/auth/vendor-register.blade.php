@@ -225,7 +225,9 @@
 
     const map = L.map('map').setView([DEFAULT_LAT, DEFAULT_LNG], DEFAULT_ZOOM);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    const cartoKey = '{{ config("services.carto.key", env("CARTO_API_KEY", "")) }}';
+    const cartoUrl = 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png' + (cartoKey ? `?key=${cartoKey}` : '');
+    L.tileLayer(cartoUrl, {
         maxZoom: 20,
         attribution: '© OpenStreetMap contributors © CARTO',
     }).addTo(map);

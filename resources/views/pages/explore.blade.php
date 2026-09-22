@@ -257,6 +257,7 @@
 <script>
 window.INITIAL_VENDORS   = {!! json_encode($allVendorsJson) !!};
 window.INITIAL_MAP_SPOTS = {!! json_encode($mapspotsJson) !!};
+window.CARTO_API_KEY     = {!! json_encode(config('services.carto.key', env('CARTO_API_KEY', ''))) !!};
 </script>
 
 <script src="{{ asset('js/explore.js') }}"></script>
