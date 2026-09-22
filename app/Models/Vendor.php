@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class Vendor extends Model
 {
@@ -68,27 +69,37 @@ class Vendor extends Model
         return self::PRICE_TIER_MAP[$this->price_tier] ?? $this->price_tier;
     }
 
-    private static function s3Url(string $key): string
+    public static function photoUrl(?string $key): ?string
     {
-        $bucket = config('filesystems.disks.s3.bucket');
-        $region = config('filesystems.disks.s3.region');
-        return "https://{$bucket}.s3.{$region}.amazonaws.com/{$key}";
+        if (!$key) return null;
+        if (str_starts_with($key, 'http://') || str_starts_with($key, 'https://')) {
+            return $key;
+        }
+
+        $defaultDisk = config('filesystems.default', 'public');
+        if ($defaultDisk === 's3' && config('filesystems.disks.s3.key')) {
+            $bucket = config('filesystems.disks.s3.bucket');
+            $region = config('filesystems.disks.s3.region', 'ap-southeast-2');
+            return "https://{$bucket}.s3.{$region}.amazonaws.com/{$key}";
+        }
+
+        return Storage::disk('public')->url($key);
     }
 
     public function getPrimaryPhotoAttribute(): ?string
     {
         $key = $this->profile_photo ?? $this->cover_photo;
-        return $key ? self::s3Url($key) : null;
+        return self::photoUrl($key);
     }
 
     public function getCoverPhotoUrlAttribute(): ?string
     {
-        return $this->cover_photo ? self::s3Url($this->cover_photo) : null;
+        return self::photoUrl($this->cover_photo);
     }
 
     public function getProfilePhotoUrlAttribute(): ?string
     {
-        return $this->profile_photo ? self::s3Url($this->profile_photo) : null;
+        return self::photoUrl($this->profile_photo);
     }
 
     public function discoveries(): HasMany

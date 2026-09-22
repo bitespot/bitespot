@@ -39,12 +39,12 @@
     .animate-respawn { animation: respawnFood 1.2s infinite; transform-origin: center; }
 </style>
 
-<div class="min-h-screen bg-gray-50 py-10 px-4">
-    <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl p-8">
+<div class="min-h-screen bg-gray-50 py-4 sm:py-10 px-3 sm:px-4">
+    <div class="max-w-2xl mx-auto bg-white rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-8">
 
-        <div class="mb-8">
-            <h2 class="text-3xl font-extrabold text-gray-900">Add an Establishment</h2>
-            <p class="text-sm text-gray-500 mt-2">Know a great spot that isn't on BiteSpot yet? Add it here. Anyone can claim ownership later.</p>
+        <div class="mb-6 sm:mb-8">
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900">Add an Establishment</h2>
+            <p class="text-sm text-gray-500 mt-1 sm:mt-2">Know a great spot that isn't on BiteSpot yet? Add it here. Anyone can claim ownership later.</p>
         </div>
 
         <form id="add-form" method="POST" action="{{ route('bitespot.store') }}" class="space-y-5">
@@ -96,7 +96,7 @@
                 <p class="text-sm text-gray-500 mb-4">Search for the establishment or tap the map to pin its exact location.</p>
 
                 <div style="position:relative;" class="mb-3">
-                    <div class="flex gap-2">
+                    <div class="flex flex-col sm:flex-row gap-2">
                         <div class="relative flex-1">
                             <input id="map-search" type="text" placeholder="Search address or place name…"
                                 class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-green-500 shadow-sm transition pr-10"
@@ -118,9 +118,9 @@
                         </div>
 
                         <button type="button" id="use-location-btn"
-                            class="px-4 py-2.5 bg-green-500 text-white text-sm font-semibold rounded-lg hover:bg-green-600 transition shadow-sm whitespace-nowrap flex items-center gap-2">
+                            class="px-4 py-2.5 bg-green-500 text-white text-sm font-semibold rounded-lg hover:bg-green-600 transition shadow-sm whitespace-nowrap flex items-center justify-center gap-2">
                             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 2C8.686 2 6 4.686 6 8c0 4.5 6 12 6 12s6-7.5 6-12c0-3.314-2.686-6-6-6z"/><circle cx="12" cy="8" r="2.5"/></svg>
-                            Use Location
+                            Use Current Location
                         </button>
                     </div>
                     <ul id="search-results" style="display:none;"></ul>

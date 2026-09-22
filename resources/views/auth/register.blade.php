@@ -10,8 +10,8 @@
         </div>
 
         <!-- Form Panel (Mobile + Desktop) -->
-        <div class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12">
-            <div class="w-full max-w-md bg-white rounded-2xl shadow-xl lg:shadow-none p-8 lg:p-2 lg:bg-transparent">
+        <div class="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-8 lg:p-12">
+            <div class="w-full max-w-md bg-white rounded-2xl shadow-xl lg:shadow-none p-5 sm:p-8 lg:p-2 lg:bg-transparent">
                 
                 <!-- Mobile Logo (Hidden on Desktop) -->
                 <div class="flex flex-col items-center lg:items-start mb-8">

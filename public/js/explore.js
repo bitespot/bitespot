@@ -98,6 +98,11 @@ window.exploreMap = {
             const withCoords = ALL_VENDORS.filter(v => v.lat != null && v.lng != null);
             this._placeMarkers(withCoords);
             this._fitBounds(withCoords);
+
+            this._map.on('click', () => {
+                this._activate(null);
+                hideMobilePinPreview();
+            });
         };
 
         if (!navigator.geolocation) { boot(TACLOBAN); return; }
@@ -127,8 +132,12 @@ window.exploreMap = {
 
             marker.on('click', () => {
                 this._activate(v.id);
-                document.querySelector(`[data-vendor-id="${v.id}"]`)
-                    ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                if (isMobile()) {
+                    showMobilePinPreview(v);
+                } else {
+                    document.querySelector(`[data-vendor-id="${v.id}"]`)
+                        ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
             });
 
             this._markers[v.id] = { marker, vendor: v };
@@ -170,10 +179,61 @@ window.exploreMap = {
 // ── View toggle ───────────────────────────────────────────────────────────
 function isMobile() { return window.innerWidth < 768; }
 
+window.toggleMobileExploreView = function() {
+    const listPane = document.getElementById('list-pane');
+    const isListActive = listPane && !listPane.classList.contains('hidden');
+    setExploreView(isListActive ? 'map' : 'list');
+};
+
+function showMobilePinPreview(v) {
+    const card = document.getElementById('mobile-pin-preview');
+    if (!card) return;
+
+    const photo = v.image_url
+        ? `<img src="${v.image_url}" alt="${v.name}" class="w-16 h-16 rounded-xl object-cover flex-shrink-0" loading="lazy">`
+        : `<div class="w-16 h-16 rounded-xl bg-gradient-to-br from-orange-400 to-orange-300 flex items-center justify-center text-white text-2xl flex-shrink-0">🍽️</div>`;
+
+    const sub = [v.category, v.price_tier].filter(Boolean).join(' • ');
+
+    card.innerHTML = `
+        <div class="flex items-center gap-3 relative">
+            ${photo}
+            <div class="flex-1 min-w-0 pr-6">
+                <h4 class="font-bold text-gray-900 text-sm truncate">${v.name}</h4>
+                ${sub ? `<p class="text-xs text-gray-500 mt-0.5">${sub}</p>` : ''}
+                ${v.city ? `<p class="text-xs text-gray-400 truncate">${v.city}</p>` : ''}
+                <div class="flex items-center gap-2 mt-1.5">
+                    <span class="inline-flex items-center gap-1 text-xs font-semibold text-amber-500">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        ${v.rating != null ? v.rating.toFixed(1) : 'New'}
+                    </span>
+                    <a href="/place/${v.slug}" class="ml-auto px-3 py-1 bg-orange-500 text-white rounded-full text-xs font-semibold hover:bg-orange-600 transition shadow-sm">
+                        View Place &rarr;
+                    </a>
+                </div>
+            </div>
+            <button onclick="hideMobilePinPreview()" class="absolute -top-1 -right-1 text-gray-400 hover:text-gray-600 p-1 text-lg leading-none" aria-label="Close preview">&times;</button>
+        </div>
+    `;
+    card.classList.remove('hidden');
+}
+
+window.hideMobilePinPreview = function() {
+    const card = document.getElementById('mobile-pin-preview');
+    if (card) card.classList.add('hidden');
+};
+
 function setExploreView(view) {
     const sidebar  = document.getElementById('sidebar-pane');
     const mapPane  = document.getElementById('map-pane');
     const listPane = document.getElementById('list-pane');
+
+    const iconList = document.getElementById('mobile-view-icon-list');
+    const iconMap  = document.getElementById('mobile-view-icon-map');
+    const label    = document.getElementById('mobile-view-label');
+    const count    = (window._exploreVendors ?? ALL_VENDORS).length;
+
+    hideMobilePinPreview();
 
     if (view === 'list') {
         // Sidebar is hidden on mobile via CSS; on desktop we hide it in list view
@@ -181,12 +241,20 @@ function setExploreView(view) {
         mapPane?.classList.add('hidden');
         listPane?.classList.remove('hidden');
         renderGrid(window._exploreVendors ?? ALL_VENDORS);
+
+        iconList?.classList.add('hidden');
+        iconMap?.classList.remove('hidden');
+        if (label) label.textContent = 'Map';
     } else {
         // Map view: on desktop show sidebar; CSS hides it on mobile automatically
         if (!isMobile()) sidebar?.classList.remove('hidden');
         mapPane?.classList.remove('hidden');
         listPane?.classList.add('hidden');
         requestAnimationFrame(() => window.exploreMap?.invalidateSize());
+
+        iconList?.classList.remove('hidden');
+        iconMap?.classList.add('hidden');
+        if (label) label.textContent = `List (${count})`;
     }
 
     document.querySelectorAll('[data-view-btn]').forEach(btn => {
@@ -253,8 +321,14 @@ function setResultCount(n) {
     const label = `${n} ${n === 1 ? 'place' : 'places'} found`;
     const el     = document.getElementById('result-count');
     const elList = document.getElementById('result-count-list');
+    const mobileLabel = document.getElementById('mobile-view-label');
+    const isListActive = !document.getElementById('list-pane')?.classList.contains('hidden');
+
     if (el)     el.textContent     = label;
     if (elList) elList.textContent = label;
+    if (mobileLabel && !isListActive) {
+        mobileLabel.textContent = `List (${n})`;
+    }
 }
 
 function renderResults(vendors) {
@@ -345,7 +419,7 @@ function activateCategory(slug) {
 // Uses window.innerHeight instead of 100vh — more reliable on mobile browsers
 // where the address bar appearing/hiding shifts the viewport.
 function fitRootHeight() {
-    const navH = document.querySelector('.bs-navbar')?.offsetHeight ?? 0;
+    const navH = isMobile() ? (document.querySelector('.bs-navbar')?.offsetHeight ?? 0) : 0;
     const root = document.getElementById('explore-root');
     if (root) root.style.height = `${window.innerHeight - navH}px`;
 }

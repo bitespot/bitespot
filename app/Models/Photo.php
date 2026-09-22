@@ -24,6 +24,16 @@ class Photo extends Model
 
     public function getFullUrlAttribute(): string
     {
-        return Storage::disk('s3')->url($this->attributes['url']);
+        $url = $this->attributes['url'] ?? '';
+        if (str_starts_with($url, 'http://') || str_starts_with($url, 'https://')) {
+            return $url;
+        }
+
+        $defaultDisk = config('filesystems.default', 'public');
+        if ($defaultDisk === 's3' && config('filesystems.disks.s3.key')) {
+            return Storage::disk('s3')->url($url);
+        }
+
+        return Storage::disk('public')->url($url);
     }
 }

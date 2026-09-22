@@ -23,6 +23,18 @@
         transform: translateY(-2px);
         color: #fff;
     }
+    @media (max-width: 640px) {
+        .add-bitespot-fab {
+            right: 1.25rem;
+            bottom: 1.5rem;
+            width: 50px;
+            height: 50px;
+        }
+        .add-bitespot-fab svg {
+            width: 24px;
+            height: 24px;
+        }
+    }
 </style>
 
 <a href="{{ route('bitespot.create') }}" class="add-bitespot-fab" title="Post a new BiteSpot">

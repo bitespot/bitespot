@@ -405,6 +405,25 @@
             gap: 0.5rem;
             flex: 1;
         }
+
+        @media (max-width: 767px) {
+            .bs-navbar__links--left {
+                display: none !important;
+            }
+            .bs-navbar__links--right {
+                display: flex !important;
+                align-items: center;
+                gap: 0.4rem !important;
+                margin-left: auto;
+            }
+            .bs-navbar__links--right .btn-primary {
+                font-size: 0.8rem !important;
+                padding: 0.4rem 0.75rem !important;
+            }
+            .bs-hero__content {
+                padding-inline: 0.5rem;
+            }
+        }
         </style>
 
         <script>

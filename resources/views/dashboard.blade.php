@@ -72,32 +72,32 @@
             {{-- ── Categories ── --}}
             <section class="bs-categories-section">
                 <h2 class="bs-section-title">What are you craving?</h2>
-                <div class="bs-categories flex flex-wrap gap-3 mt-4">
-                    <a href="/explore?category=restaurants" class="bs-category-btn flex-1 min-w-[120px] max-w-[180px] flex flex-col items-center">
+                <div class="bs-categories flex gap-3 mt-4 overflow-x-auto pb-2 scroll-smooth snap-x snap-mandatory">
+                    <a href="/explore?category=restaurants" class="bs-category-btn flex-shrink-0 snap-start min-w-[110px] sm:flex-1 max-w-[180px] flex flex-col items-center">
                         <span class="bs-who-emoji" style="display: flex; align-items: center; justify-content: center; height: 2.8em;">
                             <img src="/images/categories/restaurants.png" alt="Everyday Diners" style="width: 2.2em; height: 2.2em; object-fit: contain; display: block;" loading="lazy">
                         </span>
                         <span class="bs-category-label">Restaurants</span>
                     </a>
-                    <a href="/explore?category=street-food" class="bs-category-btn flex-1 min-w-[120px] max-w-[180px] flex flex-col items-center">
+                    <a href="/explore?category=street-food" class="bs-category-btn flex-shrink-0 snap-start min-w-[110px] sm:flex-1 max-w-[180px] flex flex-col items-center">
                         <span class="bs-who-emoji" style="display: flex; align-items: center; justify-content: center; height: 2.8em;">
                             <img src="/images/categories/street_foods.png" alt="Everyday Diners" style="width: 2.2em; height: 2.2em; object-fit: contain; display: block;" loading="lazy">
                         </span>
                         <span class="bs-category-label">Street Food</span>
                     </a>
-                    <a href="/explore?category=cafes" class="bs-category-btn flex-1 min-w-[120px] max-w-[180px] flex flex-col items-center">
+                    <a href="/explore?category=cafes" class="bs-category-btn flex-shrink-0 snap-start min-w-[110px] sm:flex-1 max-w-[180px] flex flex-col items-center">
                         <span class="bs-who-emoji" style="display: flex; align-items: center; justify-content: center; height: 2.8em;">
                             <img src="/images/categories/cafes.png" alt="Everyday Diners" style="width: 2.2em; height: 2.2em; object-fit: contain; display: block;" loading="lazy">
                         </span>
                         <span class="bs-category-label">Cafés</span>
                     </a>
-                    <a href="/explore?category=desserts" class="bs-category-btn flex-1 min-w-[120px] max-w-[180px] flex flex-col items-center">
+                    <a href="/explore?category=desserts" class="bs-category-btn flex-shrink-0 snap-start min-w-[110px] sm:flex-1 max-w-[180px] flex flex-col items-center">
                         <span class="bs-who-emoji" style="display: flex; align-items: center; justify-content: center; height: 2.8em;">
                             <img src="/images/categories/desserts.png" alt="Everyday Diners" style="width: 2.2em; height: 2.2em; object-fit: contain; display: block;" loading="lazy">
                         </span>
                         <span class="bs-category-label">Desserts</span>
                     </a>
-                    <a href="/explore?category=drinks" class="bs-category-btn flex-1 min-w-[120px] max-w-[180px] flex flex-col items-center">
+                    <a href="/explore?category=drinks" class="bs-category-btn flex-shrink-0 snap-start min-w-[110px] sm:flex-1 max-w-[180px] flex flex-col items-center">
                         <span class="bs-who-emoji" style="display: flex; align-items: center; justify-content: center; height: 2.8em;">
                             <img src="/images/categories/drinks.png" alt="Everyday Diners" style="width: 2.2em; height: 2.2em; object-fit: contain; display: block;" loading="lazy">
                         </span>

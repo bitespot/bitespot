@@ -86,10 +86,35 @@
 
     {{-- ── CONTENT ──────────────────────────────────────────────────────────── --}}
     <div class="max-w-5xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+
+        {{-- Mobile Quick Actions --}}
+        @if($vendor->phone || $vendor->address || $vendor->website)
+        <div class="grid grid-cols-3 gap-2.5 sm:hidden mb-5">
+            @if($vendor->phone)
+            <a href="tel:{{ $vendor->phone }}" class="flex flex-col items-center justify-center p-3 bg-white rounded-2xl shadow-sm border border-gray-100 text-xs font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition text-center">
+                <svg class="w-5 h-5 mb-1.5 text-orange-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.9 14.26a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.82 3.5h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 11.1a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 17.92z"/></svg>
+                Call
+            </a>
+            @endif
+            @if($vendor->address)
+            <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($vendor->business_name . ' ' . $vendor->address . ' ' . ($vendor->city ?? '')) }}" target="_blank" rel="noopener" class="flex flex-col items-center justify-center p-3 bg-white rounded-2xl shadow-sm border border-gray-100 text-xs font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition text-center">
+                <svg class="w-5 h-5 mb-1.5 text-orange-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Directions
+            </a>
+            @endif
+            @if($vendor->website)
+            <a href="{{ $vendor->website }}" target="_blank" rel="noopener" class="flex flex-col items-center justify-center p-3 bg-white rounded-2xl shadow-sm border border-gray-100 text-xs font-semibold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition text-center">
+                <svg class="w-5 h-5 mb-1.5 text-orange-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                Website
+            </a>
+            @endif
+        </div>
+        @endif
+
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
             {{-- LEFT: About + Menu --}}
-            <div class="lg:col-span-2 space-y-5">
+            <div class="lg:col-span-2 space-y-5 order-2 lg:order-1">
 
                 @if($vendor->description)
                 <div class="bg-white rounded-xl shadow-sm p-5">
@@ -147,7 +172,7 @@
             </div>
 
             {{-- RIGHT: Info sidebar --}}
-            <div class="space-y-4">
+            <div class="space-y-4 order-1 lg:order-2">
                 <div class="bg-white rounded-xl shadow-sm p-5 space-y-3">
                     <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Info</h2>
 

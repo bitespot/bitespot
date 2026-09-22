@@ -35,21 +35,21 @@
     </div>
 
     {{-- ── TABS + PANELS ────────────────────────────────────────────────── --}}
-    <div class="max-w-2xl mx-auto -mt-10 bg-white rounded-2xl shadow-sm overflow-hidden">
+    <div class="max-w-2xl mx-3 sm:mx-auto -mt-10 bg-white rounded-2xl shadow-sm overflow-hidden">
 
         {{-- Tab bar --}}
         <div class="flex border-b border-gray-100">
-            <button class="profile-tab flex-1 py-4 text-sm font-medium
+            <button class="profile-tab flex-1 py-3.5 sm:py-4 px-2 text-xs sm:text-sm font-medium
                            text-orange-500 border-b-2 border-orange-500 transition-colors"
                     data-tab="bookmarks">
                 Saved Places
             </button>
-            <button class="profile-tab flex-1 py-4 text-sm font-medium
+            <button class="profile-tab flex-1 py-3.5 sm:py-4 px-2 text-xs sm:text-sm font-medium
                            text-gray-400 border-b-2 border-transparent transition-colors"
                     data-tab="reviews">
                 My Reviews
             </button>
-            <button class="profile-tab flex-1 py-4 text-sm font-medium
+            <button class="profile-tab flex-1 py-3.5 sm:py-4 px-2 text-xs sm:text-sm font-medium
                            text-gray-400 border-b-2 border-transparent transition-colors"
                     data-tab="settings">
                 Edit Profile

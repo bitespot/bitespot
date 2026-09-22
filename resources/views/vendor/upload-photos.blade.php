@@ -28,7 +28,7 @@
 
             <div class="mb-4 rounded-lg overflow-hidden shadow-sm bg-gray-100 h-48 flex items-center justify-center">
                 <img id="cover-preview"
-                     src="{{ $vendor->cover_photo ? Storage::disk('s3')->url($vendor->cover_photo) : '' }}"
+                     src="{{ $vendor->cover_photo_url ?? '' }}"
                      alt="Cover photo"
                      class="{{ $vendor->cover_photo ? '' : 'hidden' }} w-full h-full object-cover">
                 <span id="cover-placeholder" class="{{ $vendor->cover_photo ? 'hidden' : '' }} text-gray-400 text-sm">No cover photo</span>
@@ -64,7 +64,7 @@
 
             <div class="mb-4 w-32 h-32 mx-auto rounded-full overflow-hidden shadow-sm bg-gray-100 flex items-center justify-center">
                 <img id="profile-preview"
-                     src="{{ $vendor->profile_photo ? Storage::disk('s3')->url($vendor->profile_photo) : '' }}"
+                     src="{{ $vendor->profile_photo_url ?? '' }}"
                      alt="Profile photo"
                      class="{{ $vendor->profile_photo ? '' : 'hidden' }} w-full h-full object-cover">
                 <span id="profile-placeholder" class="{{ $vendor->profile_photo ? 'hidden' : '' }} text-gray-400 text-sm">No photo</span>

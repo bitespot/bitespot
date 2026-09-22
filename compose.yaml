@@ -17,6 +17,8 @@ services:
       - SESSION_DRIVER=file
       - CACHE_STORE=file
       - QUEUE_CONNECTION=sync
+      - FILESYSTEM_DISK=public
+      - CARTO_API_KEY=${CARTO_API_KEY:-}
     volumes:
       - bitespot_db:/var/www/html/database
       - bitespot_storage:/var/www/html/storage/app/public

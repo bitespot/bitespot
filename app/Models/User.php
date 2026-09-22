@@ -39,11 +39,14 @@ class User extends Authenticatable
         if (!$this->avatar) return null;
         if (str_starts_with($this->avatar, 'http')) return $this->avatar;
         
-        $bucket = config('filesystems.disks.s3.bucket');
-        $region = config('filesystems.disks.s3.region');
-        
-        // If s3 is used, construct the URL manually or use Storage::url
-        return "https://{$bucket}.s3.{$region}.amazonaws.com/{$this->avatar}";
+        $defaultDisk = config('filesystems.default', 'public');
+        if ($defaultDisk === 's3' && config('filesystems.disks.s3.key')) {
+            $bucket = config('filesystems.disks.s3.bucket');
+            $region = config('filesystems.disks.s3.region', 'ap-southeast-2');
+            return "https://{$bucket}.s3.{$region}.amazonaws.com/{$this->avatar}";
+        }
+
+        return Storage::disk('public')->url($this->avatar);
     }
 
     public function bookmarks(): HasMany

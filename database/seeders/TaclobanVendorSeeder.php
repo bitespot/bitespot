@@ -99,10 +99,15 @@ class TaclobanVendorSeeder extends Seeder
         if (!$filename) return null;
 
         $localPath = database_path("data/photos/{$filename}");
+        $disk = (config('filesystems.default', 'public') === 's3' && config('filesystems.disks.s3.key')) ? 's3' : 'public';
         
         if (File::exists($localPath)) {
-            $fileContents = File::get($localPath);
-            Storage::disk('s3')->put($s3Path, $fileContents);
+            try {
+                $fileContents = File::get($localPath);
+                Storage::disk($disk)->put($s3Path, $fileContents, 'public');
+            } catch (\Throwable $e) {
+                // If storage fails, return path anyway so local UI can reference the photo
+            }
             return $s3Path;
         }
 

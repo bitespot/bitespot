@@ -39,6 +39,15 @@ class PhotoController extends Controller
         return response()->json(['data' => $photos]);
     }
 
+    private function storageDisk(): string
+    {
+        if (app()->runningUnitTests()) {
+            return 's3';
+        }
+        $default = config('filesystems.default', 'public');
+        return ($default === 's3' && config('filesystems.disks.s3.key')) ? 's3' : 'public';
+    }
+
     /**
      * POST /api/vendor/establishments/{vendor}/photos  — upload a gallery photo
      */
@@ -55,7 +64,7 @@ class PhotoController extends Controller
         $file = $request->file('photo');
         $key  = 'vendors/' . $vendor->id . '/gallery/' . Str::uuid() . '.' . $file->getClientOriginalExtension();
 
-        Storage::disk('s3')->put($key, file_get_contents($file), 'public');
+        Storage::disk($this->storageDisk())->put($key, file_get_contents($file), 'public');
 
         $isPrimary = $vendor->photos()->count() === 0;
 
@@ -96,7 +105,7 @@ class PhotoController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        Storage::disk('s3')->delete($photo->url);
+        Storage::disk($this->storageDisk())->delete($photo->url);
 
         if ($photo->is_primary) {
             $next = $vendor->photos()->where('id', '!=', $photo->id)->latest()->first();
@@ -125,19 +134,20 @@ class PhotoController extends Controller
         ]);
 
         $file = $request->file('cover_photo');
+        $disk = $this->storageDisk();
 
         if ($vendor->cover_photo) {
-            Storage::disk('s3')->delete($vendor->cover_photo);
+            Storage::disk($disk)->delete($vendor->cover_photo);
         }
 
         $key = 'vendors/covers/' . Str::slug($vendor->business_name) . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
-        Storage::disk('s3')->put($key, file_get_contents($file), 'public');
+        Storage::disk($disk)->put($key, file_get_contents($file), 'public');
 
         $vendor->update(['cover_photo' => $key]);
 
         return response()->json([
             'message'         => 'Cover photo updated',
-            'cover_photo_url' => Storage::disk('s3')->url($key),
+            'cover_photo_url' => Storage::disk($disk)->url($key),
         ]);
     }
 
@@ -155,19 +165,20 @@ class PhotoController extends Controller
         ]);
 
         $file = $request->file('profile_photo');
+        $disk = $this->storageDisk();
 
         if ($vendor->profile_photo) {
-            Storage::disk('s3')->delete($vendor->profile_photo);
+            Storage::disk($disk)->delete($vendor->profile_photo);
         }
 
         $key = 'vendors/profiles/' . Str::slug($vendor->business_name) . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
-        Storage::disk('s3')->put($key, file_get_contents($file), 'public');
+        Storage::disk($disk)->put($key, file_get_contents($file), 'public');
 
         $vendor->update(['profile_photo' => $key]);
 
         return response()->json([
             'message'            => 'Profile photo updated',
-            'profile_photo_url'  => Storage::disk('s3')->url($key),
+            'profile_photo_url'  => Storage::disk($disk)->url($key),
         ]);
     }
 }

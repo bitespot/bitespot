@@ -38,11 +38,11 @@ class UserController extends Controller
 
         if ($request->hasFile('avatar')) {
             $file = $request->file('avatar');
+            $disk = (config('filesystems.default', 'public') === 's3' && config('filesystems.disks.s3.key')) ? 's3' : 'public';
 
             if ($user->avatar) {
-                // If it's a key (doesn't start with http), delete it from S3
                 if (!str_starts_with($user->avatar, 'http')) {
-                    Storage::disk('s3')->delete($user->avatar);
+                    Storage::disk($disk)->delete($user->avatar);
                 } else if (str_contains($user->avatar, '/storage/')) {
                     // Fallback for previously uploaded local avatars
                     $oldPath = parse_url($user->avatar, PHP_URL_PATH);
@@ -52,7 +52,7 @@ class UserController extends Controller
             }
             
             $key = 'users/avatars/' . Str::slug($user->name) . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
-            Storage::disk('s3')->put($key, file_get_contents($file));
+            Storage::disk($disk)->put($key, file_get_contents($file), 'public');
             
             $data['avatar'] = $key;
         }

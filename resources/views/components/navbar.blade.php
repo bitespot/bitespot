@@ -265,7 +265,7 @@
 
         /* Each nav link: taller tap targets, underline shifts to top on mobile */
         .bs-navbar__link {
-            padding: 0 1.1rem;
+            padding: 0 clamp(0.4rem, 2.5vw, 1rem);
             padding-top: 0.4rem;
             height: 100%;
             flex-direction: column;

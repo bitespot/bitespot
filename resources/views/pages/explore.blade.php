@@ -6,8 +6,18 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
 <style>
+/* ── Prevent window overscroll and excess bottom gap on explore ───────────── */
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+body > div.min-h-screen {
+    min-height: 100% !important;
+    height: 100% !important;
+}
+
 /* ── Page root ──────────────────────────────────────────────────────────── */
-#explore-root { display:flex; flex-direction:column; overflow:hidden; background:#fff; }
+#explore-root { display:flex; flex-direction:column; overflow:hidden; background:#fff; height:100%; }
 
 /* ── Map pane ───────────────────────────────────────────────────────────── */
 #map-pane    { display:flex; flex-direction:column; }
@@ -230,18 +240,38 @@
         </div>
 
         {{-- MAP PANE --}}
-        <div id="map-pane" class="flex-1 min-w-0">
+        <div id="map-pane" class="flex-1 min-w-0 relative">
             <div id="explore-map"></div>
+
+            {{-- MOBILE VENDOR PREVIEW CARD (bottom slide-up when a pin is tapped on mobile) --}}
+            <div id="mobile-pin-preview" class="hidden md:hidden absolute bottom-20 left-3 right-3 z-[1000] bg-white rounded-2xl shadow-2xl border border-gray-100 p-3.5 transition-all duration-200">
+            </div>
         </div>
 
         {{-- FULL LIST PANE — used by both mobile and desktop list view --}}
-        <div id="list-pane" class="flex-1 overflow-y-auto hidden p-3 sm:p-5 lg:p-6">
+        <div id="list-pane" class="flex-1 overflow-y-auto hidden p-3 sm:p-5 lg:p-6 pb-24 md:pb-6">
             {{-- Result count for list view (mobile only — desktop uses sidebar count) --}}
             <p id="result-count-list" class="text-sm font-semibold text-gray-700 mb-3 sm:hidden"></p>
             <div id="explore-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
             </div>
         </div>
 
+    </div>
+
+    {{-- ── MOBILE FLOATING VIEW TOGGLE (Airbnb / Google Maps style) ────────── --}}
+    <div class="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-30 pointer-events-auto">
+        <button id="mobile-view-toggle" onclick="toggleMobileExploreView()"
+                class="flex items-center gap-2 px-5 py-2.5 bg-gray-900/95 hover:bg-black text-white text-sm font-semibold rounded-full shadow-xl transition-all active:scale-95 border border-white/10 backdrop-blur-md">
+            <svg id="mobile-view-icon-list" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+            </svg>
+            <svg id="mobile-view-icon-map" class="hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+                <line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/>
+            </svg>
+            <span id="mobile-view-label">List ({{ $bitespots->count() }})</span>
+        </button>
     </div>
 </div>
 

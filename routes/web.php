@@ -158,16 +158,19 @@ Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->g
         return view('vendor.setup', compact('vendor'));
     })->name('setup');
 
-    Route::get('/dashboard', [\App\Http\Controllers\Vendor\DashboardController::class, 'index'])
-         ->name('dashboard');
+    Route::get('/dashboard', function () {
+        return view('vendor.dashboard');
+    })->name('dashboard');
 
-    Route::get('/menu',      [\App\Http\Controllers\Vendor\MenuController::class, 'index'])
-         ->name('menu');
+    Route::get('/menu', function () {
+        return view('vendor.menu');
+    })->name('menu');
 
-    Route::get('/media',     [\App\Http\Controllers\Vendor\MediaController::class, 'index'])
-         ->name('media');
+    Route::get('/media', function () {
+        return view('vendor.media');
+    })->name('media');
 
-    Route::get('/photos',         function () {
+    Route::get('/photos', function () {
          $vendor = \App\Models\Vendor::where('user_id', auth()->id())->firstOrFail();
          return view('vendor.upload-photos', ['vendor' => $vendor]);
     })->name('photos');
@@ -178,11 +181,13 @@ Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->g
     Route::post('/photos/profile', [\App\Http\Controllers\Vendor\PhotosController::class, 'uploadProfile'])
          ->name('photos.profile');
 
-    Route::get('/reviews',   [\App\Http\Controllers\Vendor\ReviewsController::class, 'index'])
-         ->name('reviews');
+    Route::get('/reviews', function () {
+        return view('vendor.reviews');
+    })->name('reviews');
 
-    Route::get('/settings',  [\App\Http\Controllers\Vendor\SettingsController::class, 'index'])
-         ->name('settings');
+    Route::get('/settings', function () {
+        return view('vendor.settings');
+    })->name('settings');
 });
 
 // ---------------------------------------------------------------------------
