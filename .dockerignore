@@ -1,0 +1,13 @@
+.git
+.github
+.direnv
+node_modules
+vendor
+tests
+.phpunit.result.cache
+*.md
+.env
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*

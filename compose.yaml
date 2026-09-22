@@ -1,0 +1,26 @@
+services:
+  bitespot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bitespot
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      - APP_NAME=BiteSpot
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - APP_URL=http://localhost:8080
+      - DB_CONNECTION=sqlite
+      - DB_DATABASE=/var/www/html/database/database.sqlite
+      - SESSION_DRIVER=file
+      - CACHE_STORE=file
+      - QUEUE_CONNECTION=sync
+    volumes:
+      - bitespot_db:/var/www/html/database
+      - bitespot_storage:/var/www/html/storage/app/public
+
+volumes:
+  bitespot_db:
+  bitespot_storage:
