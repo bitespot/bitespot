@@ -76,10 +76,11 @@ window.exploreMap = {
 
         const boot = (center, userCoords = null) => {
             const cartoKey = window.CARTO_API_KEY || window.cartoApiKey || '';
-            const cartoUrl = 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png' + (cartoKey ? `?key=${cartoKey}` : '');
+            const cartoUrl = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png' + (cartoKey ? `?key=${cartoKey}` : '');
             L.tileLayer(cartoUrl, {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
                 maxZoom: 20,
-                attribution: '© OpenStreetMap contributors © CARTO',
             }).addTo(this._map);
 
             // Place user marker using the position we already have

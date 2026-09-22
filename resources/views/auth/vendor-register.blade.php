@@ -226,10 +226,11 @@
     const map = L.map('map').setView([DEFAULT_LAT, DEFAULT_LNG], DEFAULT_ZOOM);
 
     const cartoKey = '{{ config("services.carto.key", env("CARTO_API_KEY", "")) }}';
-    const cartoUrl = 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png' + (cartoKey ? `?key=${cartoKey}` : '');
+    const cartoUrl = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png' + (cartoKey ? `?key=${cartoKey}` : '');
     L.tileLayer(cartoUrl, {
-        maxZoom: 20,
-        attribution: '© OpenStreetMap contributors © CARTO',
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 20
     }).addTo(map);
 
     const pinIcon = L.divIcon({
