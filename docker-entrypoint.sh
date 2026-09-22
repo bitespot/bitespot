@@ -31,9 +31,12 @@ fi
 chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database || true
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database || true
 
+chmod 666 /var/www/html/.env 2>/dev/null || true
+chown www-data:www-data /var/www/html/.env 2>/dev/null || true
+
 # Generate application key if missing
 if [ -z "$APP_KEY" ] && ! grep -q "^APP_KEY=base64:" /var/www/html/.env 2>/dev/null; then
-    php artisan key:generate --force --ansi
+    php artisan key:generate --force --ansi || true
 fi
 
 # Create public storage symlink if missing
