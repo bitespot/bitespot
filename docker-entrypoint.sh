@@ -21,11 +21,13 @@ mkdir -p /var/www/html/storage/framework/sessions \
 # Ensure SQLite file exists if SQLite is used
 if [ "${DB_CONNECTION:-sqlite}" = "sqlite" ]; then
     DB_FILE="${DB_DATABASE:-/var/www/html/database/database.sqlite}"
+    mkdir -p "$(dirname "$DB_FILE")"
     if [ ! -f "$DB_FILE" ]; then
-        mkdir -p "$(dirname "$DB_FILE")"
         touch "$DB_FILE"
     fi
-    chmod 664 "$DB_FILE" || true
+    chmod 666 "$DB_FILE" || true
+    chmod 777 "$(dirname "$DB_FILE")" || true
+    chown -R www-data:www-data "$(dirname "$DB_FILE")" || true
 fi
 
 chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database || true
