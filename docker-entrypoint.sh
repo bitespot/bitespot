@@ -51,7 +51,6 @@ php artisan migrate --force --ansi || true
 if [ "${APP_ENV:-production}" = "production" ]; then
     php artisan config:cache || true
     php artisan route:cache || true
-    php artisan view:cache || true
 fi
 
 exec "$@"
